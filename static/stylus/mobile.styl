@@ -1,0 +1,63 @@
+$page-one-color = #E06178
+$page-two-color = #82CE58
+$page-three-color = #56A7D8
+$page-four-color = #DF7438
+$border-color = #B8B8B8
+$border-1px
+  position absolute
+  content ''
+  transform-origin left top
+  transform scale(0.5)
+// 上下左右1px边框(有问题!!!!)
+border-1px($color, $radius = 0)
+  position relative
+  &:before
+    border 1px solid $color
+    border-radius $radius
+    @extend $border-1px
+// 上边框
+border-1px-t($color)
+  position relative
+  &:before
+    left 0
+    top 0
+    width 200%
+    border-top 1px solid $color
+    @extend $border-1px
+// 下边框
+border-1px-b($color)
+  position relative
+  &:after
+    left 0
+    bottom 0
+    width 200%
+    border-bottom 1px solid $color
+    @extend $border-1px
+// 左边框
+border-1px-l($color)
+  position relative
+  &:before
+    left 0
+    top 0
+    height 200%
+    border-left 1px solid $color
+    @extend $border-1px
+// 右边框
+border-1px-r($color)
+  position relative
+  &:after
+    top 0
+    right 0
+    height 200%
+    border-right 1px solid $color
+    @extend $border-1px
+// 居中方案
+$center
+  position absolute
+  top 0
+  left 0
+  right 0
+  bottom 0
+  margin auto
+center-center
+  @extend $center

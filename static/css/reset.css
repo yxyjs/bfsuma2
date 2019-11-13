@@ -1,0 +1,327 @@
+@charset"utf-8";
+* {
+  -webkit-touch-callout: none;
+  /*系统默认菜单被禁用*/
+  -webkit-user-select: none;
+  /*webkit浏览器*/
+  -khtml-user-select: none;
+  /*早期浏览器*/
+  -moz-user-select: none;
+  /*IE10*/
+  user-select: none;
+}
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
+
+/*定义滑块 内阴影+圆角*/
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
+
+body, ul, ol, dl, dd, h1, h2, h3, h4, h5, h6, form, input, textarea, button, p, th, td, pre {
+  margin: 0;
+  padding: 0
+}
+
+em, i {
+  font-style: normal
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption, th {
+  text-align: inherit
+}
+
+ul, ol, menu {
+  list-style: none
+}
+
+img {
+  border: 0
+}
+
+img, object, input, textarea, button, select {
+  vertical-align: middle
+}
+
+article, aside, footer, header, section, nav, figure, figcaption, hgroup, details, menu {
+  display: block
+}
+
+audio, canvas, video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: "\0020"
+}
+
+textarea {
+  overflow: auto;
+  resize: vertical
+}
+
+select {
+  /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+  border: solid 1px #000;
+  /*很关键：将默认的select选择框样式清除*/
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  /*在选择框的最右侧中间显示小箭头图片*/
+  background: url("http://ourjs.github.io/static/2015/arrow.png") no-repeat scroll right center transparent;
+  /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+  padding-right: 15px;
+}
+
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+
+select::-ms-expand {
+  display: none;
+}
+
+input, textarea, button, select, a {
+  outline: 0 none;
+  border: none;
+  background-color: transparent;
+}
+
+input, textarea {
+  caret-color: skyblue;
+}
+
+::-moz-placeholder {
+  color: #CFD3D2
+}
+
+::-webkit-input-placeholder {
+  color: #CFD3D2
+}
+
+:-ms-input-placeholder {
+  color: #CFD3D2
+}
+
+button::-moz-focus-inner, input::-moz-focus-inner {
+  padding: 0;
+  border: 0
+}
+
+input:disabled {
+  background: #fff;
+}
+
+mark {
+  background-color: transparent
+}
+
+a, ins, s, u, del {
+  text-decoration: none
+}
+
+sup, sub {
+  vertical-align: baseline
+}
+
+html {
+  /* font-size: 100px; */
+  font-size: 26.666666667vw;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: "PingFang-SC-Bold,PingFang-SC";
+  color: #696969;
+  background-color: #f5f5f5;
+  font-size: 12px;
+  line-height: 150%;
+  -webkit-text-size-adjust: none;
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+}
+
+/* 打点... */
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 边框图片实现1px-border */
+
+.border-image-1px {
+  border-width: 1px 0px;
+  border: 1px solid;
+  -webkit-border-image: url("../../images/border.png") 2 0 stretch;
+  border-image: url("../../images/border.png") 2 0 stretch;
+}
+
+/* css3 transform实现1px */
+
+/* 上下边框 */
+
+.border-1px-tb {
+  position: relative;
+}
+
+.border-1px-tb:after {
+  position: absolute;
+  content: '';
+  top: -50%;
+  bottom: -50%;
+  left: -50%;
+  right: -50%;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+/* 上边框 */
+
+.border-1px-t {
+  position: relative;
+}
+
+.border-1px:after {
+  position: absolute;
+  content: '';
+  top: -50%;
+  bottom: -50%;
+  left: -50%;
+  right: -50%;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+  border-top: 1px solid #ccc;
+}
+
+/* 下边框 */
+
+.border-1px-b {
+  position: relative;
+}
+
+.border-1px:after {
+  position: absolute;
+  content: '';
+  top: -50%;
+  bottom: -50%;
+  left: -50%;
+  right: -50%;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+  border-bottom: 1px solid #ccc;
+}
+
+/* 右边框 */
+
+.border-1px-r {
+  position: relative;
+}
+
+.border-1px:after {
+  position: absolute;
+  content: '';
+  top: -50%;
+  bottom: -50%;
+  left: -50%;
+  right: -50%;
+  -webkit-transform: scale(0.5);
+  transform: scale(0.5);
+  border-right: 1px solid #ccc;
+}
+
+@media (min-width:1120px) {
+  /**css初始化**/
+  body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td, menu, nav, header {
+    margin: 0;
+    padding: 0;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 12px;
+    font-weight: normal;
+  }
+  ul, ol {
+    list-style: none;
+  }
+  ::-moz-placeholder {
+    color: #B7B7B7
+  }
+  ::-webkit-input-placeholder {
+    color: #B7B7B7
+  }
+  :-ms-input-placeholder {
+    color: #B7B7B7
+  }
+  img {
+    display: block;
+    border: 0 none;
+  }
+  button, input[type="radio"], label {
+    cursor: pointer;
+  }
+  input {
+    font-family: "SimSun", "宋体";
+    border: 0 none;
+    outline-style: none;
+  }
+  textarea {
+    resize: none;
+  }
+  .clearfix:after {
+    content: '';
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+    display: block;
+    clear: both;
+  }
+  .clearfix {
+    zoom: 1;
+  }
+  /*针对ie低级版本的浏览器*/
+  body {
+    width: 1120px;
+    margin: auto;
+    color: #575757;
+    background-color: #fafafa;
+    font-size: 14px;
+    line-height: 150%;
+    font-family: "San Francisco", "Helvetica Neue", "PingHei", "Hiragino Sans GB", "Microsoft Yahei", "Arial Unicode MS", "Arial", "Verdana", "SimHei", "Geneva", "sans-serif";
+  }
+  html {
+    font-size: 100px;
+  }
+  /*正文的字体大小和颜色*/
+}
