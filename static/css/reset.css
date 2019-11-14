@@ -259,7 +259,7 @@ a {
 }
 
 @media (min-width:1120px) {
-  /**css初始化**/
+  /**pc端css初始化**/
   body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td, menu, nav, header {
     margin: 0;
     padding: 0;
@@ -267,10 +267,6 @@ a {
   table {
     border-collapse: collapse;
     border-spacing: 0;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 12px;
-    font-weight: normal;
   }
   ul, ol {
     list-style: none;
@@ -288,16 +284,18 @@ a {
     display: block;
     border: 0 none;
   }
-  button, input[type="radio"], label {
+  button, input[type="radio"], input[type="checkbox"] {
     cursor: pointer;
   }
   input {
-    font-family: "SimSun", "宋体";
     border: 0 none;
     outline-style: none;
   }
   textarea {
     resize: none;
+  }
+  input, textarea {
+    caret-color: #000;
   }
   .clearfix:after {
     content: '';

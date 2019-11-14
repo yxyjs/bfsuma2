@@ -13,4 +13,4 @@ export const sponsorRecommend = (country, city) => ajax(BASE_URL + '/sponsor/rec
 // 获取国家
 export const getAllCountry = () => ajax(BASE_URL + '/country/all')
 // 搜索sponsor
-export const searchSponsor = (country, city, keyword, rows, _) => ajax(BASE_URL + '/sponsor?country', { country, city, keyword, rows, _ })
+export const searchSponsor = (country, city, keyword, rows, _) => ajax(BASE_URL + '/sponsor', { country, city, keyword, rows, _ })
