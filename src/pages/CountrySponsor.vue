@@ -47,78 +47,111 @@
       <div class="form-items">
         <div class="form-item">
           <label class="item-lable">*Country</label>
-          <select
-            class="item-select"
-            name="country"
-            id="country"
-            v-model="formParams.country"
-            required
-          >
-            <!-- <option value="Select gender">Select gender</option> -->
+          <select class="item-select" v-model="country">
+            <option disabled value style="display:none;">Fill in the city</option>
             <option
-              :value="country.id"
+              :value="country.value"
               v-for="(country,index) in countryList"
               :key="index"
-            >{{country.name}}</option>
+            >{{country.text}}</option>
           </select>
         </div>
         <div class="form-item">
           <label class="item-lable">*City</label>
-          <select class="item-select" name="city" id="city" v-model="formParams.city" required>
+          <select class="item-select" v-model="city">
+            <option disabled value style="display:none;">Select Registrant’s Country</option>
             <option
-              :value="country.id"
+              :value="country.value"
               v-for="(country,index) in countryList"
               :key="index"
-            >{{country.name}}</option>
+            >{{country.text}}</option>
           </select>
         </div>
       </div>
-      <hr style="margin: 10px;color:#eee" />
+      <hr class="hr" />
       <!-- *Sponsor -->
-      <div class="form-items sponsor" v-show="!isConnected">
+      <div class="form-items" v-show="!isConnected">
         <div class="form-item">
           <label class="item-lable">*Sponsor</label>
-          <input
-            type="text"
-            placeholder="*Fill in you Upline Distributor Id or Mobile Phone or E-mail that you know"
-            v-model="formParams.sponsor"
-          />
+          <div class="item-inputs">
+            <input
+              type="text"
+              placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+              v-model="sponsor"
+            />
+            <button
+              class="sponsor-searchbtn"
+              :class="{'disable':canSearch}"
+              @click="searchSponsor"
+              :disabled="canSearch"
+            >Search</button>
+          </div>
         </div>
-        <button
-          class="sponsor-searchbtn"
-          :class="{'disable':canSearch}"
-          @click="searchSponsor"
-          :disabled="canSearch"
-        >Search</button>
       </div>
       <!-- click connect -->
       <div v-show="isConnected">
         <div class="form-items">
           <div class="form-item">
             <label class="item-lable input">*Sponsor</label>
-            <p>
+            <div class="item-text">
               Gage get
-              (ID:{{currentSponsor.distributorId}} Gender:{{currentSponsor.gender}} Mobile Number:{{currentSponsor.phone}} E-mail:{{currentSponsor.email}})
-            </p>
+              <span>
+                <strong>ID:</strong>
+                {{currentSponsor.distributorId}}
+              </span>
+              <span>
+                <strong>Gender:</strong>
+                {{currentSponsor.gender}}
+              </span>
+              <span>
+                <strong>Mobile Number:</strong>
+                {{currentSponsor.phone}}
+              </span>
+              <span>
+                <strong>E-mail:</strong>
+                {{currentSponsor.email}}
+              </span>
+            </div>
           </div>
         </div>
         <div class="form-items">
           <div class="form-item">
             <label class="item-lable input">*Upline</label>
-            <p>
+            <div class="item-text">
               Gage get
-              (ID:{{currentSponsor.distributorId}} Gender:{{currentSponsor.gender}} Mobile Number:{{currentSponsor.phone}} E-mail:{{currentSponsor.email}})
-            </p>
+              <span>
+                <strong>ID:</strong>
+                {{currentSponsor.distributorId}}
+              </span>
+              <span>
+                <strong>Gender:</strong>
+                {{currentSponsor.gender}}
+              </span>
+              <span>
+                <strong>Mobile Number:</strong>
+                {{currentSponsor.phone}}
+              </span>
+              <span>
+                <strong>E-mail:</strong>
+                {{currentSponsor.email}}
+              </span>
+            </div>
           </div>
         </div>
         <div class="connect-foot">
           <p>Or you want to modify your Upline</p>
-          <input
-            type="text"
-            placeholder="*Fill in you Upline Distributor Id or Mobile Phone or E-mail that you know"
-            v-model="formParams.sponsor"
-          />
-          <button @click="searchSponsor" :class="{'disable':canSearch}" :disabled="canSearch">Search</button>
+          <div class="connect-foot-main">
+            <input
+              type="text"
+              placeholder="*Fill in you Upline Distributor Id or Mobile Phone or E-mail that you know"
+              v-model="sponsor"
+            />
+            <button
+              @click="searchSponsor"
+              :class="{'disable':canSearch}"
+              :disabled="canSearch"
+            >Search</button>
+          </div>
         </div>
       </div>
       <!-- system-recommend -->
@@ -135,36 +168,41 @@
           We found
           <span>{{recommendList.length}}</span> matches based on your search
         </p>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Distributor Name</th>
-              <th>Distributor ID</th>
-              <th>Gender</th>
-              <th>City</th>
-              <th>Mobile Number</th>
-              <th>E-mail</th>
-              <th>Connect</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="(recommend ,index) in recommendList" :key="index">
-              <td>{{recommend.distributorName}}</td>
-              <td style="backgroundColor:#DCDCDC">{{recommend.distributorId}}</td>
-              <td>{{recommend.gender}}</td>
-              <td>{{recommend.city}}</td>
-              <td>{{recommend.phone}}</td>
-              <td>{{recommend.email}}</td>
-              <td>
-                <button type="button" class="connect-btn" @click="connectHandle(recommend)">Connect</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Distributor Name</th>
+                <th>Distributor ID</th>
+                <th>Gender</th>
+                <th>City</th>
+                <th>Mobile Number</th>
+                <th>E-mail</th>
+                <th>Connect</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(recommend ,index) in recommendList" :key="index">
+                <td>{{recommend.distributorName}}</td>
+                <td style="backgroundColor:#DCDCDC">{{recommend.distributorId}}</td>
+                <td>{{recommend.gender}}</td>
+                <td>{{recommend.city}}</td>
+                <td>{{recommend.phone}}</td>
+                <td>{{recommend.email}}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="connect-btn"
+                    @click="connectHandle(recommend)"
+                  >Connect</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="next-btn-wrap" @click="$router.push('/PersonalInformation_p')">
-        <button class="next-btn">Next</button>
+      <div class="next-btn-wrap">
+        <button class="next-btn" @click="nextHandle">Next</button>
       </div>
     </form>
   </div>
@@ -189,44 +227,37 @@ export default {
       tableTips: false,
       currentStep: 0,
       currentSponsor: {},
-      formParams: {
-        country: "Kenya",
-        city: "NAIROBI",
-        sponsor: "KE220228"
-      },
-      recommendList: [],
+      // country: "Kenya",
+      country: "",
+      // city: "NAIROBI",
+      city: "",
+      // sponsor: "KE220228",
+      sponsor: "",
       countryList: [
-        {
-          name: "aa"
-        },
-        {
-          name: "bb"
-        },
-        {
-          name: "cc"
-        },
-        {
-          name: "dd"
-        }
-      ]
+        { text: "Kenya", value: "Kenya" },
+        { text: "Cameroon", value: "Cameroon" },
+        { text: "China", value: "China" },
+        { text: "Ghana", value: "Ghana" },
+        { text: "Benin", value: "Benin" },
+        { text: "Nigeria", value: "Nigeria" },
+        { text: "Tanzania", value: "Tanzania" },
+        { text: "Uganda", value: "Uganda" },
+        { text: "Zambia", value: "Zambia" }
+      ],
+      recommendList: []
     };
   },
   computed: {
     disabled() {
-      if (
-        !this.formParams.country ||
-        !this.formParams.city ||
-        !this.formParams.sponsor.trim()
-      )
-        return true;
+      if (!this.country || !this.city || !this.sponsor.trim()) return true;
     },
     canSearch() {
-      if (!this.formParams.sponsor.trim()) return true;
+      if (!this.sponsor.trim()) return true;
     }
   },
   mounted() {
     // this.getAllCountry();
-    // this.getRecommend();
+    this.getRecommend();
   },
   methods: {
     dialogHandle() {
@@ -246,9 +277,9 @@ export default {
     },
     async searchSponsor() {
       let res = await searchSponsor(
-        this.formParams.country,
-        this.formParams.city,
-        this.formParams.sponsor,
+        this.country,
+        this.city,
+        this.sponsor,
         1,
         1573693207826
       );
@@ -262,10 +293,7 @@ export default {
       this.tableTips = false;
     },
     async getRecommend() {
-      let res = await sponsorRecommend(
-        this.formParams.country,
-        this.formParams.city
-      );
+      let res = await sponsorRecommend(this.country, this.city);
       this.recommendList = res.data;
 
       if (!this.recommendList.length) {
@@ -286,7 +314,13 @@ export default {
     },
 
     submitHandle() {
-      console.log(this.formParams);
+      console.log(this);
+    },
+    nextHandle() {
+      // if (!this.city) {
+
+      // }
+      this.$router.push("/PersonalInformation");
     }
   },
   components: {
@@ -302,25 +336,38 @@ export default {
 <style scoped lang="stylus">
 @import '../../static/stylus/pc'
 
+::placeholder
+  // font-size 1
+  letter-spacing -0.4px
 .country-cont
   .form
     margin-top 20px
     padding 20px
     background-color #fff
+    min-height 100vh
+    @media (max-width: 980px)
+      margin-top 0
+      padding 8px
     .checkbox
       display flex
       margin-left 20px
       margin-top 30px
+      @media (max-width: 980px)
+        margin 10px 0 0 5px
       .checkbox-label
         color #4295C5
         font-weight bold
       .checkbox-radio
         display flex
         margin-left 20px
+        @media (max-width: 980px)
+          margin-left 0
         .radio-item
           position relative
           display flex
           margin-left 20px
+          @media (max-width: 980px)
+            margin-left 10px
           input
             display none
             &:checked+img
@@ -357,40 +404,57 @@ export default {
       text-align center
       background-color rgba(0, 0, 0, 0.3)
       padding-top 100px
+      @media (max-width: 980px)
+        background-color rgba(0, 0, 0, 0.5)
       .dialog-main
         background-color #fff
         display inline-block
         border-radius 10px
         text-align left
-        padding 50px
         font-weight bold
+        width 60%
+        font-size 16px
+        @media (max-width: 980px)
+          font-size 12px
+          width 90%
+          overflow hidden
         h2
           color #56a7d8
           text-align center
-        .dialog-main-text
           margin-top 30px
+        .dialog-main-text
+          margin 30px 0 0 30px
+          @media (max-width: 980px)
+            margin 10px 0 0 10px
           p
-            font-size 16px
             color #696969
             line-height 32px
+            @media (max-width: 980px)
+              line-height 1.5
+              margin-top 10px
         a
           display block
-          margin-top 20px
-          font-size 16px
+          margin 30px 0 0 30px
           color #56a7d8
+          @media (max-width: 980px)
+            margin 10px 0 0 10px
         .dialog-buttons
-          margin-top 40px
+          margin 30px
+          @media (max-width: 980px)
+            margin 20px 0 0 0
           display flex
           .buttons-item
             flex 1
             text-align center
             .btn
               font-weight bold
-              font-size 16px
               width 140px
               padding 20px
               color #fff
               border-radius 4px
+              @media (max-width: 980px)
+                width 100%
+                border-radius 0
             .btn-cancel
               background-color #ddd
             .btn-confirm
@@ -398,31 +462,63 @@ export default {
     .form-items
       display flex
       margin 0 8px
+      @media (max-width: 980px)
+        display block
+        margin 0
       .form-item
         flex 1
         display flex
-        // position relative
-        line-height 40px
         margin 12px 20px
         background-color #E6F0F3
-        p
+        @media (max-width: 980px)
+          margin 12px 0
+          background-color #fff
+          flex-direction column
+        .item-text
           margin-left 20px
-          line-height 50px
+          @media (max-width: 980px)
+            line-height 24px
+            span
+              display block
         .item-lable
           font-weight bold
           border-right 1px solid #BABABA
           color #4295C5
           margin-left 20px
           padding-right 10px
-          &.input
-            line-height 50px
+          @media (max-width: 980px)
+            margin-left 0
+            border-right none
         .item-select
           width 100%
           color rgb(87, 87, 87)
           padding-left 10px
+          @media (max-width: 980px)
+            line-height 36px
+            background-color #E6F0F3
+            border-radius 4px
+            margin-top 4px
           &.input
             height 50px
             text-indent 20px
+            @media (max-width: 980px)
+              text-indent 0px
+        .item-inputs
+          flex 1
+          display flex
+          justify-content space-between
+          @media (max-width: 980px)
+            padding-top 4px
+          input
+            flex 1
+            padding 10px 0
+            background-color #E6F0F3
+          .sponsor-searchbtn
+            color #fff
+            background-color #5ba2cc
+            border-radius 4px
+            padding 0 8px
+            // border-left 16px solid #fff
       .form-btn
         width 90px
         background #5ba2cc
@@ -432,76 +528,101 @@ export default {
         line-height 50px
         margin-top 12px
         margin-right 10px
-      &.sponsor
-        .form-item
-          line-height 50px
-          input
-            width 100%
-            text-indent 20px
-        .sponsor-searchbtn
-          margin 12px 10px 0 10px
-          padding 0 20px
-          color #fff
-          border-radius 4px
-          height 40px
-          line-height 40px
-          background-color #5ba2cc
-          &.disable
-            filter grayscale(1)
-            cursor not-allowed
+    .hr
+      margin 10px
+      color #eee
+      @media (max-width: 980px)
+        display none
     .connect-foot
       display flex
       justify-content space-between
       margin 0 20px
       line-height 40px
-      input
+      @media (max-width: 980px)
+        display block
+        margin 0
+        line-height 30px
+      .connect-foot-main
         flex 1
-        margin-left 20px
-        border-radius 4px
-        text-indent 20px
-        border 1px solid #ccc
-      button
-        margin-left 20px
-        color #fff
-        border-radius 4px
-        padding 6px 12px
-        background-color #5ba2cc
-        &.disable
-          filter grayscale(1)
-          cursor not-allowed
+        display flex
+        input
+          flex 1
+          margin-left 20px
+          border-radius 4px
+          text-indent 20px
+          @media (max-width: 980px)
+            margin-left 0
+            text-indent 10px
+        button
+          margin-left 20px
+          color #fff
+          border-radius 4px
+          padding 6px 12px
+          background-color #5ba2cc
+          @media (max-width: 980px)
+            margin-left 4px
+            padding 6px
+          &.disable
+            filter grayscale(1)
+            cursor not-allowed
     .system-recommend
       text-align center
       p
         color #575757
         font-size 26px
         margin-top 114px
+        @media (max-width: 980px)
+          font-size 14px
+          margin-top 54px
       img
         margin 50px auto
         width 290px
         cursor pointer
+        @media (max-width: 980px)
+          width 190px
+          margin 20px auto
     .recommend-list
       margin 12px
+      @media (max-width: 980px)
+        margin 0
       p
         span
           color #5BA2CC
-      .table
-        text-align center
-        width 100%
-        margin-top 30px
-        thead
-          border-bottom 1px solid #eee
-          tr
-            border-bottom 1px solid red
-        tbody
-          tr
-            height 70px
-            background-color #F3F3F3
-            border-top 10px solid #fff
-            .connect-btn
-              color #fff
-              padding 8px 18px
-              border-radius 4px
-              background-color #55ABD9
+      .table-wrap
+        @media (max-width: 980px)
+          width 'cale(100vw - %s)' 5px
+          overflow auto
+          white-space nowrap
+        .table
+          text-align center
+          width 100%
+          margin-top 30px
+          thead
+            border-bottom 1px solid #eee
+            tr
+              border-bottom 1px solid red
+              th
+                @media (max-width: 980px)
+                  padding 0 4px
+          tbody
+            tr
+              height 70px
+              background-color #F3F3F3
+              border-top 10px solid #fff
+              @media (max-width: 980px)
+                height 30px
+                border-top none
+              td
+                @media (max-width: 980px)
+                  border 1px solid #ccc
+                .connect-btn
+                  color #fff
+                  padding 8px 18px
+                  border-radius 4px
+                  background-color #55ABD9
+                  @media (max-width: 980px)
+                    padding 2px 3px
+                    font-size 12px
     .next-btn-wrap
       margin-top 30px
       text-align right
@@ -513,4 +634,7 @@ export default {
         border unset
         cursor pointer
         border-radius 4px
+        @media (max-width: 980px)
+          width 100%
+          font-size 16px
 </style>

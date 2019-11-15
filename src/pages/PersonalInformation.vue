@@ -10,23 +10,39 @@
       <div class="form-items">
         <div class="form-item">
           <label class="item-lable">*Name</label>
-          <input type="text" placeholder="First Name" v-model="firstName" required autofocus />
-          <input
-            style="border-left:15px solid #fff"
-            type="text"
-            placeholder="Last Name"
-            v-model="lastName"
-            required
-          />
+          <div class="item-inputs">
+            <div class="item-inputs-wrap">
+              <input
+                type="text"
+                placeholder="First Name"
+                v-model="firstName"
+                required
+                autofocus
+                :class="showHelpBlock ? 'show-help' : ''"
+              />
+              <small class="help-block" v-show="showHelpBlock">Required</small>
+            </div>
+            <div class="item-inputs-wrap">
+              <input
+                class="last-name"
+                type="text"
+                placeholder="Last Name"
+                v-model="lastName"
+                :class="showHelpBlock ? 'show-help' : ''"
+                required
+              />
+              <small class="help-block" v-show="showHelpBlock">Required</small>
+            </div>
+          </div>
         </div>
         <div class="form-item">
           <label class="item-lable">Gender</label>
           <select class="item-select" name="gender" id="gender" v-model="gender">
+            <option disabled value style="display:none;">Fill in the city</option>
             <option
-              :value="gender.id"
+              :value="gender.text"
               v-for="(gender,index) in genderList"
               :key="index"
-              class="item-select-option"
             >{{gender.value}}</option>
           </select>
         </div>
@@ -34,24 +50,54 @@
       <div class="form-items">
         <div class="form-item">
           <label class="item-lable">*Email</label>
-          <input type="text" placeholder="Email Address" v-model="email" required />
+          <div class="item-inputs-wrap">
+            <input
+              type="text"
+              placeholder="Email Address"
+              v-model="email"
+              required
+              :class="showHelpBlock ? 'show-help' : ''"
+            />
+            <small class="help-block" v-show="showHelpBlock">Required</small>
+          </div>
         </div>
         <div class="form-item">
           <label class="item-lable">*Phone</label>
-          <select class="item-select" name="phoneHead" id="phoneHead" v-model="phoneHead" required>
-            <option
-              :value="phoneHead.id"
-              v-for="(phoneHead,index) in phoneHeadList"
-              :key="index"
-            >{{phoneHead.value}}</option>
-          </select>
-          <input
-            style="border-left:15px solid #fff"
-            type="text"
-            placeholder="Phone Number"
-            v-model="phoneNumber"
-            required
-          />
+          <div class="item-inputs">
+            <select
+              class="item-select"
+              name="phoneHead"
+              id="phoneHead"
+              v-model="phoneHead"
+              required
+              style="width:50%"
+            >
+              <!-- <option
+                :value="phoneHead.text"
+                v-for="(phoneHead,index) in phoneHeadList"
+                :key="index"
+              >{{phoneHead.value}}</option>-->
+              <option style="display: none;" value>Aera Cod</option>
+              <option value="254">254</option>
+              <option value="234">234</option>
+              <option value="255">255</option>
+              <option value="256">256</option>
+              <option value="264">264</option>
+              <option value="233">233</option>
+              <option value="237">237</option>
+              <option value="229">229</option>
+            </select>
+            <div class="item-inputs-wrap">
+              <input
+                type="text"
+                placeholder="Phone Number"
+                v-model="phoneNumber"
+                required
+                :class="showHelpBlock ? 'show-help' : ''"
+              />
+              <small class="help-block" v-show="showHelpBlock">Required</small>
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-items">
@@ -116,7 +162,13 @@
       <p class="country_tips">Where did you learn about BF Suma？</p>
       <div class="product-interest">
         <div class="checkbox-wrap" v-for="(learn,index) in learnBfList" :key="index">
-          <input class="check-input" type="radio" name="product-learn" :id="learn.value" :value="learn.value" />
+          <input
+            class="check-input"
+            type="radio"
+            name="product-learn"
+            :id="learn.value"
+            :value="learn.value"
+          />
           <img class="checked-img" src="../../static/img/checked.png" alt />
           <label class="check-label" :for="learn.value">{{learn.value}}</label>
         </div>
@@ -130,8 +182,8 @@
       </div>
       <!-- btn -->
       <div class="btn-wrap">
-        <button class="btn btn-back" type="button" @click="$router.push('/CountrySponsor_p')">Back</button>
-        <button class="btn btn-submit">Submit</button>
+        <button class="btn btn-back" type="button" @click="$router.push('/CountrySponsor')">Back</button>
+        <button class="btn btn-submit" type="submit" @click="submitHandle" formnovalidate>Submit</button>
       </div>
     </form>
   </div>
@@ -146,6 +198,7 @@ export default {
     return {
       showPassword: false,
       showConfirmPassword: false,
+      showHelpBlock: false,
       firstName: "",
       lastName: "",
       gender: "",
@@ -159,11 +212,14 @@ export default {
         "At least one letter",
         "At least one number"
       ],
-      genderList: [{ id: 1, value: "Male" }, { id: 2, value: "Female" }],
+      genderList: [
+        { text: "Male", value: "Male" },
+        { text: "Female", value: "Female" }
+      ],
       phoneHeadList: [
-        { id: 1, value: "254" },
-        { id: 2, value: "255" },
-        { id: 3, value: "256" }
+        { text: 254, value: "254" },
+        { text: 255, value: "255" },
+        { text: 256, value: "256" }
       ],
       productInterestList: [
         {
@@ -269,7 +325,11 @@ export default {
   mounted() {},
   methods: {
     submitHandle() {
-      console.log("submitHandle");
+      // 非空验证
+      if (!this.firstName.trim()) {
+        this.showHelpBlock = true;
+        console.log("firstName 不能为空");
+      }
     }
   },
   components: {
@@ -288,29 +348,83 @@ export default {
     margin-top 20px
     background-color #fff
     padding 20px
+    min-height 100vh
+    @media (max-width: 980px)
+      padding 8px
+      margin-top 0
     .form-items
       display flex
       margin 0 8px
+      @media (max-width: 980px)
+        display block
+        margin 0
       .form-item
         flex 1
         display flex
         position relative
-        line-height 40px
         margin 12px 20px 12px 0
         background-color #E6F0F3
+        @media (max-width: 980px)
+          margin 12px 0
+          // padding 8px 0
+          background-color #fff
+          flex-direction column
         input
-          width 90%
+          width 100%
+          padding 12px 0
+          box-shadow none
+          &.show-help
+            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+            &::placeholder
+              color #fff
+          @media (max-width: 980px)
+            background-color #E6F0F3
         .item-lable
           font-weight bold
           border-right 1px solid #BABABA
           color #4295C5
           margin-left 20px
+          @media (max-width: 980px)
+            margin-left 0px
+            margin-bottom 4px
+            border-right none
           &.input
             line-height 50px
+        .item-inputs-wrap
+          flex 1
+          position relative
+          .help-block
+            position absolute
+            left 0
+            margin-top 30px
+            color #a94442
+            font-weight normal
+            @media (max-width: 980px)
+              display none
+              margin-top 4px
+        .item-inputs
+          display flex
+          flex 1
+          .item-inputs-wrap
+            position relative
+            .help-block
+              position absolute
+              left 0
+              margin-top 30px
+              color #a94442
+              font-weight normal
+              @media (max-width: 980px)
+                display none
+            &:last-child
+              border-left 15px solid #fff
         .item-select
           width 100%
           color rgb(87, 87, 87)
           padding-left 10px
+          @media (max-width: 980px)
+            line-height 36px
+            background-color #E6F0F3
+            border-radius 4px
           .item-select-option
             background-color #E6F0F3
           &.input
@@ -333,10 +447,17 @@ export default {
           color #23527c
     .product-interest
       margin 20px 30px
+      @media (max-width: 980px)
+        margin 10px 0 10px 20px
+        line-height 2.6
+        font-size 13px
       .checkbox-wrap
         position relative
         display inline-block
         width 33.33%
+        @media (max-width: 980px)
+          margin-right 40px
+          line-height 24px
         .check-input
           display none
           &:checked+img.checked-img
@@ -351,6 +472,9 @@ export default {
           position absolute
           top 3px
           left -20px
+          @media (max-width: 980px)
+            top 0
+            left -14px
           .check-box-img
             width 12px
         .checked-img
@@ -359,6 +483,8 @@ export default {
           top 50%
           transform translateY(-50%)
           width 18px
+          @media (max-width: 980px)
+            left -16px
         .check-label
           &::before
             content ''
@@ -368,17 +494,25 @@ export default {
             height 11px
             border-radius 50%
             border 1px solid
+            @media (max-width: 980px)
+              margin 0 2px 0 -14px
   .btn-wrap
     margin-top 30px
     text-align right
+    @media (max-width: 980px)
+      display flex
+      text-align center
     .btn
       color #fff
       width 100px
       height 50px
       border-radius 4px
+      @media (max-width: 980px)
+        flex 1
+        font-size 16px
     .btn-back
       background-color #c8c8c8
     .btn-submit
-      margin-left 30px
+      margin-left 15px
       background-color #5BA2CC
 </style>

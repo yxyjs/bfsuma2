@@ -114,32 +114,20 @@ input, textarea {
 }
 
 ::-moz-placeholder {
-  color: #CFD3D2
+  color: #bbb
 }
 
 ::-webkit-input-placeholder {
-  color: #CFD3D2
+  color: #bbb
 }
 
 :-ms-input-placeholder {
-  color: #CFD3D2
+  color: #bbb
 }
 
 button::-moz-focus-inner, input::-moz-focus-inner {
   padding: 0;
   border: 0
-}
-
-input:disabled {
-  background: #fff;
-}
-
-mark {
-  background-color: transparent
-}
-
-a, ins, s, u, del {
-  text-decoration: none
 }
 
 sup, sub {
@@ -156,8 +144,8 @@ body {
   font-family: "PingFang-SC-Bold,PingFang-SC";
   color: #696969;
   background-color: #f5f5f5;
-  font-size: 12px;
-  line-height: 150%;
+  font-size: 14px;
+  line-height: 1;
   -webkit-text-size-adjust: none;
 }
 
