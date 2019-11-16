@@ -14,3 +14,7 @@ export const sponsorRecommend = (country, city) => ajax(BASE_URL + '/sponsor/rec
 export const getAllCountry = () => ajax(BASE_URL + '/country/all')
 // 搜索sponsor
 export const searchSponsor = (country, city, keyword, rows, _) => ajax(BASE_URL + '/sponsor', { country, city, keyword, rows, _ })
+
+// 注册
+//http://www.bfsuma.com/register/check?email=yxiaoyun6%40163.com&phone=254111111111
+export const registerCheck = (email, phone) => ajax(BASE_URL + '/register/check', { email, phone })

@@ -16,7 +16,6 @@
                 type="text"
                 placeholder="First Name"
                 v-model="firstName"
-                required
                 autofocus
                 :class="showHelpBlock ? 'show-help' : ''"
               />
@@ -28,10 +27,9 @@
                 type="text"
                 placeholder="Last Name"
                 v-model="lastName"
-                :class="showHelpBlock ? 'show-help' : ''"
-                required
+                :class="showHelpBlock1 ? 'show-help' : ''"
               />
-              <small class="help-block" v-show="showHelpBlock">Required</small>
+              <small class="help-block" v-show="showHelpBlock1">Required</small>
             </div>
           </div>
         </div>
@@ -54,11 +52,10 @@
             <input
               type="text"
               placeholder="Email Address"
-              v-model="email"
-              required
-              :class="showHelpBlock ? 'show-help' : ''"
+              v-model.lazy="email"
+              :class="showHelpBlock2 ? 'show-help' : ''"
             />
-            <small class="help-block" v-show="showHelpBlock">Required</small>
+            <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
           </div>
         </div>
         <div class="form-item">
@@ -69,7 +66,6 @@
               name="phoneHead"
               id="phoneHead"
               v-model="phoneHead"
-              required
               style="width:50%"
             >
               <!-- <option
@@ -89,13 +85,14 @@
             </select>
             <div class="item-inputs-wrap">
               <input
-                type="text"
+                type="number"
                 placeholder="Phone Number"
-                v-model="phoneNumber"
-                required
-                :class="showHelpBlock ? 'show-help' : ''"
+                v-model.lazy="phoneNumber"
+                maxlength="9"
+                oninput="if(value.length>9)value=value.slice(0,9)"
+                :class="showHelpBlock3 ? 'show-help' : ''"
               />
-              <small class="help-block" v-show="showHelpBlock">Required</small>
+              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock3">Required</small>
             </div>
           </div>
         </div>
@@ -103,43 +100,53 @@
       <div class="form-items">
         <div class="form-item">
           <label class="item-lable">*Input Password</label>
-          <input
-            :type="!showPassword? 'password':'text'"
-            placeholder="8~15 character,at least one letter and one number"
-            v-model="password"
-            required
-          />
-          <i
-            class="item-icon iconfont icon-yanjing"
-            v-show="isSee"
-            @click="showPassword = !showPassword"
-          ></i>
+          <div class="item-inputs">
+            <input
+              :type="!showPassword? 'password':'text'"
+              placeholder="8~15 character,at least one letter and one number"
+              v-model="password"
+              maxlength="15"
+            />
+            <i
+              class="item-icon iconfont icon-yanjing"
+              v-show="isSee"
+              @click="showPassword = !showPassword"
+            ></i>
+          </div>
         </div>
         <div class="form-item">
           <label class="item-lable">*Confirm Password</label>
-          <input
-            :type="!showConfirmPassword? 'password':'text'"
-            placeholder="Reenter Password"
-            v-model="confirmPassword"
-            required
-          />
-          <i
-            class="item-icon iconfont icon-yanjing"
-            v-show="isSeeConfirm"
-            @click="showConfirmPassword = !showConfirmPassword"
-          ></i>
+          <div class="item-inputs">
+            <input
+              :type="!showConfirmPassword? 'password':'text'"
+              placeholder="Reenter Password"
+              v-model="confirmPassword"
+              maxlength="15"
+            />
+            <i
+              class="item-icon iconfont icon-yanjing"
+              v-show="isSeeConfirm"
+              @click="showConfirmPassword = !showConfirmPassword"
+            ></i>
+          </div>
         </div>
       </div>
       <div class="error-wrap">
-        <div class="error-item" v-show="password">
+        <div class="error-item" v-show="password || !password">
           <div v-for="(error,index) in errorList" :key="index">
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
             <span>{{error}}</span>
           </div>
         </div>
-        <div class="error-item" v-show="isEqual">
-          <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
-          <span>Passwords must match</span>
+        <div class="error-item">
+          <div class="error-item-wrap" v-show="password && confirmPassword && !isEqual">
+            <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
+            <span>Passwords must match</span>
+          </div>
+          <div class="error-item-wrap" v-show="isEqual">
+            <i class="iconfont icon-duigou" style="color:#95C884;font-weight:bold"></i>
+            <span>Passwords must match</span>
+          </div>
         </div>
       </div>
       <p class="country_tips">Which products are you interested in？</p>
@@ -193,12 +200,16 @@
 import myHeader from "@/components/my-header";
 import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
+import { registerCheck} from '../api/index'
 export default {
   data() {
     return {
-      showPassword: false,
-      showConfirmPassword: false,
+      showPassword: true,
+      showConfirmPassword: true,
       showHelpBlock: false,
+      showHelpBlock1: false,
+      showHelpBlock2: false,
+      showHelpBlock3: false,
       firstName: "",
       lastName: "",
       gender: "",
@@ -207,11 +218,7 @@ export default {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      errorList: [
-        "8~15 character",
-        "At least one letter",
-        "At least one number"
-      ],
+      errorList: [],
       genderList: [
         { text: "Male", value: "Male" },
         { text: "Female", value: "Female" }
@@ -290,7 +297,7 @@ export default {
   computed: {
     isEqual() {
       if (this.confirmPassword.trim()) {
-        return this.password.trim() !== this.confirmPassword.trim();
+        return this.password.trim() === this.confirmPassword.trim();
       }
     },
     isSee() {
@@ -301,24 +308,70 @@ export default {
     }
   },
   watch: {
-    password(newValue, oldValue) {
-      const tempList = [
+    firstName(newValue) {
+      if (!newValue.trim()) {
+        this.showHelpBlock = true;
+      } else {
+        this.showHelpBlock = false;
+      }
+    },
+    lastName(newValue) {
+      if (!newValue.trim()) {
+        this.showHelpBlock1 = true;
+      } else {
+        this.showHelpBlock1 = false;
+      }
+    },
+    email(newValue) {
+      if (!newValue.trim()) {
+        this.showHelpBlock2 = true;
+        //
+      } else {
+        this.showHelpBlock2 = true;
+        const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        if (!reg.test(newValue.trim())) {
+          this.$refs.showHelpBlock2.innerHTML = "Format error";
+        } else {
+          this.showHelpBlock2 = false;
+        }
+      }
+    },
+    phoneNumber(newValue) {
+      if (!newValue.trim()) {
+        this.showHelpBlock3 = true;
+      } else {
+        this.showHelpBlock3 = true;
+
+        if (newValue.trim().length < 9) {
+          this.$refs.showHelpBlock3.innerHTML = "Format error";
+        } else {
+          this.showHelpBlock3 = false;
+        }
+      }
+    },
+    // 密码监听
+    password(newValue) {
+      let tempList = [
         "8~15 character",
         "At least one letter",
         "At least one number"
       ];
+      // console.log(newValue);
+      // console.log("old", tempList);
+
+      // 长度检测
       if (/^[a-zA-Z0-9]{8,15}$/.test(newValue)) {
-        // console.log("已包含8-15个字符");
         tempList.splice(0, 1);
       }
+      // 字母检测
       if (/[a-zA-Z]/.test(newValue)) {
-        // console.log("字符验证正确");
         tempList.splice(1, 1);
       }
-      if (/\d+/.test(newValue)) {
-        // console.log("数字验证正确");
+      // 数字检测
+      if (/[0-9]/.test(newValue)) {
         tempList.splice(2, 1);
       }
+
       this.errorList = tempList;
     }
   },
@@ -328,7 +381,15 @@ export default {
       // 非空验证
       if (!this.firstName.trim()) {
         this.showHelpBlock = true;
-        console.log("firstName 不能为空");
+      }
+      if (!this.lastName.trim()) {
+        this.showHelpBlock1 = true;
+      }
+      if (!this.email.trim()) {
+        this.showHelpBlock2 = true;
+      }
+      if (!this.phoneNumber.trim()) {
+        this.showHelpBlock3 = true;
       }
     }
   },
@@ -348,10 +409,10 @@ export default {
     margin-top 20px
     background-color #fff
     padding 20px
-    min-height 100vh
     @media (max-width: 980px)
       padding 8px
       margin-top 0
+      min-height 100vh
     .form-items
       display flex
       margin 0 8px
@@ -396,7 +457,7 @@ export default {
           .help-block
             position absolute
             left 0
-            margin-top 30px
+            margin-top 40px
             color #a94442
             font-weight normal
             @media (max-width: 980px)
@@ -405,12 +466,16 @@ export default {
         .item-inputs
           display flex
           flex 1
+          .item-icon
+            line-height 40px
+            color #ccc
+            background-color #E6F0F3
           .item-inputs-wrap
             position relative
             .help-block
               position absolute
               left 0
-              margin-top 30px
+              margin-top 40px
               color #a94442
               font-weight normal
               @media (max-width: 980px)
@@ -430,14 +495,16 @@ export default {
           &.input
             height 50px
             text-indent 20px
-        .item-icon
-          color #ccc
     .error-wrap
-      display flex
+      position relative
       color #B7B7B7
+      margin-top 0
       .error-item
-        flex 1
-        margin-left 100px
+        position absolute
+        left 50%
+        margin-left -200px
+        &:last-child
+          left 100%
     .country_tips
       margin-top 20px
       font-weight bold
