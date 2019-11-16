@@ -13,8 +13,10 @@ export const sponsorRecommend = (country, city) => ajax(BASE_URL + '/sponsor/rec
 // 获取国家
 export const getAllCountry = () => ajax(BASE_URL + '/country/all')
 // 搜索sponsor
-export const searchSponsor = (country, city, keyword, rows, _) => ajax(BASE_URL + '/sponsor', { country, city, keyword, rows, _ })
+export const searchSponsor = (country, city, keyword, rows, page, _) => ajax(BASE_URL + '/sponsor', { country, city, keyword, rows, page, _ })
 
-// 注册
-//http://www.bfsuma.com/register/check?email=yxiaoyun6%40163.com&phone=254111111111
+// 检测email或phone是否被注册
 export const registerCheck = (email, phone) => ajax(BASE_URL + '/register/check', { email, phone })
+
+// 注册顾客
+export const registerCustomer = (country, city, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password) => ajax(BASE_URL + '/register/customer', { country, city, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password })

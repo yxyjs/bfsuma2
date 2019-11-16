@@ -15,7 +15,7 @@
               <input
                 type="text"
                 placeholder="First Name"
-                v-model="firstName"
+                v-model="formParams.firstName"
                 autofocus
                 :class="showHelpBlock ? 'show-help' : ''"
               />
@@ -26,7 +26,7 @@
                 class="last-name"
                 type="text"
                 placeholder="Last Name"
-                v-model="lastName"
+                v-model="formParams.lastName"
                 :class="showHelpBlock1 ? 'show-help' : ''"
               />
               <small class="help-block" v-show="showHelpBlock1">Required</small>
@@ -35,7 +35,7 @@
         </div>
         <div class="form-item">
           <label class="item-lable">Gender</label>
-          <select class="item-select" name="gender" id="gender" v-model="gender">
+          <select class="item-select" name="gender" id="gender" v-model="formParams.gender">
             <option disabled value style="display:none;">Fill in the city</option>
             <option
               :value="gender.text"
@@ -52,7 +52,7 @@
             <input
               type="text"
               placeholder="Email Address"
-              v-model.lazy="email"
+              v-model.lazy="formParams.email"
               :class="showHelpBlock2 ? 'show-help' : ''"
             />
             <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
@@ -73,7 +73,7 @@
                 v-for="(phoneHead,index) in phoneHeadList"
                 :key="index"
               >{{phoneHead.value}}</option>-->
-              <option style="display: none;" value>Aera Cod</option>
+              <option style="display: none;" value="254">Aera Cod</option>
               <option value="254">254</option>
               <option value="234">234</option>
               <option value="255">255</option>
@@ -87,7 +87,7 @@
               <input
                 type="number"
                 placeholder="Phone Number"
-                v-model.lazy="phoneNumber"
+                v-model="phoneBody"
                 maxlength="9"
                 oninput="if(value.length>9)value=value.slice(0,9)"
                 :class="showHelpBlock3 ? 'show-help' : ''"
@@ -104,7 +104,7 @@
             <input
               :type="!showPassword? 'password':'text'"
               placeholder="8~15 character,at least one letter and one number"
-              v-model="password"
+              v-model="formParams.password"
               maxlength="15"
             />
             <i
@@ -131,15 +131,16 @@
           </div>
         </div>
       </div>
+      <!-- 密码验证提示 -->
       <div class="error-wrap">
-        <div class="error-item" v-show="password || !password">
+        <div class="error-item" v-show="formParams.password">
           <div v-for="(error,index) in errorList" :key="index">
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
             <span>{{error}}</span>
           </div>
         </div>
         <div class="error-item">
-          <div class="error-item-wrap" v-show="password && confirmPassword && !isEqual">
+          <div class="error-item-wrap" v-show="formParams.password && confirmPassword && !isEqual">
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
             <span>Passwords must match</span>
           </div>
@@ -158,6 +159,7 @@
             name="product-interest"
             :id="interest.value"
             :value="interest.value"
+            v-model="formParams.productInterests"
           />
           <img class="checked-img" src="../../static/img/checked.png" alt />
           <label :for="interest.value" class="check-box">
@@ -175,6 +177,7 @@
             name="product-learn"
             :id="learn.value"
             :value="learn.value"
+            v-model="formParams.source"
           />
           <img class="checked-img" src="../../static/img/checked.png" alt />
           <label class="check-label" :for="learn.value">{{learn.value}}</label>
@@ -190,7 +193,12 @@
       <!-- btn -->
       <div class="btn-wrap">
         <button class="btn btn-back" type="button" @click="$router.push('/CountrySponsor')">Back</button>
-        <button class="btn btn-submit" type="submit" @click="submitHandle" formnovalidate>Submit</button>
+        <button
+          class="btn btn-submit"
+          type="submit"
+          @click.prevent="submitHandle"
+          formnovalidate
+        >Submit</button>
       </div>
     </form>
   </div>
@@ -200,7 +208,7 @@
 import myHeader from "@/components/my-header";
 import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
-import { registerCheck} from '../api/index'
+import { registerCheck, registerCustomer } from "../api/index";
 export default {
   data() {
     return {
@@ -210,13 +218,22 @@ export default {
       showHelpBlock1: false,
       showHelpBlock2: false,
       showHelpBlock3: false,
-      firstName: "",
-      lastName: "",
-      gender: "",
-      email: "",
+      formParams: {
+        firstName: "aa",
+        lastName: "bb",
+        gender: "",
+        email: "1@q.com",
+        phone: "",
+        password: "",
+        productInterests: [],
+        source: "",
+        sponsor: "",
+        upline: "",
+        country: "",
+        city: ""
+      },
       phoneHead: "",
-      phoneNumber: "",
-      password: "",
+      phoneBody: "123456789",
       confirmPassword: "",
       errorList: [],
       genderList: [
@@ -297,99 +314,127 @@ export default {
   computed: {
     isEqual() {
       if (this.confirmPassword.trim()) {
-        return this.password.trim() === this.confirmPassword.trim();
+        return this.formParams.password.trim() === this.confirmPassword.trim();
       }
     },
     isSee() {
-      return this.password.trim();
+      return this.formParams.password.trim();
     },
     isSeeConfirm() {
       return this.confirmPassword.trim();
+    },
+    computedPhone() {
+      return "+" + this.phoneHead + this.phoneBody;
     }
   },
   watch: {
-    firstName(newValue) {
-      if (!newValue.trim()) {
-        this.showHelpBlock = true;
-      } else {
-        this.showHelpBlock = false;
-      }
-    },
-    lastName(newValue) {
-      if (!newValue.trim()) {
-        this.showHelpBlock1 = true;
-      } else {
-        this.showHelpBlock1 = false;
-      }
-    },
-    email(newValue) {
-      if (!newValue.trim()) {
-        this.showHelpBlock2 = true;
-        //
-      } else {
-        this.showHelpBlock2 = true;
-        const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        if (!reg.test(newValue.trim())) {
-          this.$refs.showHelpBlock2.innerHTML = "Format error";
-        } else {
-          this.showHelpBlock2 = false;
-        }
-      }
-    },
-    phoneNumber(newValue) {
-      if (!newValue.trim()) {
+    phoneBody() {
+      if (!this.phoneBody.trim()) {
         this.showHelpBlock3 = true;
       } else {
         this.showHelpBlock3 = true;
 
-        if (newValue.trim().length < 9) {
+        if (this.phoneBody.trim().length < 9) {
           this.$refs.showHelpBlock3.innerHTML = "Format error";
         } else {
           this.showHelpBlock3 = false;
         }
       }
     },
-    // 密码监听
-    password(newValue) {
-      let tempList = [
-        "8~15 character",
-        "At least one letter",
-        "At least one number"
-      ];
-      // console.log(newValue);
-      // console.log("old", tempList);
+    // 深度监听
+    formParams: {
+      handler: function() {
+        const { firstName, lastName, email, phone, password } = this.formParams;
+        // firstName
+        if (!firstName.trim()) {
+          this.showHelpBlock = true;
+        } else {
+          this.showHelpBlock = false;
+        }
+        // lastName
+        if (!lastName.trim()) {
+          this.showHelpBlock1 = true;
+        } else {
+          this.showHelpBlock1 = false;
+        }
+        // email
+        if (!email.trim()) {
+          this.showHelpBlock2 = true;
+          //
+        } else {
+          this.showHelpBlock2 = true;
+          const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+          if (!reg.test(email.trim())) {
+            this.$refs.showHelpBlock2.innerHTML = "Format error";
+          } else {
+            this.showHelpBlock2 = false;
+          }
+        }
+        // password
+        let tempList = [
+          "8~15 character",
+          "At least one letter",
+          "At least one number"
+        ];
+        // console.log(newValue);
+        // console.log("old", tempList);
 
-      // 长度检测
-      if (/^[a-zA-Z0-9]{8,15}$/.test(newValue)) {
-        tempList.splice(0, 1);
-      }
-      // 字母检测
-      if (/[a-zA-Z]/.test(newValue)) {
-        tempList.splice(1, 1);
-      }
-      // 数字检测
-      if (/[0-9]/.test(newValue)) {
-        tempList.splice(2, 1);
-      }
-
-      this.errorList = tempList;
+        // 长度检测
+        if (/^[a-zA-Z0-9]{8,15}$/.test(password)) {
+          tempList.splice(0, 1);
+        }
+        // 字母检测
+        if (/[a-zA-Z]/.test(password)) {
+          tempList.splice(1, 1);
+        }
+        // 数字检测
+        if (/[0-9]/.test(password)) {
+          tempList.splice(2, 1);
+        }
+        this.errorList = tempList;
+      },
+      deep: true
     }
   },
   mounted() {},
   methods: {
-    submitHandle() {
+    async submitHandle() {
+      const { firstName, lastName, email } = this.formParams;
       // 非空验证
-      if (!this.firstName.trim()) {
+      if (!firstName.trim()) {
         this.showHelpBlock = true;
-      }
-      if (!this.lastName.trim()) {
         this.showHelpBlock1 = true;
-      }
-      if (!this.email.trim()) {
         this.showHelpBlock2 = true;
-      }
-      if (!this.phoneNumber.trim()) {
         this.showHelpBlock3 = true;
+      } else if (!lastName.trim()) {
+        this.showHelpBlock1 = true;
+        this.showHelpBlock2 = true;
+        this.showHelpBlock3 = true;
+      } else if (!email.trim()) {
+        this.showHelpBlock2 = true;
+        this.showHelpBlock3 = true;
+      } else if (!this.phoneBody.trim()) {
+        this.showHelpBlock3 = true;
+      } else {
+        // 验证密码是否匹配
+        if (!this.isEqual) {
+          return;
+        } else {
+          const ERRCODE = 102;
+          // 验证邮箱或手机是否被注册过
+          let res = await registerCheck(email, this.computedPhone);
+          console.log(res);
+          if (res.code === ERRCODE) {
+            this.showHelpBlock2 = true;
+            this.$refs.showHelpBlock2.innerHTML =
+              "Already bound, please replace one";
+          }
+          // 提交表单注册
+          this.formParams.phone = this.computedPhone;
+          var formData = JSON.stringify(Object.assign(this.formParams));
+          console.log(JSON.parse(formData));
+          // let res2 = await registerCustomer()
+        }
       }
     }
   },

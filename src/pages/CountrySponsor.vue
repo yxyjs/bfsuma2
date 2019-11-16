@@ -47,25 +47,47 @@
       <div class="form-items">
         <div class="form-item">
           <label class="item-lable">*Country</label>
-          <select class="item-select" v-model="country">
-            <option disabled value style="display:none;">Fill in the city</option>
-            <option
-              :value="country.value"
-              v-for="(country,index) in countryList"
-              :key="index"
-            >{{country.text}}</option>
-          </select>
+          <div class="item-select">
+            <select
+              class="item-select-wrap"
+              v-model="formParams.country"
+              :class="showHelpBlock ? 'show-help' : ''"
+              @input="selectChange"
+            >
+              <option disabled value style="display:none;">Fill in the city</option>
+              <option
+                :value="country.value"
+                v-for="(country,index) in countryList"
+                :key="index"
+              >{{country.text}}</option>
+            </select>
+            <small class="help-block" v-show="showHelpBlock">Required</small>
+          </div>
         </div>
         <div class="form-item">
           <label class="item-lable">*City</label>
-          <select class="item-select" v-model="city">
-            <option disabled value style="display:none;">Select Registrant’s Country</option>
-            <option
-              :value="country.value"
-              v-for="(country,index) in countryList"
-              :key="index"
-            >{{country.text}}</option>
-          </select>
+          <div class="item-select">
+            <select
+              class="item-select-wrap"
+              v-model="formParams.city"
+              :class="showHelpBlock1 ? 'show-help' : ''"
+              @input="selectChange"
+            >
+              <option disabled value style="display:none;">Select Registrant’s Country</option>
+              <option value="NAIROBI">NAIROBI</option>
+              <option value="BUNGOMA">BUNGOMA</option>
+              <option value="KISUMU">KISUMU</option>
+              <option value="KISII">KISII</option>
+              <option value="ELDORET">ELDORET</option>
+              <option value="KITALE">KITALE</option>
+              <option value="NAKURU">NAKURU</option>
+              <option value="EMBU">EMBU</option>
+              <option value="KIRIAINI">KIRIAINI</option>
+              <option value="MOMBASA">MOMBASA</option>
+              <option value="KAKAMEGA">KAKAMEGA</option>
+            </select>
+            <small class="help-block" v-show="showHelpBlock1">Required</small>
+          </div>
         </div>
       </div>
       <hr class="hr" />
@@ -74,17 +96,16 @@
         <div class="form-item">
           <label class="item-lable">*Sponsor</label>
           <div class="item-inputs">
-            <input
-              type="text"
-              placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-              v-model="sponsor"
-            />
-            <button
-              class="sponsor-searchbtn"
-              :class="{'disable':canSearch}"
-              @click="searchSponsor"
-              :disabled="canSearch"
-            >Search</button>
+            <div class="item-inputs-wrap">
+              <input
+                type="text"
+                placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+                :class="showHelpBlock2 ? 'show-help' : ''"
+                v-model="formParams.sponsor"
+              />
+              <small class="help-block" v-show="showHelpBlock2">Required</small>
+            </div>
+            <button class="sponsor-searchbtn" @click="searchHandle">Search</button>
           </div>
         </div>
       </div>
@@ -144,22 +165,22 @@
             <input
               type="text"
               placeholder="*Fill in you Upline Distributor Id or Mobile Phone or E-mail that you know"
-              v-model="sponsor"
+              v-model="formParams.sponsor"
             />
-            <button
-              @click="searchSponsor"
-              :class="{'disable':canSearch}"
-              :disabled="canSearch"
-            >Search</button>
+            <button @click="searchHandle">Search</button>
           </div>
         </div>
       </div>
       <!-- system-recommend -->
-      <div class="system-recommend" v-show="showrecommendBtn">
-        <p>Can't find who you're looking for or don't know any distributor?</p>
+      <div class="system-recommend" v-show="!recommendList.length">
+        <p
+          class="no-data"
+          v-show="!recommendList.length && showNoData"
+        >We couldn't find any matching Distributor. Please, try with a different term.</p>
+        <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
         <img @click="getRecommend" src="../../static/img/become.png" alt />
       </div>
-      <div class="recommend-list" v-show="!showrecommendBtn">
+      <div class="recommend-list" v-show="recommendList.length">
         <p class="tableTips" v-show="tableTips">
           We can recommend
           <span>{{recommendList.length}}</span> matches for you to choose from
@@ -223,16 +244,21 @@ export default {
       showDialog: false,
       showNoData: false,
       showrecommendBtn: true,
+      showHelpBlock: false,
+      showHelpBlock1: false,
+      showHelpBlock2: false,
       isConnected: false,
       tableTips: false,
       currentStep: 0,
       currentSponsor: {},
-      // country: "Kenya",
-      country: "",
-      // city: "NAIROBI",
-      city: "",
-      // sponsor: "KE220228",
-      sponsor: "",
+      formParams: {
+        // country: "Kenya",
+        country: "",
+        // city: "NAIROBI",
+        city: "",
+        // sponsor: "KE220228",
+        sponsor: ""
+      },
       countryList: [
         { text: "Kenya", value: "Kenya" },
         { text: "Cameroon", value: "Cameroon" },
@@ -247,19 +273,44 @@ export default {
       recommendList: []
     };
   },
-  computed: {
-    disabled() {
-      if (!this.country || !this.city || !this.sponsor.trim()) return true;
-    },
-    canSearch() {
-      if (!this.sponsor.trim()) return true;
+  computed: {},
+  watch: {
+    formParams: {
+      handler: function() {
+        const { country, city, sponsor } = this.formParams;
+        // country
+        if (!country) {
+          this.showHelpBlock = true;
+        } else {
+          this.showHelpBlock = false;
+        }
+        // city
+        if (!city) {
+          this.showHelpBlock1 = true;
+        } else {
+          this.showHelpBlock1 = false;
+        }
+        // sponsor
+        if (!sponsor) {
+          this.showHelpBlock2 = true;
+        } else {
+          this.showHelpBlock2 = false;
+        }
+      },
+      deep: true
     }
   },
   mounted() {
     // this.getAllCountry();
-    this.getRecommend();
+    // this.getRecommend();
   },
   methods: {
+    selectChange() {
+      this.recommendList = [];
+      if (this.formParams.sponsor) {
+        this.formParams.sponsor = " "; //注意,这里必须是有一个空格,为了通过监听验证
+      }
+    },
     dialogHandle() {
       this.showDialog = !this.showDialog;
       this.$refs.input.checked = true;
@@ -275,32 +326,59 @@ export default {
       this.showDialog = false;
       this.$router.push("/login");
     },
-    async searchSponsor() {
-      let res = await searchSponsor(
-        this.country,
-        this.city,
-        this.sponsor,
-        1,
-        1573693207826
-      );
-      console.log(res);
-      this.recommendList = res.list;
-      if (!this.recommendList.length) {
-        this.showNoData = true;
+    async searchHandle() {
+      // 非空验证
+      const { country, city, sponsor } = this.formParams;
+      if (!country) {
+        this.showHelpBlock = true;
+        this.showHelpBlock1 = true;
+        this.showHelpBlock2 = true;
+      } else if (!city) {
+        this.showHelpBlock1 = true;
+        this.showHelpBlock2 = true;
+      } else if (!sponsor.trim()) {
+        this.showHelpBlock2 = true;
+        return;
       } else {
-        this.showrecommendBtn = false;
+        // 发送异步请求搜索赞助者
+        let { country, city, sponsor } = this.formParams;
+        let res = await searchSponsor(
+          country,
+          city,
+          sponsor,
+          6,
+          1,
+          1573693207826
+        );
+        console.log(res);
+        this.recommendList = res.list;
+        if (!this.recommendList.length) {
+          this.showNoData = true;
+        } else {
+          this.showrecommendBtn = false;
+        }
+        this.tableTips = false;
       }
-      this.tableTips = false;
     },
+    // 获取推荐赞助商列表
     async getRecommend() {
-      let res = await sponsorRecommend(this.country, this.city);
+      const { country, city, sponsor } = this.formParams;
+      // 非空验证
+      if (!country) {
+        this.showHelpBlock = true;
+        this.showHelpBlock1 = true;
+      } else if (!city) {
+        this.showHelpBlock1 = true;
+        return;
+      }
+      let res = await sponsorRecommend(country, city);
       this.recommendList = res.data;
 
-      if (!this.recommendList.length) {
-        this.showNoData = true;
-      } else {
-        this.showrecommendBtn = false;
-      }
+      // if (!this.recommendList.length) {
+      //   this.showNoData = true;
+      // } else {
+      //   this.showrecommendBtn = false;
+      // }
       this.tableTips = true;
     },
     async getAllCountry() {
@@ -313,9 +391,7 @@ export default {
       this.showrecommendBtn = true;
     },
 
-    submitHandle() {
-      console.log(this);
-    },
+    submitHandle() {},
     nextHandle() {
       // if (!this.city) {
 
@@ -337,17 +413,16 @@ export default {
 @import '../../static/stylus/pc'
 
 ::placeholder
-  // font-size 1
   letter-spacing -0.4px
 .country-cont
   .form
     margin-top 20px
     padding 20px
     background-color #fff
-    min-height 100vh
     @media (max-width: 980px)
       margin-top 0
       padding 8px
+      min-height 100vh
     .checkbox
       display flex
       margin-left 20px
@@ -474,6 +549,16 @@ export default {
           margin 12px 0
           background-color #fff
           flex-direction column
+        input
+          width 100%
+          padding 12px 0
+          box-shadow none
+          &.show-help
+            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+            &::placeholder
+              color #fff
+          @media (max-width: 980px)
+            background-color #E6F0F3
         .item-text
           margin-left 20px
           @media (max-width: 980px)
@@ -498,6 +583,19 @@ export default {
             background-color #E6F0F3
             border-radius 4px
             margin-top 4px
+          .item-select-wrap
+            width 100%
+            height 100%
+            color rgb(87, 87, 87)
+            &.show-help
+              box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+              &::placeholder
+                color #fff
+          .help-block
+            color #a94442
+            @media (max-width: 980px)
+              display none
+              margin-top 4px
           &.input
             height 50px
             text-indent 20px
@@ -509,10 +607,22 @@ export default {
           justify-content space-between
           @media (max-width: 980px)
             padding-top 4px
-          input
+          .item-inputs-wrap
             flex 1
-            padding 10px 0
-            background-color #E6F0F3
+            position relative
+            input
+              flex 1
+              padding 12px 0
+              background-color #E6F0F3
+            .help-block
+              position absolute
+              left 0
+              margin-top 40px
+              color #a94442
+              font-weight normal
+              @media (max-width: 980px)
+                display none
+                margin-top 4px
           .sponsor-searchbtn
             color #fff
             background-color #5ba2cc
@@ -562,18 +672,22 @@ export default {
           @media (max-width: 980px)
             margin-left 4px
             padding 6px
-          &.disable
-            filter grayscale(1)
-            cursor not-allowed
     .system-recommend
       text-align center
-      p
+      .no-data
+        text-align left
+        margin-top 20px
+        font-size 17px
+        font-weight 500
+        @media (max-width: 980px)
+          font-size 13px
+      .not-find
         color #575757
         font-size 26px
-        margin-top 114px
+        margin-top 84px
         @media (max-width: 980px)
-          font-size 14px
-          margin-top 54px
+          font-size 16px
+          margin-top 44px
       img
         margin 50px auto
         width 290px
@@ -600,7 +714,6 @@ export default {
           thead
             border-bottom 1px solid #eee
             tr
-              border-bottom 1px solid red
               th
                 @media (max-width: 980px)
                   padding 0 4px
