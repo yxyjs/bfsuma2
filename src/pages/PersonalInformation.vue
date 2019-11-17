@@ -371,25 +371,23 @@ export default {
           }
         }
         // password
-        let tempList = [
+        const errorList = [
           "8~15 character",
           "At least one letter",
           "At least one number"
         ];
-        // console.log(newValue);
-        // console.log("old", tempList);
-
+        let tempList = []
         // 长度检测
-        if (/^[a-zA-Z0-9]{8,15}$/.test(password)) {
-          tempList.splice(0, 1);
+        if (!/^[a-zA-Z0-9]{8,15}$/.test(password)) {
+          tempList.push(errorList[0])
         }
         // 字母检测
-        if (/[a-zA-Z]/.test(password)) {
-          tempList.splice(1, 1);
+        if (!/[a-zA-Z]/.test(password)) {
+          tempList.push(errorList[1])
         }
         // 数字检测
-        if (/[0-9]/.test(password)) {
-          tempList.splice(2, 1);
+        if (!/[0-9]/.test(password)) {
+          tempList.push(errorList[2])
         }
         this.errorList = tempList;
       },

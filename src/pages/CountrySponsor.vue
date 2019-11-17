@@ -45,131 +45,140 @@
         </div>
       </div>
       <div class="form-items">
-        <div class="form-item">
-          <label class="item-lable">*Country</label>
-          <div class="item-select">
-            <select
-              class="item-select-wrap"
-              v-model="formParams.country"
-              :class="showHelpBlock ? 'show-help' : ''"
-              @input="selectChange"
-            >
-              <option disabled value style="display:none;">Fill in the city</option>
-              <option
-                :value="country.value"
-                v-for="(country,index) in countryList"
-                :key="index"
-              >{{country.text}}</option>
-            </select>
-            <small class="help-block" v-show="showHelpBlock">Required</small>
+        <!-- form-item -->
+        <section class="form-item">
+          <div class="form-item-top">
+            <label class="item-lable">*Country</label>
+            <div class="item-main">
+              <select
+                class="item-main-inner"
+                v-model="formParams.country"
+                :class="showHelpBlock ? 'show-help' : ''"
+                @input="selectChange"
+              >
+                <option disabled value style="display:none;">Fill in the city</option>
+                <option
+                  :value="country.value"
+                  v-for="(country,index) in countryList"
+                  :key="index"
+                >{{country.text}}</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="form-item">
-          <label class="item-lable">*City</label>
-          <div class="item-select">
-            <select
-              class="item-select-wrap"
-              v-model="formParams.city"
-              :class="showHelpBlock1 ? 'show-help' : ''"
-              @input="selectChange"
-            >
-              <option disabled value style="display:none;">Select Registrant’s Country</option>
-              <option value="NAIROBI">NAIROBI</option>
-              <option value="BUNGOMA">BUNGOMA</option>
-              <option value="KISUMU">KISUMU</option>
-              <option value="KISII">KISII</option>
-              <option value="ELDORET">ELDORET</option>
-              <option value="KITALE">KITALE</option>
-              <option value="NAKURU">NAKURU</option>
-              <option value="EMBU">EMBU</option>
-              <option value="KIRIAINI">KIRIAINI</option>
-              <option value="MOMBASA">MOMBASA</option>
-              <option value="KAKAMEGA">KAKAMEGA</option>
-            </select>
-            <small class="help-block" v-show="showHelpBlock1">Required</small>
+          <div class="form-item-bottom">
+            <small ref="showHelpBlock" class="item-main-help" v-show="showHelpBlock">Required</small>
           </div>
-        </div>
+        </section>
+        <section style="width:40px"></section>
+        <section class="form-item">
+          <div class="form-item-top">
+            <label class="item-lable">*City</label>
+            <div class="item-main">
+              <select
+                class="item-main-inner"
+                v-model="formParams.city"
+                :class="showHelpBlock1 ? 'show-help' : ''"
+                @input="selectChange"
+              >
+                <option disabled value style="display:none;">Select Registrant’s Country</option>
+                <option value="NAIROBI">NAIROBI</option>
+                <option value="BUNGOMA">BUNGOMA</option>
+                <option value="KISUMU">KISUMU</option>
+                <option value="KISII">KISII</option>
+                <option value="ELDORET">ELDORET</option>
+                <option value="KITALE">KITALE</option>
+                <option value="NAKURU">NAKURU</option>
+                <option value="EMBU">EMBU</option>
+                <option value="KIRIAINI">KIRIAINI</option>
+                <option value="MOMBASA">MOMBASA</option>
+                <option value="KAKAMEGA">KAKAMEGA</option>
+              </select>
+            </div>
+          </div>
+          <!-- smallhelp -->
+          <div class="form-item-bottom">
+            <small ref="showHelpBlock1" class="item-main-help" v-show="showHelpBlock1">Required</small>
+          </div>
+        </section>
       </div>
       <hr class="hr" />
-      <!-- *Sponsor -->
-      <div class="form-items" v-show="!isConnected">
-        <div class="form-item">
-          <label class="item-lable">*Sponsor</label>
-          <div class="item-inputs">
-            <div class="item-inputs-wrap">
-              <input
-                type="text"
-                placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-                :class="showHelpBlock2 ? 'show-help' : ''"
-                v-model="formParams.sponsor"
-              />
-              <small class="help-block" v-show="showHelpBlock2">Required</small>
-            </div>
-            <button class="sponsor-searchbtn" @click="searchHandle">Search</button>
-          </div>
-        </div>
-      </div>
       <!-- click connect -->
       <div v-show="isConnected">
         <div class="form-items">
-          <div class="form-item">
-            <label class="item-lable input">*Sponsor</label>
-            <div class="item-text">
-              Gage get
-              <span>
-                <strong>ID:</strong>
-                {{currentSponsor.distributorId}}
-              </span>
-              <span>
-                <strong>Gender:</strong>
-                {{currentSponsor.gender}}
-              </span>
-              <span>
-                <strong>Mobile Number:</strong>
-                {{currentSponsor.phone}}
-              </span>
-              <span>
-                <strong>E-mail:</strong>
-                {{currentSponsor.email}}
-              </span>
+          <section class="form-item">
+            <div class="form-item-top">
+              <label class="item-lable">*Sponsor</label>
+              <div class="item-main">
+                Gage get
+                <span>
+                  <strong>ID:</strong>
+                  {{currentSponsor.distributorId}}
+                </span>
+                <span>
+                  <strong>Gender:</strong>
+                  {{currentSponsor.gender}}
+                </span>
+                <span>
+                  <strong>Mobile Number:</strong>
+                  {{currentSponsor.phone}}
+                </span>
+                <span>
+                  <strong>E-mail:</strong>
+                  {{currentSponsor.email}}
+                </span>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="form-items" style="margin-top:10px">
+          <section class="form-item">
+            <div class="form-item-top">
+              <label class="item-lable">*Upline</label>
+              <div class="item-main">
+                Gage get
+                <span>
+                  <strong>ID:</strong>
+                  {{currentSponsor.distributorId}}
+                </span>
+                <span>
+                  <strong>Gender:</strong>
+                  {{currentSponsor.gender}}
+                </span>
+                <span>
+                  <strong>Mobile Number:</strong>
+                  {{currentSponsor.phone}}
+                </span>
+                <span>
+                  <strong>E-mail:</strong>
+                  {{currentSponsor.email}}
+                </span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <!-- *Sponsor -->
+      <div class="form-items" style="margin-top:10px">
+        <section class="form-item">
+          <div class="form-item-top">
+            <p v-show="isConnected" class="item-p">Or you want to modify your Upline</p>
+            <label v-show="!isConnected" class="item-lable">*Sponsor</label>
+            <div class="item-main">
+              <input
+                ref="input"
+                class="item-main-inner"
+                type="text"
+                placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+                :class="showHelpBlock2 && !formParams.sponsor ? 'show-help' : ''"
+                v-model="formParams.sponsor"
+              />
+              <button class="item-searchbtn" @click="searchHandle">Search</button>
             </div>
           </div>
-        </div>
-        <div class="form-items">
-          <div class="form-item">
-            <label class="item-lable input">*Upline</label>
-            <div class="item-text">
-              Gage get
-              <span>
-                <strong>ID:</strong>
-                {{currentSponsor.distributorId}}
-              </span>
-              <span>
-                <strong>Gender:</strong>
-                {{currentSponsor.gender}}
-              </span>
-              <span>
-                <strong>Mobile Number:</strong>
-                {{currentSponsor.phone}}
-              </span>
-              <span>
-                <strong>E-mail:</strong>
-                {{currentSponsor.email}}
-              </span>
-            </div>
+          <div class="form-item-bottom">
+            <small ref="showHelpBlock2" class="item-main-help" v-show="showHelpBlock2">Required</small>
           </div>
-        </div>
-        <div class="connect-foot">
-          <p>Or you want to modify your Upline</p>
-          <div class="connect-foot-main">
-            <input
-              type="text"
-              placeholder="*Fill in you Upline Distributor Id or Mobile Phone or E-mail that you know"
-              v-model="formParams.sponsor"
-            />
-            <button @click="searchHandle">Search</button>
-          </div>
-        </div>
+        </section>
       </div>
       <!-- system-recommend -->
       <div class="system-recommend" v-show="!recommendList.length">
@@ -291,7 +300,7 @@ export default {
           this.showHelpBlock1 = false;
         }
         // sponsor
-        if (!sponsor) {
+        if (!sponsor.trim()) {
           this.showHelpBlock2 = true;
         } else {
           this.showHelpBlock2 = false;
@@ -373,12 +382,6 @@ export default {
       }
       let res = await sponsorRecommend(country, city);
       this.recommendList = res.data;
-
-      // if (!this.recommendList.length) {
-      //   this.showNoData = true;
-      // } else {
-      //   this.showrecommendBtn = false;
-      // }
       this.tableTips = true;
     },
     async getAllCountry() {
@@ -386,6 +389,18 @@ export default {
       this.countryList = res.data;
     },
     connectHandle(item) {
+      // 存储到session
+      let obj = {
+        distributorId: item.distributorId,
+        uplineId: item.distributorId,
+        sponsorData: item,
+        uplineData: item,
+        distSponsor: {
+          country: this.formParams.country,
+          city: this.formParams.city
+        }
+      };
+      sessionStorage.setItem("connectObj", JSON.stringify(obj));
       this.isConnected = true;
       this.currentSponsor = item;
       this.showrecommendBtn = true;
@@ -393,10 +408,16 @@ export default {
 
     submitHandle() {},
     nextHandle() {
-      // if (!this.city) {
-
-      // }
-      this.$router.push("/PersonalInformation");
+      // 读取session
+      let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
+      if (!connectObj) {
+        // 不存在,提示
+        this.showHelpBlock2 = true;
+        this.$refs.input.className = "";
+        this.$refs.showHelpBlock2.innerHTML = "*Please connect your sponsor";
+      } else {
+        this.$router.push("/PersonalInformation");
+      }
     }
   },
   components: {
@@ -536,99 +557,71 @@ export default {
               background-color #56a7d8
     .form-items
       display flex
-      margin 0 8px
       @media (max-width: 980px)
         display block
         margin 0
       .form-item
         flex 1
-        display flex
-        margin 12px 20px
-        background-color #E6F0F3
         @media (max-width: 980px)
           margin 12px 0
           background-color #fff
           flex-direction column
-        input
-          width 100%
-          padding 12px 0
-          box-shadow none
-          &.show-help
-            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-            &::placeholder
-              color #fff
-          @media (max-width: 980px)
-            background-color #E6F0F3
-        .item-text
-          margin-left 20px
-          @media (max-width: 980px)
-            line-height 24px
-            span
-              display block
-        .item-lable
-          font-weight bold
-          border-right 1px solid #BABABA
-          color #4295C5
-          margin-left 20px
-          padding-right 10px
-          @media (max-width: 980px)
-            margin-left 0
-            border-right none
-        .item-select
-          width 100%
-          color rgb(87, 87, 87)
-          padding-left 10px
-          @media (max-width: 980px)
-            line-height 36px
-            background-color #E6F0F3
-            border-radius 4px
-            margin-top 4px
-          .item-select-wrap
-            width 100%
-            height 100%
+        .form-item-top
+          display flex
+          background-color #E6F0F3
+          .item-lable
+            font-weight bold
+            border-right 1px solid #BABABA
+            color #4295C5
+            margin-left 20px
+            padding-right 10px
+            @media (max-width: 980px)
+              margin-left 0
+              border-right none
+          .item-p
+            line-height 40px
+            padding-right 10px
+            background-color #fff
+          .item-main
+            flex 1
+            display flex
+            align-items center
             color rgb(87, 87, 87)
-            &.show-help
-              box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-              &::placeholder
-                color #fff
-          .help-block
+            padding-left 6px
+            @media (max-width: 980px)
+              padding-top 4px
+              line-height 36px
+              background-color #E6F0F3
+            span
+              margin-left 15px
+            .item-main-inner
+              flex 1
+              height 100%
+              color rgb(87, 87, 87)
+              &.show-help
+                box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+                &::placeholder
+                  color #fff
+              .item-main-help
+                color #a94442
+                font-weight normal
+                @media (max-width: 980px)
+                  display none
+                  margin-top 4px
+            .item-searchbtn
+              height 100%
+              color #fff
+              background-color #5ba2cc
+              border-radius 4px
+              padding 0 8px
+        .form-item-bottom
+          height 20px
+          line-height 20px
+          >small
             color #a94442
             @media (max-width: 980px)
               display none
               margin-top 4px
-          &.input
-            height 50px
-            text-indent 20px
-            @media (max-width: 980px)
-              text-indent 0px
-        .item-inputs
-          flex 1
-          display flex
-          justify-content space-between
-          @media (max-width: 980px)
-            padding-top 4px
-          .item-inputs-wrap
-            flex 1
-            position relative
-            input
-              flex 1
-              padding 12px 0
-              background-color #E6F0F3
-            .help-block
-              position absolute
-              left 0
-              margin-top 40px
-              color #a94442
-              font-weight normal
-              @media (max-width: 980px)
-                display none
-                margin-top 4px
-          .sponsor-searchbtn
-            color #fff
-            background-color #5ba2cc
-            border-radius 4px
-            padding 0 8px
-            // border-left 16px solid #fff
       .form-btn
         width 90px
         background #5ba2cc
@@ -639,15 +632,16 @@ export default {
         margin-top 12px
         margin-right 10px
     .hr
-      margin 10px
-      color #eee
+      margin-bottom 20px
+      border 0
+      border-top 1px solid #b7b7b7
       @media (max-width: 980px)
         display none
     .connect-foot
       display flex
       justify-content space-between
-      margin 0 20px
       line-height 40px
+      margin 10px
       @media (max-width: 980px)
         display block
         margin 0
@@ -660,6 +654,7 @@ export default {
           margin-left 20px
           border-radius 4px
           text-indent 20px
+          border 1px solid #ccc
           @media (max-width: 980px)
             margin-left 0
             text-indent 10px
