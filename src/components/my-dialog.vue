@@ -1,133 +1,121 @@
 <template>
-  <div class="dialog">
-    <!--外层的遮罩 点击事件用来关闭弹窗，isShow控制弹窗显示 隐藏的props-->
-    <div class="dialog-cover back" v-if="isShow"></div>
-    <!-- transition 这里可以加一些简单的动画效果 -->
-    <transition name="drop">
-      <!--style 通过props 控制内容的样式  -->
-      <div
-        class="dialog-content"
-        :style="{top:topDistance+'%',width:widNum+'%',left:leftSite+'%'}"
-        v-if="isShow"
-      >
-        <div class="dialog_main" :style="{paddingTop:pdt+'px',paddingBottom:pdb+'px'}">
-          <!--弹窗的内容-->
-          <slot></slot>
+  <div id="my-dialog" v-if="showDialog">
+    <div class="dialog-wrap">
+      <header>
+        <h2>{{title}}</h2>
+      </header>
+      <main class="dialog-text">
+        <slot name="dialog-text"></slot>
+      </main>
+      <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
+      <footer class="dialog-buttons">
+        <div class="buttons-item" v-show="showCancel">
+          <button class="btn btn-cancel" @click.prevent="dialogHandle(false)">Cancel</button>
         </div>
-        <!--弹窗操作按钮-->
-        <div class="foot-buttons">
-          <button
-            class="foot-button button-confirm"
-            :style="{backgroundColor:bgc}"
-            @click="confirmHandle"
-          >Confirm</button>
-          <button class="foot-button button-cancel" @click="cancelHandle">Cancel</button>
+        <div class="buttons-item">
+          <button class="btn btn-confirm" @click.prevent="dialogHandle(true)">Confirm</button>
         </div>
-      </div>
-    </transition>
+      </footer>
+    </div>
   </div>
-</template> 
+</template>
 
-<script>
-/** 弹窗组件*/
+<script type="text/ecmascript-6">
 export default {
   props: {
-    isShow: {
-      type: Boolean,
-      default: false,
-      required: true
-    },
-    widNum: {
-      type: Number,
-      default: 86.5
-    },
-    leftSite: {
-      // 左定位
-      type: Number,
-      default: 6.5
-    },
-    topDistance: {
-      //top上边距
-      type: Number,
-      default: 10
-    },
-    pdt: {
-      //上padding
-      type: Number,
-      default: 0
-    },
-    pdb: {
-      //下padding
-      type: Number,
-      default: 0
-    },
-    bgc: {
-      //背景色
+    title: {
       type: String,
-      default: "pink"
+      required: false
+    },
+    showDialog: {
+      type: Boolean,
+      default: false
+    },
+    showCancel: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
+  data() {
+    return {};
+  },
   methods: {
-    confirmHandle() {
-      this.$emit("on-confirm");
+    dialogHandle(flag) {
+      this.$emit("dialogHandle", flag);
     },
-    cancelHandle() {
-      this.$emit("on-cancel");
+    closeDialog() {
+      this.$emit("closeDialog");
     }
-  }
+  },
+  components: {}
 };
 </script>
-<style lang="stylus" scoped>
-/* * 弹窗动画 */
-.drop-enter-active
-  // 动画进入过程：0.5s
-  transition all 0.5s ease
-.drop-leave-active
-  // 动画离开过程：0.5s
-  transition all 0.3s ease
-.drop-enter
-  // 动画之前的位置
-  transform translateY(-500px)
-.drop-leave-active
-  // 动画之后的位置
-  transform translateY(-500px)
-// 最外层 设置position定位
-.dialog
-  position relative
-  color #2e2c2d
-  font-size 16px
-// 遮罩 设置背景层，z-index值要足够大确保能覆盖，高度 宽度设置满 做到全屏遮罩
-.dialog-cover
-  background rgba(0, 0, 0, 0.8)
-  position fixed
-  z-index 200
+
+<style scoped lang="stylus">
+#my-dialog
+  position absolute
   top 0
   left 0
-  width 100%
-  height 100%
-// 内容层 z-index要比遮罩大，否则会被遮盖，
-.dialog-content
-  position fixed
-  z-index 300
-  border-radius 9px
-  background-color #fff
-  .dialog_main
-    // 主体内容样式设置
-    background #ffffff
-    display flex
-    justify-content center
-    align-content space-between
-    width 100%
-    border-radius 9px
-  .foot-buttons
-    text-align center
-    .foot-button
-      width 90%
-      font-size 0.18rem
-      line-height 0.49rem
-      border-radius 25px
-    .button-confirm
-      color #fff
-    .button-cancel
-      color #CFD3D2
+  margin auto
+  width 100vw
+  height 100vh
+  text-align center
+  background-color rgba(0, 0, 0, 0.3)
+  @media (max-width: 980px)
+    background-color rgba(0, 0, 0, 0.5)
+  .dialog-wrap
+    position absolute
+    left 50%
+    transform translate(-50%)
+    width 50%
+    padding 0 50px
+    margin-top 100px
+    background-color #fff
+    border-radius 10px
+    h2
+      color #56a7d8
+      text-align center
+      margin 25px 0
+    .dialog-text
+      text-align left
+      font-size 16px
+      font-weight bold
+      line-height 32px
+      a
+        display block
+        color #56a7d8
+        @media (max-width: 980px)
+          margin 10px 0 0 10px
+    .dialog-icon
+      position absolute
+      right 20px
+      top 20px
+      font-size 26px
+      color #ccc
+      cursor pointer
+      &:hover
+        color #aaa
+    .dialog-buttons
+      margin 30px
+      @media (max-width: 980px)
+        margin 20px 0 0 0
+      display flex
+      .buttons-item
+        flex 1
+        text-align center
+        .btn
+          font-size 16px
+          font-weight bold
+          width 140px
+          padding 20px
+          color #fff
+          border-radius 4px
+          @media (max-width: 980px)
+            width 100%
+            border-radius 0
+        .btn-cancel
+          background-color #ddd
+        .btn-confirm
+          background-color #56a7d8
 </style>

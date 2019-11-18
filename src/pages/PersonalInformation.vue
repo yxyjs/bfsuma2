@@ -7,144 +7,201 @@
     <form action="/" class="form" @submit.prevent="submitHandle">
       <my-required>Step two, please fill in your personal information：</my-required>
       <!-- form -->
-      <div class="form-items">
-        <div class="form-item">
-          <label class="item-lable">*Name</label>
-          <div class="item-inputs">
-            <div class="item-inputs-wrap">
-              <input
-                type="text"
-                placeholder="First Name"
-                v-model="formParams.firstName"
-                autofocus
-                :class="showHelpBlock ? 'show-help' : ''"
-              />
-              <small class="help-block" v-show="showHelpBlock">Required</small>
-            </div>
-            <div class="item-inputs-wrap">
-              <input
-                class="last-name"
-                type="text"
-                placeholder="Last Name"
-                v-model="formParams.lastName"
-                :class="showHelpBlock1 ? 'show-help' : ''"
-              />
-              <small class="help-block" v-show="showHelpBlock1">Required</small>
-            </div>
+      <div class="form-wrap">
+        <section>
+          <!-- Name -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Name</label>
+                <div class="item-main">
+                  <input
+                    type="text"
+                    class="item-main-inner"
+                    placeholder="First Name"
+                    v-model="formParams.firstName"
+                    autofocus
+                    :class="showHelpBlock ? 'show-help' : ''"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small ref="showHelpBlock" class="help-block" v-show="showHelpBlock">Required</small>
+              </div>
+            </section>
+            <section class="form-item" style="margin-left:16px">
+              <div class="form-item-top">
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="Last Name"
+                    v-model="formParams.lastName"
+                    :class="showHelpBlock1 ? 'show-help' : ''"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small class="help-block" v-show="showHelpBlock1">Required</small>
+              </div>
+            </section>
           </div>
-        </div>
-        <div class="form-item">
-          <label class="item-lable">Gender</label>
-          <select class="item-select" name="gender" id="gender" v-model="formParams.gender">
-            <option disabled value style="display:none;">Fill in the city</option>
-            <option
-              :value="gender.text"
-              v-for="(gender,index) in genderList"
-              :key="index"
-            >{{gender.value}}</option>
-          </select>
-        </div>
+          <!-- Gender -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">Gender</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    name="gender"
+                    id="gender"
+                    v-model="formParams.gender"
+                  >
+                    <option disabled value style="display:none;">Select gender</option>
+                    <option
+                      :value="gender.text"
+                      v-for="(gender,index) in genderList"
+                      :key="index"
+                    >{{gender.value}}</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section>
+          <!-- Email -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Email</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="Email Address"
+                    v-model.lazy="formParams.email"
+                    :class="showHelpBlock2 ? 'show-help' : ''"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
+              </div>
+            </section>
+          </div>
+          <!-- Phone -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Phone</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    name="phoneHead"
+                    id="phoneHead"
+                    v-model="phoneHead"
+                  >
+                    <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                    <option value="254">254</option>
+                    <option value="234">234</option>
+                    <option value="255">255</option>
+                    <option value="256">256</option>
+                    <option value="264">264</option>
+                    <option value="233">233</option>
+                    <option value="237">237</option>
+                    <option value="229">229</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+            <section class="form-item" style="margin-left:16px">
+              <div class="form-item-top">
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="number"
+                    placeholder="Phone Number"
+                    v-model="phoneBody"
+                    maxlength="9"
+                    oninput="if(value.length>9)value=value.slice(0,9)"
+                    :class="showHelpBlock3 ? 'show-help' : ''"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock3">Required</small>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section>
+          <!-- Password -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Input Password</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPrePassword? 'password':'text'"
+                    placeholder="8~15 character,at least one letter and one number"
+                    v-model="prePassword"
+                    maxlength="15"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeePre"
+                    @click="showPrePassword = !showPrePassword"
+                  ></i>
+                </div>
+              </div>
+            </section>
+          </div>
+          <!-- Confirm Password -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Confirm Password</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPassword? 'password':'text'"
+                    placeholder="Reenter Password"
+                    v-model="formParams.password"
+                    maxlength="15"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeeConfirm"
+                    @click="showPassword = !showPassword"
+                  ></i>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
       </div>
-      <div class="form-items">
-        <div class="form-item">
-          <label class="item-lable">*Email</label>
-          <div class="item-inputs-wrap">
-            <input
-              type="text"
-              placeholder="Email Address"
-              v-model.lazy="formParams.email"
-              :class="showHelpBlock2 ? 'show-help' : ''"
-            />
-            <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
-          </div>
-        </div>
-        <div class="form-item">
-          <label class="item-lable">*Phone</label>
-          <div class="item-inputs">
-            <select
-              class="item-select"
-              name="phoneHead"
-              id="phoneHead"
-              v-model="phoneHead"
-              style="width:50%"
-            >
-              <!-- <option
-                :value="phoneHead.text"
-                v-for="(phoneHead,index) in phoneHeadList"
-                :key="index"
-              >{{phoneHead.value}}</option>-->
-              <option style="display: none;" value="254">Aera Cod</option>
-              <option value="254">254</option>
-              <option value="234">234</option>
-              <option value="255">255</option>
-              <option value="256">256</option>
-              <option value="264">264</option>
-              <option value="233">233</option>
-              <option value="237">237</option>
-              <option value="229">229</option>
-            </select>
-            <div class="item-inputs-wrap">
-              <input
-                type="number"
-                placeholder="Phone Number"
-                v-model="phoneBody"
-                maxlength="9"
-                oninput="if(value.length>9)value=value.slice(0,9)"
-                :class="showHelpBlock3 ? 'show-help' : ''"
-              />
-              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock3">Required</small>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="form-items">
-        <div class="form-item">
-          <label class="item-lable">*Input Password</label>
-          <div class="item-inputs">
-            <input
-              :type="!showPassword? 'password':'text'"
-              placeholder="8~15 character,at least one letter and one number"
-              v-model="formParams.password"
-              maxlength="15"
-            />
-            <i
-              class="item-icon iconfont icon-yanjing"
-              v-show="isSee"
-              @click="showPassword = !showPassword"
-            ></i>
-          </div>
-        </div>
-        <div class="form-item">
-          <label class="item-lable">*Confirm Password</label>
-          <div class="item-inputs">
-            <input
-              :type="!showConfirmPassword? 'password':'text'"
-              placeholder="Reenter Password"
-              v-model="confirmPassword"
-              maxlength="15"
-            />
-            <i
-              class="item-icon iconfont icon-yanjing"
-              v-show="isSeeConfirm"
-              @click="showConfirmPassword = !showConfirmPassword"
-            ></i>
-          </div>
-        </div>
-      </div>
+      <!-- 错误提示框 -->
+      <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
       <!-- 密码验证提示 -->
       <div class="error-wrap">
-        <div class="error-item" v-show="formParams.password">
-          <div v-for="(error,index) in errorList" :key="index">
+        <div class="error-item" v-show="prePassword">
+          <div v-for="(error,index) in passwordErrorList" :key="index">
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
             <span>{{error}}</span>
           </div>
         </div>
-        <div class="error-item">
-          <div class="error-item-wrap" v-show="formParams.password && confirmPassword && !isEqual">
+        <div class="error-item" ref>
+          <div
+            class="error-item-wrap"
+            v-show="prePassword && formParams.password && !isPasswordEqual"
+          >
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
             <span>Passwords must match</span>
           </div>
-          <div class="error-item-wrap" v-show="isEqual">
+          <div class="error-item-wrap" v-show="isPasswordEqual">
             <i class="iconfont icon-duigou" style="color:#95C884;font-weight:bold"></i>
             <span>Passwords must match</span>
           </div>
@@ -161,11 +218,11 @@
             :value="interest.value"
             v-model="formParams.productInterests"
           />
-          <img class="checked-img" src="../../static/img/checked.png" alt />
-          <label :for="interest.value" class="check-box">
+          <img class="check-img" src="../../static/img/checked.png" alt />
+          <label :for="interest.value" class="interest-label-box">
             <img class="check-box-img" src="../../static/img/check_box.png" alt />
           </label>
-          <label :for="interest.value">{{interest.value}}</label>
+          <label class="check-label" :for="interest.value" >{{interest.value}}</label>
         </div>
       </div>
       <p class="country_tips">Where did you learn about BF Suma？</p>
@@ -179,7 +236,7 @@
             :value="learn.value"
             v-model="formParams.source"
           />
-          <img class="checked-img" src="../../static/img/checked.png" alt />
+          <img class="check-img" src="../../static/img/checked.png" alt />
           <label class="check-label" :for="learn.value">{{learn.value}}</label>
         </div>
       </div>
@@ -201,6 +258,15 @@
         >Submit</button>
       </div>
     </form>
+    <!-- dialog -->
+    <my-dialog
+      title="Create account"
+      :showDialog="showDialog"
+      @dialogHandle="dialogHandle"
+      @closeDialog="showDialog=false"
+    >
+      <div slot="dialog-text">Account created, you can now log in with your mobile number or E-mail.</div>
+    </my-dialog>
   </div>
 </template>
 
@@ -208,34 +274,40 @@
 import myHeader from "@/components/my-header";
 import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
+import myToast from "@/components/my-toast";
+import myDialog from "@/components/my-dialog";
 import { registerCheck, registerCustomer } from "../api/index";
 export default {
   data() {
     return {
+      showPrePassword: true,
       showPassword: true,
-      showConfirmPassword: true,
       showHelpBlock: false,
       showHelpBlock1: false,
       showHelpBlock2: false,
       showHelpBlock3: false,
+      showToast: false,
+      showDialog: false,
+      toastText: "",
+      prePassword: "yxy123456",
+      phoneHead: "254",
+      phoneBody: "111111111",
       formParams: {
-        firstName: "aa",
-        lastName: "bb",
+        firstName: "y",
+        lastName: "xy",
         gender: "",
-        email: "1@q.com",
+        email: "yxiaoyun6@163.com",
         phone: "",
-        password: "",
+        password: "yxy123456",
         productInterests: [],
         source: "",
         sponsor: "",
         upline: "",
         country: "",
-        city: ""
+        city: "",
+        mobile: 0
       },
-      phoneHead: "",
-      phoneBody: "123456789",
-      confirmPassword: "",
-      errorList: [],
+      passwordErrorList: [],
       genderList: [
         { text: "Male", value: "Male" },
         { text: "Female", value: "Female" }
@@ -312,39 +384,60 @@ export default {
     };
   },
   computed: {
-    isEqual() {
-      if (this.confirmPassword.trim()) {
-        return this.formParams.password.trim() === this.confirmPassword.trim();
+    isPasswordEqual() {
+      if (this.prePassword.trim()) {
+        return this.prePassword.trim() === this.formParams.password.trim();
       }
     },
-    isSee() {
-      return this.formParams.password.trim();
+    isSeePre() {
+      return this.prePassword.trim();
     },
     isSeeConfirm() {
-      return this.confirmPassword.trim();
+      return this.formParams.password.trim();
     },
     computedPhone() {
-      return "+" + this.phoneHead + this.phoneBody;
+      return this.phoneHead + this.phoneBody;
     }
   },
   watch: {
-    phoneBody() {
-      if (!this.phoneBody.trim()) {
+    phoneBody(val) {
+      if (!val.trim()) {
         this.showHelpBlock3 = true;
       } else {
         this.showHelpBlock3 = true;
 
-        if (this.phoneBody.trim().length < 9) {
+        if (val.trim().length < 9) {
           this.$refs.showHelpBlock3.innerHTML = "Format error";
         } else {
           this.showHelpBlock3 = false;
         }
       }
     },
+    prePassword(val) {
+      const passwordErrorList = [
+        "8~15 character",
+        "At least one letter",
+        "At least one number"
+      ];
+      let tempList = [];
+      // 长度检测
+      if (!/^[a-zA-Z0-9]{8,15}$/.test(val)) {
+        tempList.push(passwordErrorList[0]);
+      }
+      // 字母检测
+      if (!/[a-zA-Z]/.test(val)) {
+        tempList.push(passwordErrorList[1]);
+      }
+      // 数字检测
+      if (!/[0-9]/.test(val)) {
+        tempList.push(passwordErrorList[2]);
+      }
+      this.passwordErrorList = tempList;
+    },
     // 深度监听
     formParams: {
       handler: function() {
-        const { firstName, lastName, email, phone, password } = this.formParams;
+        const { firstName, lastName, email, phone } = this.formParams;
         // firstName
         if (!firstName.trim()) {
           this.showHelpBlock = true;
@@ -370,26 +463,6 @@ export default {
             this.showHelpBlock2 = false;
           }
         }
-        // password
-        const errorList = [
-          "8~15 character",
-          "At least one letter",
-          "At least one number"
-        ];
-        let tempList = []
-        // 长度检测
-        if (!/^[a-zA-Z0-9]{8,15}$/.test(password)) {
-          tempList.push(errorList[0])
-        }
-        // 字母检测
-        if (!/[a-zA-Z]/.test(password)) {
-          tempList.push(errorList[1])
-        }
-        // 数字检测
-        if (!/[0-9]/.test(password)) {
-          tempList.push(errorList[2])
-        }
-        this.errorList = tempList;
       },
       deep: true
     }
@@ -415,38 +488,88 @@ export default {
         this.showHelpBlock3 = true;
       } else {
         // 验证密码是否匹配
-        if (!this.isEqual) {
+        if (!this.isPasswordEqual) {
+          this.showToast = true;
+          this.toastText = "Passwords must match";
           return;
         } else {
-          const ERRCODE = 102;
           // 验证邮箱或手机是否被注册过
+          // 101;邮箱和手机被使用了
+          // 102;邮箱被使用了
+          // 102;手机号码被使用了
           let res = await registerCheck(email, this.computedPhone);
-          console.log(res);
-          if (res.code === ERRCODE) {
-            this.showHelpBlock2 = true;
-            this.$refs.showHelpBlock2.innerHTML =
-              "Already bound, please replace one";
+          const errcode = res.code;
+          switch (errcode) {
+            case 101:
+              this.showHelpBlock3 = true;
+              this.$refs.showHelpBlock3.innerHTML =
+                "Already bound, please replace one";
+              this.showHelpBlock2 = true;
+              this.$refs.showHelpBlock2.innerHTML =
+                "Already bound, please replace one";
+              break;
+            case 102:
+              this.showHelpBlock2 = true;
+              this.$refs.showHelpBlock2.innerHTML =
+                "Already bound, please replace one";
+              break;
+            case 103:
+              this.showHelpBlock3 = true;
+              this.$refs.showHelpBlock3.innerHTML =
+                "Already bound, please replace one";
+              break;
+            default:
+              break;
           }
           // 提交表单注册
           this.formParams.phone = this.computedPhone;
-          var formData = JSON.stringify(Object.assign(this.formParams));
-          console.log(JSON.parse(formData));
-          // let res2 = await registerCustomer()
+          const connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
+          const { distSponsor, uplineId } = connectObj;
+          this.formParams.country = distSponsor.country;
+          this.formParams.city = distSponsor.city;
+          this.formParams.sponsor = uplineId;
+          this.formParams.upline = uplineId;
+          let res1 = await registerCustomer(this.formParams);
+          console.log(res1);
+          let errcode1 = res1.code;
+          switch (errcode1) {
+            case 101:
+              // alert(res1.message);
+              this.showDialog = true;
+              break;
+            case 0:
+              this.showDialog = true;
+              break;
+            default:
+              break;
+          }
+          // 成功,弹窗
         }
+      }
+    },
+    closeToast() {
+      this.showToast = false;
+    },
+    dialogHandle(flag) {
+      if (flag) {
+        this.$router.push("/Payment");
       }
     }
   },
   components: {
     "my-header": myHeader,
     "my-required": myRequired,
-    "my-step": myStep
+    "my-step": myStep,
+    "my-toast": myToast,
+    "my-dialog": myDialog
   }
 };
 </script>
 
 <style scoped lang="stylus">
-@import '../../static/stylus/pc'
-
+// @import '../../static/stylus/pc'
+select, input
+  padding-left 10px
 .personal-cont
   .form
     margin-top 20px
@@ -456,88 +579,78 @@ export default {
       padding 8px
       margin-top 0
       min-height 100vh
-    .form-items
-      display flex
-      margin 0 8px
-      @media (max-width: 980px)
-        display block
-        margin 0
-      .form-item
-        flex 1
+    .form-wrap
+      margin-top 20px
+      >section
         display flex
-        position relative
-        margin 12px 20px 12px 0
-        background-color #E6F0F3
-        @media (max-width: 980px)
-          margin 12px 0
-          // padding 8px 0
-          background-color #fff
-          flex-direction column
-        input
-          width 100%
-          padding 12px 0
-          box-shadow none
-          &.show-help
-            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-            &::placeholder
-              color #fff
-          @media (max-width: 980px)
-            background-color #E6F0F3
-        .item-lable
-          font-weight bold
-          border-right 1px solid #BABABA
-          color #4295C5
-          margin-left 20px
-          @media (max-width: 980px)
-            margin-left 0px
-            margin-bottom 4px
-            border-right none
-          &.input
-            line-height 50px
-        .item-inputs-wrap
-          flex 1
-          position relative
-          .help-block
-            position absolute
-            left 0
-            margin-top 40px
-            color #a94442
-            font-weight normal
-            @media (max-width: 980px)
-              display none
-              margin-top 4px
-        .item-inputs
+        .form-wrap-box
           display flex
           flex 1
-          .item-icon
-            line-height 40px
-            color #ccc
-            background-color #E6F0F3
-          .item-inputs-wrap
-            position relative
-            .help-block
-              position absolute
-              left 0
-              margin-top 40px
-              color #a94442
-              font-weight normal
-              @media (max-width: 980px)
-                display none
-            &:last-child
-              border-left 15px solid #fff
-        .item-select
-          width 100%
-          color rgb(87, 87, 87)
-          padding-left 10px
+          &:nth-child(2n)
+            margin-left 40px
           @media (max-width: 980px)
-            line-height 36px
-            background-color #E6F0F3
-            border-radius 4px
-          .item-select-option
-            background-color #E6F0F3
-          &.input
-            height 50px
-            text-indent 20px
+            display block
+            margin 0
+          .form-item
+            flex 1
+            @media (max-width: 980px)
+              margin 12px 0
+              background-color #fff
+              flex-direction column
+            .form-item-top
+              display flex
+              background-color #E6F0F3
+              height 40px
+              line-height 40px
+              .item-lable
+                font-weight bold
+                border-right 1px solid #BABABA
+                color #4295C5
+                margin-left 20px
+                padding-right 10px
+                @media (max-width: 980px)
+                  margin-left 0
+                  border-right none
+              .item-p
+                line-height 40px
+                padding-right 10px
+                background-color #fff
+              .item-main
+                flex 1
+                display flex
+                align-items center
+                color rgb(87, 87, 87)
+                @media (max-width: 980px)
+                  padding-top 4px
+                  line-height 36px
+                  background-color #E6F0F3
+                &.nth-child(2)
+                  margin-left 10px
+                .item-main-inner
+                  flex 1
+                  height 100%
+                  color rgb(87, 87, 87)
+                  &.show-help
+                    box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+                    &::placeholder
+                      color #fff
+                  .item-main-help
+                    color #a94442
+                    font-weight normal
+                    @media (max-width: 980px)
+                      display none
+                      margin-top 4px
+                .item-icon
+                  color #ccc
+            .form-item-bottom
+              display flex
+              height 20px
+              line-height 20px
+              >small
+                color #a94442
+                @media (max-width: 980px)
+                  display none
+                  margin-top 4px
     .error-wrap
       position relative
       color #B7B7B7
@@ -570,15 +683,9 @@ export default {
           line-height 24px
         .check-input
           display none
-          &:checked+img.checked-img
+          &:checked+img.check-img
             opacity 1
-        label
-          border-right none
-          font-weight normal
-          color #575757
-          cursor pointer
-          border-right none
-        .check-box
+        .interest-label-box
           position absolute
           top 3px
           left -20px
@@ -587,7 +694,13 @@ export default {
             left -14px
           .check-box-img
             width 12px
-        .checked-img
+        .check-label
+          border-right none
+          font-weight normal
+          color #575757
+          cursor pointer
+          border-right none
+        .check-img
           opacity 0
           position absolute
           top 50%

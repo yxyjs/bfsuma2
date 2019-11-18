@@ -24,159 +24,163 @@
           </div>
         </div>
       </div>
-      <!-- 年龄不足18的弹框 -->
-      <div class="dialog-eighteen" v-if="showDialog">
-        <div class="dialog-main">
-          <h2>Minor reminder</h2>
-          <div class="dialog-main-text">
-            <p>Sorry,you can’t be a distributor of BF Suma if you are under 18 years old.</p>
-            <p>But you can recommend relative or neighbor around you who is over 18 to become distributors of BFSuma!</p>
-            <p>If you are over 16, you can try our products.</p>
-          </div>
-          <a href="http://www.bfsuma.com/products/en">Now，have a look at the product！</a>
-          <div class="dialog-buttons">
-            <div class="buttons-item">
-              <button class="btn btn-cancel" @click.prevent="dialogHandle">Cancel</button>
-            </div>
-            <div class="buttons-item">
-              <button class="btn btn-confirm" @click.prevent="dialogHandle">Confirm</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="form-items">
-        <!-- form-item -->
-        <section class="form-item">
-          <div class="form-item-top">
-            <label class="item-lable">*Country</label>
-            <div class="item-main">
-              <select
-                class="item-main-inner"
-                v-model="formParams.country"
-                :class="showHelpBlock ? 'show-help' : ''"
-                @input="selectChange"
-              >
-                <option disabled value style="display:none;">Fill in the city</option>
-                <option
-                  :value="country.value"
-                  v-for="(country,index) in countryList"
-                  :key="index"
-                >{{country.text}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-item-bottom">
-            <small ref="showHelpBlock" class="item-main-help" v-show="showHelpBlock">Required</small>
-          </div>
-        </section>
-        <section style="width:40px"></section>
-        <section class="form-item">
-          <div class="form-item-top">
-            <label class="item-lable">*City</label>
-            <div class="item-main">
-              <select
-                class="item-main-inner"
-                v-model="formParams.city"
-                :class="showHelpBlock1 ? 'show-help' : ''"
-                @input="selectChange"
-              >
-                <option disabled value style="display:none;">Select Registrant’s Country</option>
-                <option value="NAIROBI">NAIROBI</option>
-                <option value="BUNGOMA">BUNGOMA</option>
-                <option value="KISUMU">KISUMU</option>
-                <option value="KISII">KISII</option>
-                <option value="ELDORET">ELDORET</option>
-                <option value="KITALE">KITALE</option>
-                <option value="NAKURU">NAKURU</option>
-                <option value="EMBU">EMBU</option>
-                <option value="KIRIAINI">KIRIAINI</option>
-                <option value="MOMBASA">MOMBASA</option>
-                <option value="KAKAMEGA">KAKAMEGA</option>
-              </select>
-            </div>
-          </div>
-          <!-- smallhelp -->
-          <div class="form-item-bottom">
-            <small ref="showHelpBlock1" class="item-main-help" v-show="showHelpBlock1">Required</small>
+      <div class="form-wrap">
+        <!-- country -->
+        <section>
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Country</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="formParams.country"
+                    :class="showHelpBlock ? 'show-help' : ''"
+                    @input="selectChange"
+                  >
+                    <option disabled value style="display:none;">Fill in the city</option>
+                    <option
+                      :value="country.value"
+                      v-for="(country,index) in countryList"
+                      :key="index"
+                    >{{country.text}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small ref="showHelpBlock" class="item-main-help" v-show="showHelpBlock">Required</small>
+              </div>
+            </section>
+            <section class="form-item" style="margin-left:16px">
+              <div class="form-item-top">
+                <label class="item-lable">*City</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="formParams.city"
+                    :class="showHelpBlock1 ? 'show-help' : ''"
+                    @input="selectChange"
+                  >
+                    <option disabled value style="display:none;">Select Registrant’s Country</option>
+                    <option value="NAIROBI">NAIROBI</option>
+                    <option value="BUNGOMA">BUNGOMA</option>
+                    <option value="KISUMU">KISUMU</option>
+                    <option value="KISII">KISII</option>
+                    <option value="ELDORET">ELDORET</option>
+                    <option value="KITALE">KITALE</option>
+                    <option value="NAKURU">NAKURU</option>
+                    <option value="EMBU">EMBU</option>
+                    <option value="KIRIAINI">KIRIAINI</option>
+                    <option value="MOMBASA">MOMBASA</option>
+                    <option value="KAKAMEGA">KAKAMEGA</option>
+                  </select>
+                </div>
+              </div>
+              <!-- smallhelp -->
+              <div class="form-item-bottom">
+                <small ref="showHelpBlock1" class="item-main-help" v-show="showHelpBlock1">Required</small>
+              </div>
+            </section>
           </div>
         </section>
       </div>
       <hr class="hr" />
       <!-- click connect -->
-      <div v-show="isConnected">
-        <div class="form-items">
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Sponsor</label>
-              <div class="item-main">
-                Gage get
-                <span>
-                  <strong>ID:</strong>
-                  {{currentSponsor.distributorId}}
-                </span>
-                <span>
-                  <strong>Gender:</strong>
-                  {{currentSponsor.gender}}
-                </span>
-                <span>
-                  <strong>Mobile Number:</strong>
-                  {{currentSponsor.phone}}
-                </span>
-                <span>
-                  <strong>E-mail:</strong>
-                  {{currentSponsor.email}}
-                </span>
+      <div class="form-wrap" v-show="Object.keys(currentSponsor).length !== 0">
+        <!-- Sponsor -->
+        <section>
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Sponsor</label>
+                <div class="item-main">
+                  Gage get
+                  <span>
+                    <strong>ID:</strong>
+                    {{currentSponsor.distributorId}}
+                  </span>
+                  <span>
+                    <strong>Gender:</strong>
+                    {{currentSponsor.gender}}
+                  </span>
+                  <span>
+                    <strong>Mobile Number:</strong>
+                    {{currentSponsor.phone}}
+                  </span>
+                  <span>
+                    <strong>E-mail:</strong>
+                    {{currentSponsor.email}}
+                  </span>
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
-        <div class="form-items" style="margin-top:10px">
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Upline</label>
-              <div class="item-main">
-                Gage get
-                <span>
-                  <strong>ID:</strong>
-                  {{currentSponsor.distributorId}}
-                </span>
-                <span>
-                  <strong>Gender:</strong>
-                  {{currentSponsor.gender}}
-                </span>
-                <span>
-                  <strong>Mobile Number:</strong>
-                  {{currentSponsor.phone}}
-                </span>
-                <span>
-                  <strong>E-mail:</strong>
-                  {{currentSponsor.email}}
-                </span>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-      <!-- *Sponsor -->
-      <div class="form-items" style="margin-top:10px">
-        <section class="form-item">
-          <div class="form-item-top">
-            <p v-show="isConnected" class="item-p">Or you want to modify your Upline</p>
-            <label v-show="!isConnected" class="item-lable">*Sponsor</label>
-            <div class="item-main">
-              <input
-                ref="input"
-                class="item-main-inner"
-                type="text"
-                placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-                :class="showHelpBlock2 && !formParams.sponsor ? 'show-help' : ''"
-                v-model="formParams.sponsor"
-              />
-              <button class="item-searchbtn" @click="searchHandle">Search</button>
-            </div>
+            </section>
           </div>
-          <div class="form-item-bottom">
-            <small ref="showHelpBlock2" class="item-main-help" v-show="showHelpBlock2">Required</small>
+        </section>
+        <!-- Upline -->
+        <section style="margin-top:10px">
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">*Upline</label>
+                <div class="item-main">
+                  Gage get
+                  <span>
+                    <strong>ID:</strong>
+                    {{currentSponsor.distributorId}}
+                  </span>
+                  <span>
+                    <strong>Gender:</strong>
+                    {{currentSponsor.gender}}
+                  </span>
+                  <span>
+                    <strong>Mobile Number:</strong>
+                    {{currentSponsor.phone}}
+                  </span>
+                  <span>
+                    <strong>E-mail:</strong>
+                    {{currentSponsor.email}}
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+      <div class="form-wrap" style="margin-top:10px">
+        <!-- *Sponsor -->
+        <section>
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <p
+                  v-if="Object.keys(currentSponsor).length !== 0"
+                  class="item-p"
+                >Or you want to modify your Upline</p>
+                <label v-else class="item-lable">*Sponsor</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+                    :class="showHelpBlock2 && !sponsor ? 'show-help' : ''"
+                    v-model="sponsor"
+                  />
+                  <button class="item-searchbtn" @click="searchHandle">Search</button>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <small
+                  ref="showHelpBlock2"
+                  class="item-main-help"
+                  v-show="showHelpBlock2 && !sponsor"
+                >Required</small>
+                <small
+                  ref="showHelpBlockSponsor"
+                  class="item-main-help"
+                  v-if="showHelpBlockSponsor"
+                >*Please connect your sponsor</small>
+              </div>
+            </section>
           </div>
         </section>
       </div>
@@ -186,9 +190,12 @@
           class="no-data"
           v-show="!recommendList.length && showNoData"
         >We couldn't find any matching Distributor. Please, try with a different term.</p>
-        <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
-        <img @click="getRecommend" src="../../static/img/become.png" alt />
+        <div>
+          <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
+          <img @click="getRecommend" src="../../static/img/become.png" alt />
+        </div>
       </div>
+      <!-- 赞助商列表 -->
       <div class="recommend-list" v-show="recommendList.length">
         <p class="tableTips" v-show="tableTips">
           We can recommend
@@ -198,6 +205,8 @@
           We found
           <span>{{recommendList.length}}</span> matches based on your search
         </p>
+        <!-- loading -->
+        <my-loading :show="showLoading"></my-loading>
         <div class="table-wrap">
           <table class="table">
             <thead>
@@ -234,6 +243,21 @@
       <div class="next-btn-wrap">
         <button class="next-btn" @click="nextHandle">Next</button>
       </div>
+      <!-- 年龄不足18的弹框 -->
+      <my-dialog
+        title="Minor reminder"
+        :showDialog="showDialog"
+        showCancel
+        @dialogHandle="dialogHandle"
+        @closeDialog="closeDialog"
+      >
+        <div slot="dialog-text">
+          <p>Sorry,you can’t be a distributor of BF Suma if you are under 18 years old.</p>
+          <p>But you can recommend relative or neighbor around you who is over 18 to become distributors of BFSuma!</p>
+          <p>If you are over 16, you can try our products.</p>
+          <a href="http://www.bfsuma.com/products/en">Now，have a look at the product！</a>
+        </div>
+      </my-dialog>
     </form>
   </div>
 </template>
@@ -245,6 +269,7 @@ import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
+import myLoading from "@/components/my-loading";
 
 export default {
   data() {
@@ -252,11 +277,11 @@ export default {
       checked: true,
       showDialog: false,
       showNoData: false,
-      showrecommendBtn: true,
       showHelpBlock: false,
       showHelpBlock1: false,
       showHelpBlock2: false,
-      isConnected: false,
+      showLoading: false,
+      showHelpBlockSponsor: false,
       tableTips: false,
       currentStep: 0,
       currentSponsor: {},
@@ -264,10 +289,10 @@ export default {
         // country: "Kenya",
         country: "",
         // city: "NAIROBI",
-        city: "",
-        // sponsor: "KE220228",
-        sponsor: ""
+        city: ""
       },
+      // sponsor: "KE220228",
+      sponsor: "",
       countryList: [
         { text: "Kenya", value: "Kenya" },
         { text: "Cameroon", value: "Cameroon" },
@@ -284,9 +309,14 @@ export default {
   },
   computed: {},
   watch: {
+    sponsor: val => {
+      if (val) {
+        console.log("sponsor", val);
+      }
+    },
     formParams: {
       handler: function() {
-        const { country, city, sponsor } = this.formParams;
+        const { country, city } = this.formParams;
         // country
         if (!country) {
           this.showHelpBlock = true;
@@ -298,12 +328,9 @@ export default {
           this.showHelpBlock1 = true;
         } else {
           this.showHelpBlock1 = false;
-        }
-        // sponsor
-        if (!sponsor.trim()) {
-          this.showHelpBlock2 = true;
-        } else {
-          this.showHelpBlock2 = false;
+          if (this.showHelpBlockSponsor) {
+            this.showHelpBlockSponsor = false;
+          }
         }
       },
       deep: true
@@ -314,30 +341,24 @@ export default {
     // this.getRecommend();
   },
   methods: {
-    selectChange() {
-      this.recommendList = [];
-      if (this.formParams.sponsor) {
-        this.formParams.sponsor = " "; //注意,这里必须是有一个空格,为了通过监听验证
+    dialogHandle(flag) {
+      if (!flag) {
+        this.showDialog = false;
+        this.$refs.input.checked = true;
+      } else {
+        location.href = "http://www.bfsuma.com/en";
       }
     },
-    dialogHandle() {
-      this.showDialog = !this.showDialog;
+    closeDialog() {
+      this.showDialog = false;
       this.$refs.input.checked = true;
     },
-    toggleChecked() {
-      this.showDialog = true;
-    },
-    onConfirm() {
-      this.showDialog = false;
-      this.checked = true;
-    },
-    onCancel() {
-      this.showDialog = false;
-      this.$router.push("/login");
+    selectChange() {
+      this.recommendList = [];
     },
     async searchHandle() {
       // 非空验证
-      const { country, city, sponsor } = this.formParams;
+      const { country, city } = this.formParams;
       if (!country) {
         this.showHelpBlock = true;
         this.showHelpBlock1 = true;
@@ -345,16 +366,16 @@ export default {
       } else if (!city) {
         this.showHelpBlock1 = true;
         this.showHelpBlock2 = true;
-      } else if (!sponsor.trim()) {
+      } else if (!this.sponsor.trim()) {
         this.showHelpBlock2 = true;
         return;
       } else {
         // 发送异步请求搜索赞助者
-        let { country, city, sponsor } = this.formParams;
+        let { country, city } = this.formParams;
         let res = await searchSponsor(
           country,
           city,
-          sponsor,
+          this.sponsor.trim(),
           6,
           1,
           1573693207826
@@ -363,15 +384,13 @@ export default {
         this.recommendList = res.list;
         if (!this.recommendList.length) {
           this.showNoData = true;
-        } else {
-          this.showrecommendBtn = false;
         }
         this.tableTips = false;
       }
     },
     // 获取推荐赞助商列表
     async getRecommend() {
-      const { country, city, sponsor } = this.formParams;
+      const { country, city } = this.formParams;
       // 非空验证
       if (!country) {
         this.showHelpBlock = true;
@@ -379,15 +398,20 @@ export default {
       } else if (!city) {
         this.showHelpBlock1 = true;
         return;
+      } else {
+        this.showLoading = true;
+        let res = await sponsorRecommend(country, city);
+        if (res) this.showLoading = false;
+        this.recommendList = res.data;
+        this.tableTips = true;
       }
-      let res = await sponsorRecommend(country, city);
-      this.recommendList = res.data;
-      this.tableTips = true;
     },
+    // 异步请求国家
     async getAllCountry() {
       let res = await getAllCountry();
       this.countryList = res.data;
     },
+    // 连接赞助商
     connectHandle(item) {
       // 存储到session
       let obj = {
@@ -401,9 +425,10 @@ export default {
         }
       };
       sessionStorage.setItem("connectObj", JSON.stringify(obj));
-      this.isConnected = true;
       this.currentSponsor = item;
-      this.showrecommendBtn = true;
+      this.recommendList = [];
+      this.sponsor = "";
+      this.showHelpBlockSponsor = false;
     },
 
     submitHandle() {},
@@ -411,12 +436,16 @@ export default {
       // 读取session
       let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
       if (!connectObj) {
-        // 不存在,提示
-        this.showHelpBlock2 = true;
-        this.$refs.input.className = "";
-        this.$refs.showHelpBlock2.innerHTML = "*Please connect your sponsor";
+        this.showHelpBlockSponsor = true;
       } else {
-        this.$router.push("/PersonalInformation");
+        const { country, city } = this.formParams;
+        if (!country) {
+          this.showHelpBlock = true;
+        } else if (!city) {
+          this.showHelpBlock1 = true;
+        } else {
+          this.$router.push("/PersonalInformation");
+        }
       }
     }
   },
@@ -425,14 +454,15 @@ export default {
     "my-dialog": myDialog,
     "my-header": myHeader,
     "my-required": myRequired,
-    "my-step": myStep
+    "my-step": myStep,
+    "my-loading": myLoading
   }
 };
 </script>
 
 <style scoped lang="stylus">
-@import '../../static/stylus/pc'
-
+select, input
+  padding-left 10px
 ::placeholder
   letter-spacing -0.4px
 .country-cont
@@ -453,6 +483,8 @@ export default {
       .checkbox-label
         color #4295C5
         font-weight bold
+        padding-right 10px
+        border-right 1px solid #bababa
       .checkbox-radio
         display flex
         margin-left 20px
@@ -491,146 +523,98 @@ export default {
               height 11px
               border-radius 50%
               border 1px solid #666
-    .dialog-eighteen
-      position absolute
-      top 0
-      left 0
-      width 100vw
-      height 100vh
-      text-align center
-      background-color rgba(0, 0, 0, 0.3)
-      padding-top 100px
-      @media (max-width: 980px)
-        background-color rgba(0, 0, 0, 0.5)
-      .dialog-main
-        background-color #fff
-        display inline-block
-        border-radius 10px
-        text-align left
-        font-weight bold
-        width 60%
-        font-size 16px
-        @media (max-width: 980px)
-          font-size 12px
-          width 90%
-          overflow hidden
-        h2
-          color #56a7d8
-          text-align center
-          margin-top 30px
-        .dialog-main-text
-          margin 30px 0 0 30px
-          @media (max-width: 980px)
-            margin 10px 0 0 10px
-          p
-            color #696969
-            line-height 32px
-            @media (max-width: 980px)
-              line-height 1.5
-              margin-top 10px
-        a
-          display block
-          margin 30px 0 0 30px
-          color #56a7d8
-          @media (max-width: 980px)
-            margin 10px 0 0 10px
-        .dialog-buttons
-          margin 30px
-          @media (max-width: 980px)
-            margin 20px 0 0 0
+    .form-wrap
+      margin-top 20px
+      >section
+        display flex
+        .form-wrap-box
           display flex
-          .buttons-item
+          flex 1
+          &:nth-child(2n)
+            margin-left 40px
+          @media (max-width: 980px)
+            display block
+            margin 0
+          .form-item
             flex 1
-            text-align center
-            .btn
-              font-weight bold
-              width 140px
-              padding 20px
-              color #fff
-              border-radius 4px
-              @media (max-width: 980px)
-                width 100%
-                border-radius 0
-            .btn-cancel
-              background-color #ddd
-            .btn-confirm
-              background-color #56a7d8
-    .form-items
-      display flex
-      @media (max-width: 980px)
-        display block
-        margin 0
-      .form-item
-        flex 1
-        @media (max-width: 980px)
-          margin 12px 0
-          background-color #fff
-          flex-direction column
-        .form-item-top
-          display flex
-          background-color #E6F0F3
-          .item-lable
-            font-weight bold
-            border-right 1px solid #BABABA
-            color #4295C5
-            margin-left 20px
-            padding-right 10px
             @media (max-width: 980px)
-              margin-left 0
-              border-right none
-          .item-p
-            line-height 40px
-            padding-right 10px
-            background-color #fff
-          .item-main
-            flex 1
-            display flex
-            align-items center
-            color rgb(87, 87, 87)
-            padding-left 6px
-            @media (max-width: 980px)
-              padding-top 4px
-              line-height 36px
+              margin 12px 0
+              background-color #fff
+              flex-direction column
+            .form-item-top
+              display flex
+              height 40px
+              line-height 40px
               background-color #E6F0F3
-            span
-              margin-left 15px
-            .item-main-inner
-              flex 1
-              height 100%
-              color rgb(87, 87, 87)
-              &.show-help
-                box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                &::placeholder
+              @media (max-width: 980px)
+                display flex
+                flex-direction column
+              .item-lable
+                display inline-block
+                font-weight bold
+                border-right 1px solid #BABABA
+                color #4295C5
+                padding-right 10px
+                margin 10px 0 10px 20px
+                height 20px
+                line-height 20px
+                white-space nowrap
+                @media (max-width: 980px)
+                  margin-left 0
+                  border-right none
+              .item-p
+                line-height 40px
+                padding-right 10px
+                background-color #fff
+              .item-main
+                flex 1
+                display flex
+                align-items center
+                color rgb(87, 87, 87)
+                padding-left 6px
+                @media (max-width: 980px)
+                  padding-top 4px
+                  line-height 36px
+                  background-color #E6F0F3
+                span
+                  margin-left 15px
+                .item-main-inner
+                  flex 1
+                  height 100%
+                  color rgb(87, 87, 87)
+                  &.show-help
+                    box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+                    &::placeholder
+                      color #fff
+                  .item-main-help
+                    color #a94442
+                    font-weight normal
+                    @media (max-width: 980px)
+                      display none
+                      margin-top 4px
+                .item-searchbtn
+                  height 100%
                   color #fff
-              .item-main-help
+                  background-color #5ba2cc
+                  border-radius 4px
+                  padding 0 8px
+            .form-item-bottom
+              height 20px
+              line-height 20px
+              >small
                 color #a94442
-                font-weight normal
                 @media (max-width: 980px)
                   display none
                   margin-top 4px
-            .item-searchbtn
-              height 100%
-              color #fff
-              background-color #5ba2cc
-              border-radius 4px
-              padding 0 8px
-        .form-item-bottom
-          height 20px
-          line-height 20px
-          >small
-            color #a94442
-            @media (max-width: 980px)
-              display none
-              margin-top 4px
-      .form-btn
-        width 90px
-        background #5ba2cc
-        color #fff
-        border-radius 4px
-        height 50px
-        line-height 50px
-        margin-top 12px
-        margin-right 10px
+          .form-btn
+            width 90px
+            background #5ba2cc
+            color #fff
+            border-radius 4px
+            height 50px
+            line-height 50px
+            margin-top 12px
+            margin-right 10px
     .hr
       margin-bottom 20px
       border 0
