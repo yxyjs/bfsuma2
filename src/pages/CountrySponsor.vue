@@ -1,14 +1,15 @@
 <template>
-  <div class="country-cont">
+  <div id="country-cont">
     <my-header />
     <my-step>
       <img src="../../static/img/country_sponsor.png" alt />
     </my-step>
     <form action="/" class="form" @submit.prevent="submitHandle">
-      <my-required>
+      <p class="top-tips">
         You are now taking your first steps to becoming a BF Suma Distributor.
         <br />Begin the registration process by selecting a country and your sponsor below：
-      </my-required>
+      </p>
+      <p class="required">*Required</p>
       <div class="checkbox">
         <label class="checkbox-label">* I am at least 18 years old</label>
         <div class="checkbox-radio">
@@ -51,7 +52,7 @@
                 <small ref="showHelpBlock" class="item-main-help" v-show="showHelpBlock">Required</small>
               </div>
             </section>
-            <section class="form-item" style="margin-left:16px">
+            <section class="form-item margin-l">
               <div class="form-item-top">
                 <label class="item-lable">*City</label>
                 <div class="item-main">
@@ -267,7 +268,6 @@ import { sponsorRecommend, getAllCountry, searchSponsor } from "@/api/index";
 import { Checkbox } from "vant";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
-import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
 import myLoading from "@/components/my-loading";
 
@@ -453,7 +453,6 @@ export default {
     "van-checkbox": Checkbox,
     "my-dialog": myDialog,
     "my-header": myHeader,
-    "my-required": myRequired,
     "my-step": myStep,
     "my-loading": myLoading
   }
@@ -465,15 +464,29 @@ select, input
   padding-left 10px
 ::placeholder
   letter-spacing -0.4px
-.country-cont
+#country-cont
   .form
-    margin-top 20px
+    margin 20px 0 38px 0
     padding 20px
     background-color #fff
     @media (max-width: 980px)
       margin-top 0
       padding 8px
       min-height 100vh
+    .top-tips
+      font-size 14px
+      font-family PingFang-SC-Bold, PingFang-SC
+      font-weight bold
+      color #575757
+      line-height 30px
+      @media (max-width: 980px)
+        font-size 13px
+        line-height 1.5
+        font-weight normal
+        padding 10px
+    .required
+      margin 12px 0 0 0
+      color #5BA2CC
     .checkbox
       display flex
       margin-left 20px
@@ -537,6 +550,10 @@ select, input
             margin 0
           .form-item
             flex 1
+            &.margin-l
+              margin-left 20px
+              @media (max-width: 980px)
+                margin-left 0
             @media (max-width: 980px)
               margin 12px 0
               background-color #fff
@@ -601,7 +618,7 @@ select, input
             .form-item-bottom
               height 20px
               line-height 20px
-              >small
+              .help-block
                 color #a94442
                 @media (max-width: 980px)
                   display none

@@ -1,11 +1,12 @@
 <template>
-  <div class="personal-cont">
+  <div id="personal-cont">
     <my-header />
     <my-step>
       <img src="../../static/img/personal_information.png" alt />
     </my-step>
-    <form action="/" class="form" @submit.prevent="submitHandle">
-      <my-required>Step two, please fill in your personal information：</my-required>
+    <form action="/" method="POST" class="form" @submit.prevent="submitHandle">
+      <p class="top-tips">Step two, please fill in your personal information：</p>
+      <p class="required">*Required</p>
       <!-- form -->
       <div class="form-wrap">
         <section>
@@ -207,7 +208,7 @@
           </div>
         </div>
       </div>
-      <p class="country_tips">Which products are you interested in？</p>
+      <p class="country-tips">Which products are you interested in？</p>
       <div class="product-interest">
         <div class="checkbox-wrap" v-for="(interest,index) in productInterestList" :key="index">
           <input
@@ -222,10 +223,10 @@
           <label :for="interest.value" class="interest-label-box">
             <img class="check-box-img" src="../../static/img/check_box.png" alt />
           </label>
-          <label class="check-label" :for="interest.value" >{{interest.value}}</label>
+          <label class="check-label" :for="interest.value">{{interest.value}}</label>
         </div>
       </div>
-      <p class="country_tips">Where did you learn about BF Suma？</p>
+      <p class="country-tips">Where did you learn about BF Suma？</p>
       <div class="product-interest">
         <div class="checkbox-wrap" v-for="(learn,index) in learnBfList" :key="index">
           <input
@@ -237,10 +238,10 @@
             v-model="formParams.source"
           />
           <img class="check-img" src="../../static/img/checked.png" alt />
-          <label class="check-label" :for="learn.value">{{learn.value}}</label>
+          <label class="check-label before" :for="learn.value">{{learn.value}}</label>
         </div>
       </div>
-      <div class="country_tips">
+      <div class="country-tips">
         By submitting your information, you agree to
         <a
           class="link"
@@ -271,12 +272,11 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { registerCheck, registerCustomer } from "@/api/index";
 import myHeader from "@/components/my-header";
-import myRequired from "@/components/my-required";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
 import myDialog from "@/components/my-dialog";
-import { registerCheck, registerCustomer } from "../api/index";
 export default {
   data() {
     return {
@@ -529,16 +529,17 @@ export default {
           this.formParams.city = distSponsor.city;
           this.formParams.sponsor = uplineId;
           this.formParams.upline = uplineId;
+          sessionStorage.setItem("payInfo", JSON.stringify(this.formParams));
           let res1 = await registerCustomer(this.formParams);
           console.log(res1);
           let errcode1 = res1.code;
           switch (errcode1) {
             case 101:
-              // alert(res1.message);
-              this.showDialog = true;
+              // this.showDialog = true;
               break;
             case 0:
               this.showDialog = true;
+              sessionStorage.setItem("customerInfo", res1.data);
               break;
             default:
               break;
@@ -558,7 +559,6 @@ export default {
   },
   components: {
     "my-header": myHeader,
-    "my-required": myRequired,
     "my-step": myStep,
     "my-toast": myToast,
     "my-dialog": myDialog
@@ -567,18 +567,31 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-// @import '../../static/stylus/pc'
 select, input
   padding-left 10px
-.personal-cont
+#personal-cont
   .form
-    margin-top 20px
+    margin 20px 0 38px 0
     background-color #fff
     padding 20px
     @media (max-width: 980px)
       padding 8px
       margin-top 0
       min-height 100vh
+    .top-tips
+      font-size 14px
+      font-family PingFang-SC-Bold, PingFang-SC
+      font-weight bold
+      color #575757
+      line-height 30px
+      @media (max-width: 980px)
+        font-size 13px
+        line-height 1.5
+        font-weight normal
+        padding 10px
+    .required
+      margin 12px 0 0 0
+      color #5BA2CC
     .form-wrap
       margin-top 20px
       >section
@@ -606,7 +619,9 @@ select, input
                 font-weight bold
                 border-right 1px solid #BABABA
                 color #4295C5
-                margin-left 20px
+                height 20px
+                line-height 20px
+                margin 10px 0 10px 20px
                 padding-right 10px
                 @media (max-width: 980px)
                   margin-left 0
@@ -646,7 +661,7 @@ select, input
               display flex
               height 20px
               line-height 20px
-              >small
+              .help-block
                 color #a94442
                 @media (max-width: 980px)
                   display none
@@ -661,7 +676,7 @@ select, input
         margin-left -200px
         &:last-child
           left 100%
-    .country_tips
+    .country-tips
       margin-top 20px
       font-weight bold
       .link
@@ -687,28 +702,22 @@ select, input
             opacity 1
         .interest-label-box
           position absolute
-          top 3px
-          left -20px
+          top 14px
           @media (max-width: 980px)
             top 0
             left -14px
           .check-box-img
             width 12px
         .check-label
-          border-right none
+          display inline-block
+          height 20px
+          line-height 20px
+          margin 10px 0 10px 20px
           font-weight normal
           color #575757
           cursor pointer
           border-right none
-        .check-img
-          opacity 0
-          position absolute
-          top 50%
-          transform translateY(-50%)
-          width 18px
-          @media (max-width: 980px)
-            left -16px
-        .check-label
+        .before
           &::before
             content ''
             display inline-block
@@ -719,6 +728,14 @@ select, input
             border 1px solid
             @media (max-width: 980px)
               margin 0 2px 0 -14px
+        .check-img
+          opacity 0
+          position absolute
+          top 50%
+          transform translateY(-50%)
+          width 18px
+          @media (max-width: 980px)
+            left -16px
   .btn-wrap
     margin-top 30px
     text-align right

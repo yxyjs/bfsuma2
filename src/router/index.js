@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import CountrySponsor from '@/pages/CountrySponsor'
 import PersonalInformation from '@/pages/PersonalInformation'
 import Payment from '@/pages/Payment'
+import Personal from '@/pages/Personal'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ let router = new Router({
       path: '/Payment',
       name: 'Payment',
       component: Payment,
+    },
+    {
+      path: '/Personal',
+      name: 'Personal',
+      component: Personal,
     },
   ]
 })

@@ -6,6 +6,7 @@
       </header>
       <main class="dialog-text">
         <slot name="dialog-text"></slot>
+        <slot name="dialog-table"></slot>
       </main>
       <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
       <footer class="dialog-buttons">
@@ -54,7 +55,7 @@ export default {
 
 <style scoped lang="stylus">
 #my-dialog
-  position absolute
+  position fixed
   top 0
   left 0
   margin auto

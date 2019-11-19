@@ -1,6 +1,6 @@
 <template>
   <!-- 加载 -->
-  <div class="loading" v-show="show">
+  <div id="loading" v-show="show">
     <div class="spinner">
       <div class="rect1"></div>
       <div class="rect2"></div>
@@ -28,7 +28,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.loading
+#loading
   text-align center
   margin-top 50px
   .spinner

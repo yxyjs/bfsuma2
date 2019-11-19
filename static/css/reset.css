@@ -292,9 +292,7 @@ a {
   .clearfix {
     zoom: 1;
   }
-  /*针对ie低级版本的浏览器*/
   body {
-    width: 1120px;
     margin: auto;
     color: #575757;
     background-color: #fafafa;
