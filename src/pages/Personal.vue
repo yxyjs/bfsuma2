@@ -127,7 +127,6 @@ export default {
           display inline-block
           width 8px
           height 20px
-          // line-height 30px
           margin-right 20px
           transform translateY(4px)
           background-color rgba(139, 195, 113, 1)

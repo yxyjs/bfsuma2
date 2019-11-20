@@ -88,6 +88,8 @@ export default {
   position absolute
   left 0
   right 0
+  @media (max-width: 980px)
+    display none
   .top-line
     >img
       height 4px

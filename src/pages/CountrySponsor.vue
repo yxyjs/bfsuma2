@@ -39,7 +39,7 @@
                     :class="showHelpBlock ? 'show-help' : ''"
                     @input="selectChange"
                   >
-                    <option disabled value style="display:none;">Fill in the city</option>
+                    <option disabled value style="display:none;">Select Registrant’s Country</option>
                     <option
                       :value="country.value"
                       v-for="(country,index) in countryList"
@@ -49,7 +49,7 @@
                 </div>
               </div>
               <div class="form-item-bottom">
-                <small ref="showHelpBlock" class="item-main-help" v-show="showHelpBlock">Required</small>
+                <small ref="showHelpBlock" class="help-block" v-show="showHelpBlock">Required</small>
               </div>
             </section>
             <section class="form-item margin-l">
@@ -62,7 +62,7 @@
                     :class="showHelpBlock1 ? 'show-help' : ''"
                     @input="selectChange"
                   >
-                    <option disabled value style="display:none;">Select Registrant’s Country</option>
+                    <option disabled value style="display:none;">Fill in the city</option>
                     <option value="NAIROBI">NAIROBI</option>
                     <option value="BUNGOMA">BUNGOMA</option>
                     <option value="KISUMU">KISUMU</option>
@@ -79,7 +79,7 @@
               </div>
               <!-- smallhelp -->
               <div class="form-item-bottom">
-                <small ref="showHelpBlock1" class="item-main-help" v-show="showHelpBlock1">Required</small>
+                <small ref="showHelpBlock1" class="help-block" v-show="showHelpBlock1">Required</small>
               </div>
             </section>
           </div>
@@ -172,12 +172,12 @@
               <div class="form-item-bottom">
                 <small
                   ref="showHelpBlock2"
-                  class="item-main-help"
+                  class="help-block"
                   v-show="showHelpBlock2 && !sponsor"
                 >Required</small>
                 <small
                   ref="showHelpBlockSponsor"
-                  class="item-main-help"
+                  class="help-block"
                   v-if="showHelpBlockSponsor"
                 >*Please connect your sponsor</small>
               </div>
@@ -252,7 +252,7 @@
         @dialogHandle="dialogHandle"
         @closeDialog="closeDialog"
       >
-        <div slot="dialog-text">
+        <div slot="dialog-text" class="dialog-text">
           <p>Sorry,you can’t be a distributor of BF Suma if you are under 18 years old.</p>
           <p>But you can recommend relative or neighbor around you who is over 18 to become distributors of BFSuma!</p>
           <p>If you are over 16, you can try our products.</p>
@@ -603,12 +603,6 @@ select, input
                     box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
                     &::placeholder
                       color #fff
-                  .item-main-help
-                    color #a94442
-                    font-weight normal
-                    @media (max-width: 980px)
-                      display none
-                      margin-top 4px
                 .item-searchbtn
                   height 100%
                   color #fff
@@ -620,6 +614,7 @@ select, input
               line-height 20px
               .help-block
                 color #a94442
+                font-weight normal
                 @media (max-width: 980px)
                   display none
                   margin-top 4px

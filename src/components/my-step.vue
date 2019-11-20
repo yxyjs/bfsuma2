@@ -1,8 +1,6 @@
 <template>
-  <div class="page">
-    <section class="step">
-      <slot></slot>
-    </section>
+  <div id="my-step">
+    <slot></slot>
   </div>
 </template>
 
@@ -16,7 +14,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.step
+#my-step
   margin-top 10px
   background-color #fff
   text-align center
@@ -28,6 +26,7 @@ export default {
     padding 10px
     width 100%
     @media (max-width: 980px)
+      max-width 100vw
       padding 0
       height auto
 </style>

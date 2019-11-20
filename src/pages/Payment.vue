@@ -7,7 +7,7 @@
     <div class="pay-mid">
       <p
         class="top-tips"
-      >Step three, please pay a KES 1800 registration fee only by M-pesa and the welcome kits will be delievered for you.</p>
+      >Step three, please pay a KES {{formParams.amount}} registration fee only by M-pesa and the welcome kits will be delievered for you.</p>
       <div class="pay-main">
         <section class="pay-info">
           <div class="img-wrap">
@@ -28,11 +28,11 @@
             </li>
           </ul>
         </section>
-        <section class="pay-account">
+        <section ref="payAccount" class="pay-account">
           <p>Please pay the EXACT amount to complete your order</p>
           <div class="pay-account-main">
             <p
-              v-show="showPayError"
+              v-show="showNoPhone"
               class="pay-error"
             >Sorry,your phone hasn't been opened for M-pesa payment.</p>
             <form class="form">
@@ -42,7 +42,7 @@
                   <input
                     id="payPhone"
                     class="form-input-inner"
-                    :class="showHelpBlock ? 'show-help' : ''"
+                    :class="showHelpBlockPayPhone ? 'show-help' : ''"
                     type="number"
                     placeholder="Phone Number"
                     v-model="formParams.payPhone"
@@ -58,12 +58,16 @@
                 >Pay</button>
               </div>
               <div class="form-bottom">
-                <small ref="showHelpBlock" class="help-block" v-show="showHelpBlock">Required</small>
+                <small
+                  ref="showHelpBlock"
+                  class="help-block"
+                  v-show="showHelpBlockPayPhone"
+                >Required</small>
               </div>
             </form>
             <!-- loading -->
             <my-loading :show="showLoading"></my-loading>
-            <ul>
+            <ul ref="payUl">
               <li>
                 <span class="info-title">Account:</span>
                 <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
@@ -76,6 +80,14 @@
           </div>
           <button class="form-button" type="button" @click="$router.push('/Personal')">Skip</button>
         </section>
+        <!-- 支付失败盒子 -->
+        <section ref="payFailBox" class="pay-account" style="display:none">
+          <p>Sorry，payment failed, please repay</p>
+          <div class="pay-account-main">
+            <img class="fail-img" src="../../static/img/payment_fail.png" alt />
+          </div>
+          <button class="form-button" type="button" @click="repayHandle">Repay</button>
+        </section>
       </div>
     </div>
     <!-- 填写收货地址弹窗 -->
@@ -86,12 +98,13 @@
       @closeDialog="showDialog=false"
       showCancel
     >
-      <div slot="dialog-text">
+      <div slot="dialog-text" class="dialog-text">
         You have successfully registered and you are now a BF Suma
         distributor.
         Please write the address where you will want your welcome kit delivered or send. Thank you
       </div>
-      <div slot="dialog-table">
+      <div slot="dialog-table" class="dialog-table">
+        <!-- name -->
         <div class="form-wrap-box">
           <section class="form-item">
             <div class="form-item-top">
@@ -101,8 +114,7 @@
                   type="text"
                   class="item-main-inner"
                   placeholder="First Name"
-                  v-model="formParams.firstName"
-                  autofocus
+                  v-model="dialogParams.firstName"
                   :class="showHelpBlock ? 'show-help' : ''"
                 />
               </div>
@@ -118,7 +130,7 @@
                   class="item-main-inner"
                   type="text"
                   placeholder="Last Name"
-                  v-model="formParams.lastName"
+                  v-model="dialogParams.lastName"
                   :class="showHelpBlock1 ? 'show-help' : ''"
                 />
               </div>
@@ -128,13 +140,143 @@
             </div>
           </section>
         </div>
+        <!-- Phone -->
+        <div class="form-wrap-box">
+          <section class="form-item">
+            <div class="form-item-top">
+              <label class="item-lable">*Phone</label>
+              <div class="item-main">
+                <select
+                  class="item-main-inner"
+                  name="phoneHead"
+                  id="phoneHead"
+                  v-model="dialogParams.phoneHead"
+                >
+                  <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                  <option value="254">254</option>
+                  <option value="234">234</option>
+                  <option value="255">255</option>
+                  <option value="256">256</option>
+                  <option value="264">264</option>
+                  <option value="233">233</option>
+                  <option value="237">237</option>
+                  <option value="229">229</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
+            </div>
+          </section>
+          <section class="form-item" style="margin-left:16px">
+            <div class="form-item-top">
+              <div class="item-main">
+                <input
+                  class="item-main-inner"
+                  type="number"
+                  placeholder="Phone Number"
+                  v-model="dialogParams.phoneBody"
+                  maxlength="9"
+                  oninput="if(value.length>9)value=value.slice(0,9)"
+                  :class="showHelpBlock3 ? 'show-help' : ''"
+                />
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock3">Required</small>
+            </div>
+          </section>
+        </div>
+        <!-- address -->
+        <div class="form-wrap-box">
+          <section class="form-item">
+            <div class="form-item-top">
+              <label class="item-lable">*Address</label>
+              <div class="item-main">
+                <input
+                  class="item-main-inner"
+                  type="text"
+                  placeholder="Street Name/Building/Apartment No./Floor"
+                  :class="showHelpBlock4 ? 'show-help' : ''"
+                  v-model="dialogParams.address"
+                  autofocus
+                />
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock4">Required</small>
+            </div>
+          </section>
+        </div>
+        <div class="form-wrap-box">
+          <!-- country -->
+          <section class="form-item">
+            <div class="form-item-top">
+              <label class="item-lable">*Country</label>
+              <div class="item-main">
+                <select
+                  class="item-main-inner"
+                  v-model="dialogParams.country"
+                  :class="showHelpBlock6 ? 'show-help' : ''"
+                  @input="selectChange"
+                >
+                  <option disabled value style="display:none;">Choose Country</option>
+                  <option
+                    :value="country.value"
+                    v-for="(country,index) in countryList"
+                    :key="index"
+                  >{{country.text}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock6">Required</small>
+            </div>
+          </section>
+          <!-- city -->
+          <section class="form-item" style="margin-left:16px">
+            <div class="form-item-top">
+              <label class="item-lable">*City</label>
+              <div class="item-main">
+                <select
+                  class="item-main-inner"
+                  v-model="dialogParams.city"
+                  :class="showHelpBlock5 ? 'show-help' : ''"
+                  @input="selectChange"
+                >
+                  <option disabled value style="display:none;">Choose City</option>
+                  <option value="NAIROBI">NAIROBI</option>
+                  <option value="BUNGOMA">BUNGOMA</option>
+                  <option value="KISUMU">KISUMU</option>
+                  <option value="KISII">KISII</option>
+                  <option value="ELDORET">ELDORET</option>
+                  <option value="KITALE">KITALE</option>
+                  <option value="NAKURU">NAKURU</option>
+                  <option value="EMBU">EMBU</option>
+                  <option value="KIRIAINI">KIRIAINI</option>
+                  <option value="MOMBASA">MOMBASA</option>
+                  <option value="KAKAMEGA">KAKAMEGA</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock5">Required</small>
+            </div>
+          </section>
+        </div>
       </div>
     </my-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { payBill, payRequest } from "@/api/index";
+import {
+  payBill,
+  payRequest,
+  payStatus,
+  distributorUpgrade,
+  distributorAddress
+} from "@/api/index";
 import { toThousands } from "@/util/tool.js";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
@@ -144,17 +286,38 @@ export default {
   data() {
     return {
       showHelpBlock: false,
-      showPayError: false,
+      showHelpBlock1: false,
+      showHelpBlock2: false,
+      showHelpBlock3: false,
+      showHelpBlock4: false,
+      showHelpBlock5: false,
+      showHelpBlock6: false,
+      showHelpBlockPayPhone: false,
+      showNoPhone: false,
       showDialog: false,
       isPay: false,
       showLoading: false,
       email: "",
+      rightAmount: "",
+      countryList: [
+        { text: "Kenya", value: "Kenya" },
+        { text: "Cameroon", value: "Cameroon" },
+        { text: "China", value: "China" },
+        { text: "Ghana", value: "Ghana" },
+        { text: "Benin", value: "Benin" },
+        { text: "Nigeria", value: "Nigeria" },
+        { text: "Tanzania", value: "Tanzania" },
+        { text: "Uganda", value: "Uganda" },
+        { text: "Zambia", value: "Zambia" }
+      ],
+      // 页面参数
       formParams: {
         amount: "",
         payPhone: "",
         orderNo: ""
       },
-      rightAmount: ""
+      // 弹窗参数
+      dialogParams: {}
     };
   },
   computed: {
@@ -172,36 +335,94 @@ export default {
         const { payPhone } = this.formParams;
         // payPhone
         if (payPhone.trim().length !== 12) {
-          this.showHelpBlock = true;
+          this.showHelpBlockPayPhone = true;
           this.isPay = false;
-          this.showPayError = false;
+          this.showNoPhone = false;
+        } else {
+          this.showHelpBlockPayPhone = false;
+        }
+      },
+      deep: true
+    },
+    dialogParams: {
+      handler: function() {
+        const {
+          firstName,
+          lastName,
+          phoneHead,
+          phoneBody,
+          address,
+          country,
+          city
+        } = this.dialogParams;
+        //firstName
+        if (!firstName) {
+          this.showHelpBlock = true;
         } else {
           this.showHelpBlock = false;
+        }
+        //lastName
+        if (!lastName) {
+          this.showHelpBlock1 = true;
+        } else {
+          this.showHelpBlock1 = false;
+        }
+        //phoneHead
+        if (!phoneHead) {
+          this.showHelpBlock2 = true;
+        } else {
+          this.showHelpBlock2 = false;
+        }
+        //phoneBody
+        if (phoneBody.length !== 9) {
+          this.$refs.showHelpBlock3.innerHTML = "Format error";
+          this.showHelpBlock3 = true;
+        } else {
+          this.showHelpBlock3 = false;
+        }
+        //country
+        if (!country) {
+          this.showHelpBlock6 = true;
+        } else {
+          this.showHelpBlock6 = false;
+        }
+        //city
+        if (!city) {
+          this.showHelpBlock5 = true;
+        } else {
+          this.showHelpBlock5 = false;
         }
       },
       deep: true
     }
   },
   mounted() {
-    // 从session拿手机号
+    this.customerId = sessionStorage.getItem("customerInfo");
+    // 获取商户信息
+    this.payBill();
+    // 从session拿注册信息
     let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
+    const phone = payInfo.phone;
+    payInfo.phoneHead = phone.slice(0, 3);
+    payInfo.phoneBody = phone.slice(3);
+    payInfo.address = "";
+    this.dialogParams = payInfo;
+
+    console.log(this.dialogParams);
+
+    // 给页面参数赋值
     let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
     this.rightAmount = mySponsor.payAmount;
     this.formParams.amount = toThousands(mySponsor.payAmount);
     this.formParams.payPhone = payInfo.phone;
     this.formParams.orderNo = mySponsor.orderNo;
     this.email = payInfo.email;
-
-    // 获取支付信息
-    this.payBill();
   },
   methods: {
     async payBill() {
-      // 从session拿注册信息
-      let info = JSON.parse(sessionStorage.getItem("payInfo"));
-      let res = await payBill(info);
-      let errcode = res.code;
-      if (errcode === 0) {
+      let res = await payBill(this.customerId);
+      let rescode = res.code;
+      if (rescode === 0) {
         // 存到session
         sessionStorage.setItem("mySponsor", JSON.stringify(res.data));
       }
@@ -209,16 +430,65 @@ export default {
     async payHandle() {
       this.isPay = true;
       this.showLoading = true;
-      this.showDialog = true;
-      let res1 = await payRequest(this.formParams);
-      if (res1) this.showLoading = false;
-      let errcode1 = res1.code;
-      if (errcode1 === 101) {
-        // 请求失败
-        this.showPayError = true;
+      this.$refs.payUl.style.display = "none";
+      let res = await payRequest(this.formParams);
+      if (res) {
+        this.showLoading = false;
+        this.$refs.payUl.style.display = "block";
+      }
+      let rescode = res.code;
+      if (rescode === 0) {
+        // 获取支付状态
+        this.payStatus();
+      }
+      if (rescode === 101) {
+        // 支付失败
+        // this.showNoPhone = true;
+        this.$refs.payAccount.style.display = "none";
+        this.$refs.payFailBox.style.display = "block";
       }
     },
-    dialogHandle() {}
+    async payStatus() {
+      let res = await payStatus(this.formParams.orderNo);
+      console.log(res);
+      const rescode = res.code;
+      if (rescode === 0) {
+        // 顾客升级为经销商
+        this.distributorUpgrade();
+
+        this.showDialog = true;
+      } else if (rescode === 102) {
+        //失败处理
+      }
+    },
+    async distributorUpgrade() {
+      let customerId = this.customerId;
+      const reqData = { customerId, payPhone, orderNo };
+      let res = await distributorUpgrade(reqData);
+    },
+    async distributorAddress() {
+      const reqData = {};
+      let res = await distributorAddress(this.dialogParams);
+    },
+    selectChange() {},
+    dialogHandle(flag) {
+      if (flag) {
+        // 地址非空验证
+        if (!this.dialogParams.address.trim()) {
+          this.showHelpBlock4 = true;
+          return;
+        } else {
+          this.showHelpBlock4 = false;
+          // 发起请求
+          this.distributorAddress();
+        }
+      }
+    },
+    repayHandle() {
+      this.$refs.payFailBox.style.display = "none";
+      this.$refs.payAccount.style.display = "block";
+      this.isPay = false;
+    }
   },
   components: {
     "my-dialog": myDialog,
@@ -252,7 +522,6 @@ export default {
       margin 50px 0
       .pay-info
         flex 0.47
-        // padding-right 30px
         .img-wrap
           margin-right 30px
           img
@@ -269,6 +538,10 @@ export default {
           .pay-error
             position absolute
             color #a94442
+          .fail-img
+            display block
+            margin auto
+            width 193px
           .form-box
             display flex
             margin-top 40px
@@ -315,8 +588,6 @@ export default {
   .form-wrap-box
     display flex
     flex 1
-    &:nth-child(2n)
-      margin-left 40px
     @media (max-width: 980px)
       display block
       margin 0
@@ -332,6 +603,7 @@ export default {
         height 40px
         line-height 40px
         .item-lable
+          font-size 12px
           font-weight bold
           border-right 1px solid #BABABA
           color #4295C5
@@ -361,6 +633,7 @@ export default {
             flex 1
             height 100%
             color rgb(87, 87, 87)
+            padding-left 10px
             &.show-help
               box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
               &::placeholder

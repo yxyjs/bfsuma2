@@ -24,6 +24,8 @@ export default {
 .header-cont
   background-color #fff
   padding 10px 0 20px 0
+  @media (max-width: 980px)
+    display none
   .header-main
     display flex
     justify-content space-between

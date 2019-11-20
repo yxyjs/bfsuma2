@@ -22,4 +22,6 @@ export default {
   .app-md
     margin auto
     width 1120px
+    @media (max-width: 980px)
+      max-width 100vw
 </style>

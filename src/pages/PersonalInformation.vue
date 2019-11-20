@@ -266,7 +266,10 @@
       @dialogHandle="dialogHandle"
       @closeDialog="showDialog=false"
     >
-      <div slot="dialog-text">Account created, you can now log in with your mobile number or E-mail.</div>
+      <div
+        slot="dialog-text"
+        class="dialog-text"
+      >Account created, you can now log in with your mobile number or E-mail.</div>
     </my-dialog>
   </div>
 </template>
@@ -530,12 +533,13 @@ export default {
           this.formParams.sponsor = uplineId;
           this.formParams.upline = uplineId;
           sessionStorage.setItem("payInfo", JSON.stringify(this.formParams));
-          let res1 = await registerCustomer(this.formParams);
-          console.log(res1);
+          // 定义请求对象
+          const reqData = JSON.parse(JSON.stringify(this.formParams));
+          reqData.productInterests = JSON.stringify(reqData.productInterests);
+          let res1 = await registerCustomer(reqData);
           let errcode1 = res1.code;
           switch (errcode1) {
             case 101:
-              // this.showDialog = true;
               break;
             case 0:
               this.showDialog = true;
@@ -544,7 +548,6 @@ export default {
             default:
               break;
           }
-          // 成功,弹窗
         }
       }
     },
@@ -649,12 +652,6 @@ select, input
                     box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
                     &::placeholder
                       color #fff
-                  .item-main-help
-                    color #a94442
-                    font-weight normal
-                    @media (max-width: 980px)
-                      display none
-                      margin-top 4px
                 .item-icon
                   color #ccc
             .form-item-bottom

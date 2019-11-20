@@ -4,7 +4,7 @@
       <header>
         <h2>{{title}}</h2>
       </header>
-      <main class="dialog-text">
+      <main class="dialog-main">
         <slot name="dialog-text"></slot>
         <slot name="dialog-table"></slot>
       </main>
@@ -60,9 +60,10 @@ export default {
   left 0
   margin auto
   width 100vw
-  height 100vh
+  min-height 100vh
   text-align center
   background-color rgba(0, 0, 0, 0.3)
+  z-index 2
   @media (max-width: 980px)
     background-color rgba(0, 0, 0, 0.5)
   .dialog-wrap
@@ -78,16 +79,19 @@ export default {
       color #56a7d8
       text-align center
       margin 25px 0
-    .dialog-text
+    .dialog-main
       text-align left
       font-size 16px
-      font-weight bold
       line-height 32px
-      a
-        display block
-        color #56a7d8
-        @media (max-width: 980px)
-          margin 10px 0 0 10px
+      .dialog-text
+        font-weight bold
+        a
+          display block
+          color #56a7d8
+          @media (max-width: 980px)
+            margin 10px 0 0 10px
+      .dialog-table
+        margin-top 20px
     .dialog-icon
       position absolute
       right 20px
@@ -117,6 +121,10 @@ export default {
             border-radius 0
         .btn-cancel
           background-color #ddd
+          &:hover
+            background-color #bbb
         .btn-confirm
           background-color #56a7d8
+          &:hover
+            background-color #286090
 </style>

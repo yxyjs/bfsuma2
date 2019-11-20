@@ -4,6 +4,7 @@ import CountrySponsor from '@/pages/CountrySponsor'
 import PersonalInformation from '@/pages/PersonalInformation'
 import Payment from '@/pages/Payment'
 import Personal from '@/pages/Personal'
+import Business from '@/pages/Business'
 
 Vue.use(Router)
 
@@ -33,6 +34,11 @@ let router = new Router({
       path: '/Personal',
       name: 'Personal',
       component: Personal,
+    },
+    {
+      path: '/Business',
+      name: 'Business',
+      component: Business,
     },
   ]
 })
