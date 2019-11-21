@@ -1,13 +1,17 @@
 <template>
   <div id="country-cont">
-    <my-header />
+    <my-header>
+      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <span>/ Distributor Register</span>
+    </my-header>
     <my-step>
-      <img src="../../static/img/country_sponsor.png" alt />
+      <img src="../../../../static/img/country_sponsor.png" alt />
     </my-step>
     <form action="/" class="form" @submit.prevent="submitHandle">
       <p class="top-tips">
         You are now taking your first steps to becoming a BF Suma Distributor.
-        <br />Begin the registration process by selecting a country and your sponsor below：
+        <br />Begin the registration process by selecting a country and your
+        sponsor below：
       </p>
       <p class="required">*Required</p>
       <div class="checkbox">
@@ -15,12 +19,12 @@
         <div class="checkbox-radio">
           <div class="radio-item">
             <input ref="input" type="radio" name="flag" id="yes" checked />
-            <img class="checked-img" src="../../static/img/checked.png" alt />
+            <img class="checked-img" src="../../../../static/img/checked.png" alt />
             <label for="yes">Yes</label>
           </div>
-          <div class="radio-item" @click="showDialog=true">
+          <div class="radio-item" @click="showDialog = true">
             <input type="radio" name="flag" id="no" />
-            <img class="checked-img" src="../../static/img/checked.png" alt />
+            <img class="checked-img" src="../../../../static/img/checked.png" alt />
             <label for="no">No</label>
           </div>
         </div>
@@ -39,12 +43,12 @@
                     :class="showHelpBlock ? 'show-help' : ''"
                     @input="selectChange"
                   >
-                    <option disabled value style="display:none;">Select Registrant’s Country</option>
+                    <option disabled value style="display:none;">Select Country</option>
                     <option
                       :value="country.value"
-                      v-for="(country,index) in countryList"
+                      v-for="(country, index) in countryList"
                       :key="index"
-                    >{{country.text}}</option>
+                    >{{ country.text }}</option>
                   </select>
                 </div>
               </div>
@@ -62,7 +66,7 @@
                     :class="showHelpBlock1 ? 'show-help' : ''"
                     @input="selectChange"
                   >
-                    <option disabled value style="display:none;">Fill in the city</option>
+                    <option disabled value style="display:none;">Select City</option>
                     <option value="NAIROBI">NAIROBI</option>
                     <option value="BUNGOMA">BUNGOMA</option>
                     <option value="KISUMU">KISUMU</option>
@@ -98,19 +102,19 @@
                   Gage get
                   <span>
                     <strong>ID:</strong>
-                    {{currentSponsor.distributorId}}
+                    {{ currentSponsor.distributorId }}
                   </span>
                   <span>
                     <strong>Gender:</strong>
-                    {{currentSponsor.gender}}
+                    {{ currentSponsor.gender }}
                   </span>
                   <span>
                     <strong>Mobile Number:</strong>
-                    {{currentSponsor.phone}}
+                    {{ currentSponsor.phone }}
                   </span>
                   <span>
                     <strong>E-mail:</strong>
-                    {{currentSponsor.email}}
+                    {{ currentSponsor.email }}
                   </span>
                 </div>
               </div>
@@ -127,19 +131,19 @@
                   Gage get
                   <span>
                     <strong>ID:</strong>
-                    {{currentSponsor.distributorId}}
+                    {{ currentSponsor.distributorId }}
                   </span>
                   <span>
                     <strong>Gender:</strong>
-                    {{currentSponsor.gender}}
+                    {{ currentSponsor.gender }}
                   </span>
                   <span>
                     <strong>Mobile Number:</strong>
-                    {{currentSponsor.phone}}
+                    {{ currentSponsor.phone }}
                   </span>
                   <span>
                     <strong>E-mail:</strong>
-                    {{currentSponsor.email}}
+                    {{ currentSponsor.email }}
                   </span>
                 </div>
               </div>
@@ -187,24 +191,24 @@
       </div>
       <!-- system-recommend -->
       <div class="system-recommend" v-show="!recommendList.length">
-        <p
-          class="no-data"
-          v-show="!recommendList.length && showNoData"
-        >We couldn't find any matching Distributor. Please, try with a different term.</p>
+        <p class="no-data" v-show="!recommendList.length && showNoData">
+          We couldn't find any matching Distributor. Please, try with a
+          different term.
+        </p>
         <div>
           <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
-          <img @click="getRecommend" src="../../static/img/become.png" alt />
+          <img @click="getRecommend" src="../../../../static/img/become.png" alt />
         </div>
       </div>
       <!-- 赞助商列表 -->
       <div class="recommend-list" v-show="recommendList.length">
         <p class="tableTips" v-show="tableTips">
           We can recommend
-          <span>{{recommendList.length}}</span> matches for you to choose from
+          <span>{{ recommendList.length }}</span> matches for you to choose from
         </p>
         <p class="tableTips" v-show="!tableTips">
           We found
-          <span>{{recommendList.length}}</span> matches based on your search
+          <span>{{ recommendList.length }}</span> matches based on your search
         </p>
         <!-- loading -->
         <my-loading :show="showLoading"></my-loading>
@@ -222,13 +226,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(recommend ,index) in recommendList" :key="index">
-                <td>{{recommend.distributorName}}</td>
-                <td style="backgroundColor:#DCDCDC">{{recommend.distributorId}}</td>
-                <td>{{recommend.gender}}</td>
-                <td>{{recommend.city}}</td>
-                <td>{{recommend.phone}}</td>
-                <td>{{recommend.email}}</td>
+              <tr v-for="(recommend, index) in recommendList" :key="index">
+                <td>{{ recommend.distributorName }}</td>
+                <td style="backgroundColor:#DCDCDC">{{ recommend.distributorId }}</td>
+                <td>{{ recommend.gender }}</td>
+                <td>{{ recommend.city }}</td>
+                <td>{{ recommend.phone }}</td>
+                <td>{{ recommend.email }}</td>
                 <td>
                   <button
                     type="button"
@@ -242,30 +246,35 @@
         </div>
       </div>
       <div class="next-btn-wrap">
-        <button class="next-btn" @click="nextHandle">Next</button>
+        <button class="next-btn" @click="submitHandle">Next</button>
       </div>
-      <!-- 年龄不足18的弹框 -->
-      <my-dialog
-        title="Minor reminder"
-        :showDialog="showDialog"
-        showCancel
-        @dialogHandle="dialogHandle"
-        @closeDialog="closeDialog"
-      >
-        <div slot="dialog-text" class="dialog-text">
-          <p>Sorry,you can’t be a distributor of BF Suma if you are under 18 years old.</p>
-          <p>But you can recommend relative or neighbor around you who is over 18 to become distributors of BFSuma!</p>
-          <p>If you are over 16, you can try our products.</p>
-          <a href="http://www.bfsuma.com/products/en">Now，have a look at the product！</a>
-        </div>
-      </my-dialog>
     </form>
+    <!-- 年龄不足18的弹框 -->
+    <my-dialog
+      title="Minor reminder"
+      :showDialog="showDialog"
+      showCancel
+      @dialogHandle="dialogHandle"
+      @closeDialog="closeDialog"
+    >
+      <div slot="dialog-text" class="dialog-text">
+        <p>
+          Sorry,you can’t be a distributor of BF Suma if you are under 18 years
+          old.
+        </p>
+        <p>
+          But you can recommend relative or neighbor around you who is over 18
+          to become distributors of BFSuma!
+        </p>
+        <p>If you are over 16, you can try our products.</p>
+        <a href="http://www.bfsuma.com/products/en">Now，have a look at the product！</a>
+      </div>
+    </my-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { sponsorRecommend, getAllCountry, searchSponsor } from "@/api/index";
-import { Checkbox } from "vant";
+import { sponsorRecommend, searchSponsor, getAllCountry } from "@/api/index";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -334,6 +343,10 @@ export default {
         }
       },
       deep: true
+    },
+    // this.$route.path
+    "$route.path": function(newVal, oldVal) {
+      console.log(newVal + "---" + oldVal);
     }
   },
   mounted() {
@@ -431,8 +444,7 @@ export default {
       this.showHelpBlockSponsor = false;
     },
 
-    submitHandle() {},
-    nextHandle() {
+    submitHandle() {
       // 读取session
       let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
       if (!connectObj) {
@@ -444,13 +456,12 @@ export default {
         } else if (!city) {
           this.showHelpBlock1 = true;
         } else {
-          this.$router.push("/PersonalInformation");
+          this.$router.push("/register/distributor/personalInformation");
         }
       }
     }
   },
   components: {
-    "van-checkbox": Checkbox,
     "my-dialog": myDialog,
     "my-header": myHeader,
     "my-step": myStep,
@@ -475,7 +486,6 @@ select, input
       min-height 100vh
     .top-tips
       font-size 14px
-      font-family PingFang-SC-Bold, PingFang-SC
       font-weight bold
       color #575757
       line-height 30px

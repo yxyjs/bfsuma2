@@ -128,12 +128,10 @@ html {
 }
 
 body {
-  font-family: "PingFang-SC-Bold,PingFang-SC";
   color: #696969;
   background-color: #f5f5f5;
-  font-size: 14px;
-  line-height: 1.2;
   -webkit-text-size-adjust: none;
+  font: 14px/1.5 arial, Microsoft YaHei, tahoma, Hiragino Sans GB, \\5b8b\4f53, sans-serif
 }
 
 a {
@@ -296,9 +294,7 @@ a {
     margin: auto;
     color: #575757;
     background-color: #fafafa;
-    font-size: 14px;
-    line-height: 150%;
-    font-family: "San Francisco", "Helvetica Neue", "PingHei", "Hiragino Sans GB", "Microsoft Yahei", "Arial Unicode MS", "Arial", "Verdana", "SimHei", "Geneva", "sans-serif";
+    font: 14px/1.5 arial, Microsoft YaHei, tahoma, Hiragino Sans GB, \\5b8b\4f53, sans-serif
   }
   html {
     font-size: 100px;

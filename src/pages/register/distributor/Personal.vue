@@ -8,7 +8,7 @@
             class="item-title head"
           >The distributor registration fee order has not been paid yet, go pay now.</p>
           <div class="item-list-box" style="border-left:none">
-            <img class="item-img" src="../../static/img/payment_banner.png" alt />
+            <img class="item-img" src="../../../../static/img/payment_banner.png" alt />
             <p class="item-text">Distributor Register Fee</p>
             <p class="item-text">KES {{payAmount}}</p>
           </div>
@@ -22,7 +22,7 @@
             </div>
             <div class="item-list">
               <p>Name：</p>
-              <p class="item-list-right">{{uplineData.distributorName}}</p>
+              <p class="item-list-right">{{uplineData.name}}</p>
             </div>
             <div class="item-list">
               <p>Address：</p>
@@ -47,7 +47,7 @@
             </div>
             <div class="item-list">
               <p>Name：</p>
-              <p class="item-list-right">{{sponsorData.distributorName}}</p>
+              <p class="item-list-right">{{sponsorData.name}}</p>
             </div>
             <div class="item-list">
               <p>Address：</p>
@@ -70,6 +70,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { distributorCustomer } from "@/api/index";
 import { toThousands } from "@/util/tool.js";
 export default {
   data() {
@@ -83,15 +84,34 @@ export default {
     };
   },
   mounted() {
-    let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
-    this.firstName = payInfo.firstName;
-    this.lastName = payInfo.lastName;
-    let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
-    this.payAmount = toThousands(mySponsor.payAmount);
-    let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
-    this.sponsorData = connectObj.sponsorData;
-    this.uplineData = connectObj.uplineData;
-    this.distSponsor = connectObj.distSponsor;
+    let user = JSON.parse(sessionStorage.getItem('user'))
+    this.distributorCustomer(user.id)
+
+    
+
+    // let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
+    // // this.firstName = payInfo.firstName;
+    // this.lastName = payInfo.lastName;
+    // let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+    // this.payAmount = toThousands(mySponsor.payAmount);
+    // let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
+    // this.sponsorData = connectObj.sponsorData;
+    // this.uplineData = connectObj.uplineData;
+    // this.distSponsor = connectObj.distSponsor;
+  },
+  methods:{
+    async distributorCustomer(id){
+      let result = await distributorCustomer(id)
+      const res = result.data
+      const rescode = result.code
+      if(rescode === 0){
+        this.sponsorData = res.sponsor
+        this.uplineData = res.upline
+        this.firstName = res.firstName
+        this.lastName = res.lastName
+        this.payAmount = res.payAmount
+      }
+    }
   },
   components: {}
 };
@@ -105,7 +125,6 @@ export default {
     padding 20px
     .top-tips
       font-size 14px
-      font-family PingFang-SC-Bold, PingFang-SC
       font-weight bold
       color #575757
       line-height 30px

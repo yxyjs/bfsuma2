@@ -1,21 +1,32 @@
 <template>
-  <header class="header">
-    <p class="header-title">Become a Distributor</p>
-    <p class="header-crumbs">You are here：Home / Register / Distributor Register</p>
+  <header id="header-cont">
+    <p class="header-title">{{ title }}</p>
+    <p class="header-crumbs">
+      You are here：
+      <a href="http://www.bfsuma.com/">Home /</a>
+      <slot></slot>
+    </p>
   </header>
 </template>
 
 <script type="text/ecmascript-6">
 export default {
+  props: {
+    title: {
+      type: String,
+      default: "Become a Distributor"
+    }
+  },
   data() {
     return {};
   },
+  mounted() {},
   components: {}
 };
 </script>
 
 <style scoped lang="stylus">
-.header
+#header-cont
   display flex
   justify-content space-between
   margin-top 32px
@@ -24,11 +35,9 @@ export default {
     display none
   .header-title
     font-size 36px
-    font-family PingFang-SC-Bold, PingFang-SC
     color #5BA2CC
     @media (max-width: 980px)
       font-size 16px
   .header-crumbs
-    font-family PingFang-SC-Bold, PingFang-SC
     color #9A9A9A
 </style>

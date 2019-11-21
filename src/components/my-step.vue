@@ -1,5 +1,5 @@
 <template>
-  <div id="my-step">
+  <div id="step-cont">
     <slot></slot>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-#my-step
+#step-cont
   margin-top 10px
   background-color #fff
   text-align center

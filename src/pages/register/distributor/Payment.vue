@@ -2,7 +2,7 @@
   <div id="payment-cont">
     <my-header />
     <my-step>
-      <img src="../../static/img/payment.png" alt />
+      <img src="../../../../static/img/payment.png" alt />
     </my-step>
     <div class="pay-mid">
       <p
@@ -11,7 +11,7 @@
       <div class="pay-main">
         <section class="pay-info">
           <div class="img-wrap">
-            <img src="../../static/img/payment_banner.png" alt />
+            <img src="../../../../static/img/payment_banner.png" alt />
           </div>
           <ul>
             <li>
@@ -84,7 +84,7 @@
         <section ref="payFailBox" class="pay-account" style="display:none">
           <p>Sorry，payment failed, please repay</p>
           <div class="pay-account-main">
-            <img class="fail-img" src="../../static/img/payment_fail.png" alt />
+            <img class="fail-img" src="../../../../static/img/payment_fail.png" alt />
           </div>
           <button class="form-button" type="button" @click="repayHandle">Repay</button>
         </section>
@@ -508,7 +508,6 @@ export default {
     margin-top 20px
     .top-tips
       font-size 14px
-      font-family PingFang-SC-Bold, PingFang-SC
       font-weight bold
       color #575757
       line-height 30px

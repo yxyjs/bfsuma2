@@ -1,5 +1,5 @@
 <template>
-  <div class="my-toast" v-if="showToast">
+  <div id="toast-cont" v-if="showToast">
     <p class="toast-text">{{toastText}}</p>
     <i class="toast-icon iconfont icon-del-" @click="closeToast"></i>
   </div>
@@ -39,7 +39,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.my-toast
+#toast-cont
   display flex
   align-items center
   position absolute

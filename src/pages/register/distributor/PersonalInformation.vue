@@ -1,8 +1,11 @@
 <template>
   <div id="personal-cont">
-    <my-header />
+    <my-header>
+      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <span>/ Distributor Register</span>
+    </my-header>
     <my-step>
-      <img src="../../static/img/personal_information.png" alt />
+      <img src="../../../../static/img/personal_information.png" alt />
     </my-step>
     <form action="/" method="POST" class="form" @submit.prevent="submitHandle">
       <p class="top-tips">Step two, please fill in your personal information：</p>
@@ -62,9 +65,9 @@
                     <option disabled value style="display:none;">Select gender</option>
                     <option
                       :value="gender.text"
-                      v-for="(gender,index) in genderList"
+                      v-for="(gender, index) in genderList"
                       :key="index"
-                    >{{gender.value}}</option>
+                    >{{ gender.value }}</option>
                   </select>
                 </div>
               </div>
@@ -146,7 +149,7 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    :type="!showPrePassword? 'password':'text'"
+                    :type="!showPrePassword ? 'password' : 'text'"
                     placeholder="8~15 character,at least one letter and one number"
                     v-model="prePassword"
                     maxlength="15"
@@ -168,7 +171,7 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    :type="!showPassword? 'password':'text'"
+                    :type="!showPassword ? 'password' : 'text'"
                     placeholder="Reenter Password"
                     v-model="formParams.password"
                     maxlength="15"
@@ -189,9 +192,9 @@
       <!-- 密码验证提示 -->
       <div class="error-wrap">
         <div class="error-item" v-show="prePassword">
-          <div v-for="(error,index) in passwordErrorList" :key="index">
+          <div v-for="(error, index) in passwordErrorList" :key="index">
             <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
-            <span>{{error}}</span>
+            <span>{{ error }}</span>
           </div>
         </div>
         <div class="error-item" ref>
@@ -210,7 +213,7 @@
       </div>
       <p class="country-tips">Which products are you interested in？</p>
       <div class="product-interest">
-        <div class="checkbox-wrap" v-for="(interest,index) in productInterestList" :key="index">
+        <div class="checkbox-wrap" v-for="(interest, index) in productInterestList" :key="index">
           <input
             class="check-input"
             type="checkbox"
@@ -219,16 +222,20 @@
             :value="interest.value"
             v-model="formParams.productInterests"
           />
-          <img class="check-img" src="../../static/img/checked.png" alt />
+          <img class="check-img" src="../../../../static/img/checked.png" alt />
           <label :for="interest.value" class="interest-label-box">
-            <img class="check-box-img" src="../../static/img/check_box.png" alt />
+            <img class="check-box-img" src="../../../../static/img/check_box.png" alt />
           </label>
-          <label class="check-label" :for="interest.value">{{interest.value}}</label>
+          <label class="check-label" :for="interest.value">
+            {{
+            interest.value
+            }}
+          </label>
         </div>
       </div>
       <p class="country-tips">Where did you learn about BF Suma？</p>
       <div class="product-interest">
-        <div class="checkbox-wrap" v-for="(learn,index) in learnBfList" :key="index">
+        <div class="checkbox-wrap" v-for="(learn, index) in learnBfList" :key="index">
           <input
             class="check-input"
             type="radio"
@@ -237,8 +244,12 @@
             :value="learn.value"
             v-model="formParams.source"
           />
-          <img class="check-img" src="../../static/img/checked.png" alt />
-          <label class="check-label before" :for="learn.value">{{learn.value}}</label>
+          <img class="check-img" src="../../../../static/img/checked.png" alt />
+          <label class="check-label before" :for="learn.value">
+            {{
+            learn.value
+            }}
+          </label>
         </div>
       </div>
       <div class="country-tips">
@@ -250,7 +261,7 @@
       </div>
       <!-- btn -->
       <div class="btn-wrap">
-        <button class="btn btn-back" type="button" @click="$router.push('/CountrySponsor')">Back</button>
+        <button class="btn btn-back" type="button" @click="$router.go(-1)">Back</button>
         <button
           class="btn btn-submit"
           type="submit"
@@ -264,7 +275,7 @@
       title="Create account"
       :showDialog="showDialog"
       @dialogHandle="dialogHandle"
-      @closeDialog="showDialog=false"
+      @closeDialog="showDialog = false"
     >
       <div
         slot="dialog-text"
@@ -473,7 +484,7 @@ export default {
   mounted() {},
   methods: {
     async submitHandle() {
-      const { firstName, lastName, email } = this.formParams;
+      let { firstName, lastName, email } = this.formParams;
       // 非空验证
       if (!firstName.trim()) {
         this.showHelpBlock = true;
@@ -497,57 +508,67 @@ export default {
           return;
         } else {
           // 验证邮箱或手机是否被注册过
-          // 101;邮箱和手机被使用了
-          // 102;邮箱被使用了
-          // 102;手机号码被使用了
-          let res = await registerCheck(email, this.computedPhone);
-          const errcode = res.code;
-          switch (errcode) {
-            case 101:
-              this.showHelpBlock3 = true;
-              this.$refs.showHelpBlock3.innerHTML =
-                "Already bound, please replace one";
-              this.showHelpBlock2 = true;
-              this.$refs.showHelpBlock2.innerHTML =
-                "Already bound, please replace one";
-              break;
-            case 102:
-              this.showHelpBlock2 = true;
-              this.$refs.showHelpBlock2.innerHTML =
-                "Already bound, please replace one";
-              break;
-            case 103:
-              this.showHelpBlock3 = true;
-              this.$refs.showHelpBlock3.innerHTML =
-                "Already bound, please replace one";
-              break;
-            default:
-              break;
-          }
-          // 提交表单注册
-          this.formParams.phone = this.computedPhone;
-          const connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
-          const { distSponsor, uplineId } = connectObj;
-          this.formParams.country = distSponsor.country;
-          this.formParams.city = distSponsor.city;
-          this.formParams.sponsor = uplineId;
-          this.formParams.upline = uplineId;
-          sessionStorage.setItem("payInfo", JSON.stringify(this.formParams));
-          // 定义请求对象
-          const reqData = JSON.parse(JSON.stringify(this.formParams));
-          reqData.productInterests = JSON.stringify(reqData.productInterests);
-          let res1 = await registerCustomer(reqData);
-          let errcode1 = res1.code;
-          switch (errcode1) {
-            case 101:
-              break;
-            case 0:
-              this.showDialog = true;
-              sessionStorage.setItem("customerInfo", res1.data);
-              break;
-            default:
-              break;
-          }
+          this.registerCheck();
+        }
+      }
+    },
+    async registerCheck() {
+      let res = await registerCheck(this.formParams.email, this.computedPhone);
+      const errcode = res.code;
+      switch (errcode) {
+        case 0:
+          // 调用注册接口
+          this.registerCustomer();
+        case 101: //邮箱和手机被使用了
+          this.showHelpBlock3 = true;
+          this.$refs.showHelpBlock3.innerHTML =
+            "Already bound, please replace one";
+          this.showHelpBlock2 = true;
+          this.$refs.showHelpBlock2.innerHTML =
+            "Already bound, please replace one";
+          break;
+        case 102: //邮箱被使用了
+          this.showHelpBlock2 = true;
+          this.$refs.showHelpBlock2.innerHTML =
+            "Already bound, please replace one";
+          break;
+        case 103: //手机号码被使用了
+          this.showHelpBlock3 = true;
+          this.$refs.showHelpBlock3.innerHTML =
+            "Already bound, please replace one";
+          break;
+        default:
+          break;
+      }
+    },
+    async registerCustomer() {
+      this.formParams.phone = this.computedPhone;
+      const connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
+      const { distSponsor, uplineId } = connectObj;
+      this.formParams.country = distSponsor.country;
+      this.formParams.city = distSponsor.city;
+      this.formParams.sponsor = uplineId;
+      this.formParams.upline = uplineId;
+      sessionStorage.setItem("payInfo", JSON.stringify(this.formParams));
+      // 定义请求对象
+      const reqData = JSON.parse(JSON.stringify(this.formParams));
+      reqData.productInterests = JSON.stringify(reqData.productInterests);
+      const res = await registerCustomer(reqData);
+      if (!res) {
+        this.showToast = true;
+        this.toastText("Password setting failed");
+        return;
+      } else {
+        const rescode = res.code;
+        switch (rescode) {
+          case 0:
+            this.showDialog = true;
+            sessionStorage.setItem("customerInfo", res.data);
+            break;
+          case 101:
+            break;
+          default:
+            break;
         }
       }
     },
@@ -583,7 +604,6 @@ select, input
       min-height 100vh
     .top-tips
       font-size 14px
-      font-family PingFang-SC-Bold, PingFang-SC
       font-weight bold
       color #575757
       line-height 30px

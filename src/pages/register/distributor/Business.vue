@@ -2,7 +2,7 @@
   <div id="business-cont">
     <my-header />
     <my-step>
-      <img src="../../static/img/business.png" alt />
+      <img src="../../../../static/img/business.png" alt />
     </my-step>
     <div class="business-mid">
       <section class="md-item">

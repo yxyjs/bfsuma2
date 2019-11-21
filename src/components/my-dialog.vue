@@ -1,20 +1,27 @@
 <template>
-  <div id="my-dialog" v-if="showDialog">
+  <div id="dialog-cont" v-if="showDialog">
     <div class="dialog-wrap">
       <header>
-        <h2>{{title}}</h2>
+        <h2>{{ title }}</h2>
       </header>
       <main class="dialog-main">
         <slot name="dialog-text"></slot>
         <slot name="dialog-table"></slot>
       </main>
-      <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
+      <i
+        class="dialog-icon iconfont icon-del-"
+        @click.prevent="closeDialog"
+      ></i>
       <footer class="dialog-buttons">
         <div class="buttons-item" v-show="showCancel">
-          <button class="btn btn-cancel" @click.prevent="dialogHandle(false)">Cancel</button>
+          <button class="btn btn-cancel" @click.prevent="dialogHandle(false)">
+            Cancel
+          </button>
         </div>
         <div class="buttons-item">
-          <button class="btn btn-confirm" @click.prevent="dialogHandle(true)">Confirm</button>
+          <button class="btn btn-confirm" @click.prevent="dialogHandle(true)">
+            Confirm
+          </button>
         </div>
       </footer>
     </div>
@@ -54,7 +61,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-#my-dialog
+#dialog-cont
   position fixed
   top 0
   left 0

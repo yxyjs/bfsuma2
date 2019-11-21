@@ -1,10 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import CountrySponsor from '@/pages/CountrySponsor'
-import PersonalInformation from '@/pages/PersonalInformation'
-import Payment from '@/pages/Payment'
-import Personal from '@/pages/Personal'
-import Business from '@/pages/Business'
+// register
+import RegisterIndex from "@/pages/register/Index"
+import RegisterAgreement from "@/pages/register/Agreement"
+import DistributorCountrySponsor from '@/pages/register/distributor/CountrySponsor'
+import DistributorPersonalInformation from '@/pages/register/distributor/PersonalInformation'
+import DistributorPayment from '@/pages/register/distributor/Payment'
+import DistributorPersonal from '@/pages/register/distributor/Personal'
+import DistributorBusiness from '@/pages/register/distributor/Business'
+
+// login
+import LoginIndex from "@/pages/login/Index"
+// findpassword
+import FindPassword from "@/pages/login/FindPassword"
 
 Vue.use(Router)
 
@@ -12,35 +20,46 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      name: 'CountrySponsor',
-      component: CountrySponsor
+      redirect: '/register'
     },
     {
-      path: '/CountrySponsor',
-      name: 'CountrySponsor',
-      component: CountrySponsor,
+      path: '/register',
+      component: RegisterIndex
     },
     {
-      path: '/PersonalInformation',
-      name: 'PersonalInformation',
-      component: PersonalInformation,
+      path: '/register/agreement',
+      component: RegisterAgreement
     },
     {
-      path: '/Payment',
-      name: 'Payment',
-      component: Payment,
+      path: '/register/distributor',
+      component: DistributorCountrySponsor
     },
     {
-      path: '/Personal',
-      name: 'Personal',
-      component: Personal,
+      path: '/register/distributor/personalInformation',
+      component: DistributorPersonalInformation
     },
     {
-      path: '/Business',
-      name: 'Business',
-      component: Business,
+      path: '/register/distributor/payment',
+      component: DistributorPayment
     },
+    {
+      path: '/register/distributor/personal',
+      component: DistributorPersonal
+    },
+    {
+      path: '/register/distributor/business',
+      component: DistributorBusiness
+    },
+    {
+      path: '/login',
+      component: LoginIndex
+    },
+    {
+      path: '/findPassword',
+      component: FindPassword
+    }
   ]
 })
+
 
 export default router
