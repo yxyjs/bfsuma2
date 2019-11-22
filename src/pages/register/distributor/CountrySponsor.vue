@@ -40,7 +40,6 @@
                   <select
                     class="item-main-inner"
                     v-model="formParams.country"
-                    :class="showHelpBlock ? 'show-help' : ''"
                     @input="selectChange"
                   >
                     <option disabled value style="display:none;">Select Country</option>
@@ -53,19 +52,14 @@
                 </div>
               </div>
               <div class="form-item-bottom">
-                <small ref="showHelpBlock" class="help-block" v-show="showHelpBlock">Required</small>
+                <small ref="countryEmpty" class="help-block">Required</small>
               </div>
             </section>
             <section class="form-item margin-l">
               <div class="form-item-top">
                 <label class="item-lable">*City</label>
                 <div class="item-main">
-                  <select
-                    class="item-main-inner"
-                    v-model="formParams.city"
-                    :class="showHelpBlock1 ? 'show-help' : ''"
-                    @input="selectChange"
-                  >
+                  <select class="item-main-inner" v-model="formParams.city" @input="selectChange">
                     <option disabled value style="display:none;">Select City</option>
                     <option value="NAIROBI">NAIROBI</option>
                     <option value="BUNGOMA">BUNGOMA</option>
@@ -83,7 +77,7 @@
               </div>
               <!-- smallhelp -->
               <div class="form-item-bottom">
-                <small ref="showHelpBlock1" class="help-block" v-show="showHelpBlock1">Required</small>
+                <small ref="cityEmpty" class="help-block">Required</small>
               </div>
             </section>
           </div>
@@ -167,23 +161,14 @@
                     class="item-main-inner"
                     type="text"
                     placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-                    :class="showHelpBlock2 && !sponsor ? 'show-help' : ''"
                     v-model="sponsor"
                   />
                   <button class="item-searchbtn" @click="searchHandle">Search</button>
                 </div>
               </div>
               <div class="form-item-bottom">
-                <small
-                  ref="showHelpBlock2"
-                  class="help-block"
-                  v-show="showHelpBlock2 && !sponsor"
-                >Required</small>
-                <small
-                  ref="showHelpBlockSponsor"
-                  class="help-block"
-                  v-if="showHelpBlockSponsor"
-                >*Please connect your sponsor</small>
+                <small ref="sponsorEmpty" class="help-block">Required</small>
+                <small ref="noConnect" class="help-block">*Please connect your sponsor</small>
               </div>
             </section>
           </div>
@@ -246,7 +231,7 @@
         </div>
       </div>
       <div class="next-btn-wrap">
-        <button class="next-btn" @click="submitHandle">Next</button>
+        <button type="submit" class="next-btn" @click.prevent="submitHandle">Next</button>
       </div>
     </form>
     <!-- 年龄不足18的弹框 -->
@@ -286,11 +271,7 @@ export default {
       checked: true,
       showDialog: false,
       showNoData: false,
-      showHelpBlock: false,
-      showHelpBlock1: false,
-      showHelpBlock2: false,
       showLoading: false,
-      showHelpBlockSponsor: false,
       tableTips: false,
       currentStep: 0,
       currentSponsor: {},
@@ -316,39 +297,13 @@ export default {
       recommendList: []
     };
   },
-  computed: {},
-  watch: {
-    sponsor: val => {
-      if (val) {
-        console.log("sponsor", val);
-      }
-    },
-    formParams: {
-      handler: function() {
-        const { country, city } = this.formParams;
-        // country
-        if (!country) {
-          this.showHelpBlock = true;
-        } else {
-          this.showHelpBlock = false;
-        }
-        // city
-        if (!city) {
-          this.showHelpBlock1 = true;
-        } else {
-          this.showHelpBlock1 = false;
-          if (this.showHelpBlockSponsor) {
-            this.showHelpBlockSponsor = false;
-          }
-        }
-      },
-      deep: true
-    },
-    // this.$route.path
-    "$route.path": function(newVal, oldVal) {
-      console.log(newVal + "---" + oldVal);
+  computed: {
+    emptyVerify() {
+      const { country, city } = this.formParams;
+      return country && city;
     }
   },
+  watch: {},
   mounted() {
     // this.getAllCountry();
     // this.getRecommend();
@@ -370,19 +325,8 @@ export default {
       this.recommendList = [];
     },
     async searchHandle() {
-      // 非空验证
-      const { country, city } = this.formParams;
-      if (!country) {
-        this.showHelpBlock = true;
-        this.showHelpBlock1 = true;
-        this.showHelpBlock2 = true;
-      } else if (!city) {
-        this.showHelpBlock1 = true;
-        this.showHelpBlock2 = true;
-      } else if (!this.sponsor.trim()) {
-        this.showHelpBlock2 = true;
-        return;
-      } else {
+      this._formVerify();
+      if (this.emptyVerify && this.sponsor.trim()) {
         // 发送异步请求搜索赞助者
         let { country, city } = this.formParams;
         let res = await searchSponsor(
@@ -403,15 +347,9 @@ export default {
     },
     // 获取推荐赞助商列表
     async getRecommend() {
-      const { country, city } = this.formParams;
-      // 非空验证
-      if (!country) {
-        this.showHelpBlock = true;
-        this.showHelpBlock1 = true;
-      } else if (!city) {
-        this.showHelpBlock1 = true;
-        return;
-      } else {
+      this._formVerify();
+      if (this.emptyVerify) {
+        const { country, city } = this.formParams;
         this.showLoading = true;
         let res = await sponsorRecommend(country, city);
         if (res) this.showLoading = false;
@@ -427,37 +365,40 @@ export default {
     // 连接赞助商
     connectHandle(item) {
       // 存储到session
-      let obj = {
-        distributorId: item.distributorId,
-        uplineId: item.distributorId,
-        sponsorData: item,
-        uplineData: item,
-        distSponsor: {
-          country: this.formParams.country,
-          city: this.formParams.city
-        }
-      };
-      sessionStorage.setItem("connectObj", JSON.stringify(obj));
+      let distSponsor = JSON.parse(JSON.stringify(this.formParams));
+      sessionStorage.setItem("distSponsor", JSON.stringify(distSponsor));
+      sessionStorage.setItem("distributorId", item.distributorId);
+      sessionStorage.setItem("sponsorData", JSON.stringify(item));
+      sessionStorage.setItem("uplineData", JSON.stringify(item));
+
       this.currentSponsor = item;
       this.recommendList = [];
       this.sponsor = "";
-      this.showHelpBlockSponsor = false;
     },
 
     submitHandle() {
-      // 读取session
-      let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
-      if (!connectObj) {
-        this.showHelpBlockSponsor = true;
+      // 表单验证
+      this._formVerify();
+      // 是否连接赞助商验证
+      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {};
+      if (!Object.keys(distSponsor).length) {
+        this.$refs.noConnect.style.display = "block";
       } else {
-        const { country, city } = this.formParams;
-        if (!country) {
-          this.showHelpBlock = true;
-        } else if (!city) {
-          this.showHelpBlock1 = true;
-        } else {
-          this.$router.push("/register/distributor/personalInformation");
-        }
+        this.$router.push("/register/distributor/personalInformation");
+      }
+    },
+    // require验证
+    _formVerify() {
+      const { country, city } = this.formParams;
+      if (!country) {
+        this.$refs.countryEmpty.style.display = "block";
+      } else {
+        this.$refs.countryEmpty.style.display = "none";
+      }
+      if (!city) {
+        this.$refs.cityEmpty.style.display = "block";
+      } else {
+        this.$refs.cityEmpty.style.display = "none";
       }
     }
   },
@@ -625,6 +566,7 @@ select, input
               .help-block
                 color #a94442
                 font-weight normal
+                display none
                 @media (max-width: 980px)
                   display none
                   margin-top 4px

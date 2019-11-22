@@ -107,7 +107,7 @@
                     id="phoneHead"
                     v-model="phoneHead"
                   >
-                    <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                    <option disabled value style="display: none;">Aera Cod</option>
                     <option value="254">254</option>
                     <option value="234">234</option>
                     <option value="255">255</option>
@@ -448,7 +448,6 @@ export default {
       }
       this.passwordErrorList = tempList;
     },
-    // 深度监听
     formParams: {
       handler: function() {
         const { firstName, lastName, email, phone } = this.formParams;

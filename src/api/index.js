@@ -4,9 +4,8 @@
  */
 import ajax from './ajax'
 import { type } from 'os'
-// const BASE_URL = 'http://172.18.1.240:73'
-// const BASE_URL = 'http://172.18.5.192:8081' //林刚
-const BASE_URL = 'http://www.bfsuma.com' //正式
+const BASE_URL = 'http://172.18.1.240:73'
+// const BASE_URL = 'http://www.bfsuma.com' //正式
 // const BASE_URL = '/api'
 
 
@@ -50,6 +49,9 @@ export const distributorCustomer = (id) => ajax(BASE_URL + '/distributor/custome
 
 // 忘记密码
 export const distributorResetpwd = ({ phone, password, verifyCode, sendBy }) => ajax(BASE_URL + '/distributor/resetpwd', { phone, password, verifyCode, sendBy }, "POST")
+
+// 获取code
+export const getTelCode = ({ sendBy, phone }) => ajax(BASE_URL + '/getTelCode', { sendBy, phone })
 
 //填写地址
 export const distributorAddress = (address) => ajax(BASE_URL + '/distributor/address', { address }, "POST")

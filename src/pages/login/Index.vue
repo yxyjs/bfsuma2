@@ -167,7 +167,7 @@ export default {
               distributorNo: "111",
               password: this.password
             };
-            window.location.href =
+            window.location.href =  
               backstageUrl +
               "/login.jsp?account=" +
               user.distributorNo +

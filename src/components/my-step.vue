@@ -24,7 +24,6 @@ export default {
   img
     height 44px
     padding 10px
-    width 100%
     @media (max-width: 980px)
       max-width 100vw
       padding 0
