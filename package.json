@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "fastclick": "^1.0.6",
+    "vee-validate": "^3.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

@@ -6,139 +6,155 @@
         <img src="../../../static/img/login_banner.png" />
       </div>
       <div class="find-form">
-        <form class="form" action="#" @submit.prevent="submitHandle">
+        <ValidationObserver
+          ref="observer"
+          @submit.prevent="onSubmit"
+          v-slot="{ invalid }"
+          tag="form"
+          class="form"
+        >
           <p class="form-title">Find Password</p>
           <!-- *Country -->
           <div class="form-wrap-box">
             <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">Country</label>
-                <div class="item-main">
-                  <select
-                    ref="showHelpBlock"
-                    class="item-main-inner"
-                    v-model="formParams.country"
-                    :class="showHelpBlock ? 'show-help' : ''"
-                    @input="selectChange('country')"
-                  >
-                    <option disabled value style="display:none;">Select Country</option>
-                    <option
-                      :value="country.value"
-                      v-for="(country, index) in countryList"
-                      :key="index"
-                    >{{ country.text }}</option>
-                  </select>
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">Country</label>
+                  <div class="item-main">
+                    <select
+                      ref="showHelpBlock"
+                      class="item-main-inner"
+                      v-model="formParams.country"
+                      :class="showHelpBlock ? 'show-help' : ''"
+                    >
+                      <option disabled value style="display:none;">Select Country</option>
+                      <option
+                        :value="country.value"
+                        v-for="(country, index) in countryList"
+                        :key="index"
+                      >{{ country.text }}</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="countryEmpty" class="help-block">* Select country！</small>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
             </section>
           </div>
           <!-- Phone -->
           <div class="form-wrap-box">
             <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">Phone</label>
-                <div class="item-main">
-                  <select
-                    class="item-main-inner"
-                    name="phoneHead"
-                    id="phoneHead"
-                    :class="showHelpBlock1 ? 'show-help' : ''"
-                    v-model="formParams.phoneHead"
-                    @input="selectChange('phone')"
-                  >
-                    <option disabled value style="display: none;">Aera Cod</option>
-                    <option value="254">254</option>
-                    <option value="234">234</option>
-                    <option value="255">255</option>
-                    <option value="256">256</option>
-                    <option value="264">264</option>
-                    <option value="233">233</option>
-                    <option value="237">237</option>
-                    <option value="229">229</option>
-                  </select>
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">Phone</label>
+                  <div class="item-main">
+                    <select
+                      class="item-main-inner"
+                      name="phoneHead"
+                      id="phoneHead"
+                      :class="showHelpBlock1 ? 'show-help' : ''"
+                      v-model="formParams.phoneHead"
+                    >
+                      <option disabled value style="display: none;">Aera Cod</option>
+                      <option value="254">254</option>
+                      <option value="234">234</option>
+                      <option value="255">255</option>
+                      <option value="256">256</option>
+                      <option value="264">264</option>
+                      <option value="233">233</option>
+                      <option value="237">237</option>
+                      <option value="229">229</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="phoneEmpty" class="help-block">* Enter phone！</small>
-                <small ref="phoneFormatErr" class="help-block">Format Error</small>
-                <small ref="phoneNotValid" class="help-block">Please enter a valid number</small>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
             </section>
             <div class="form-item" style="margin-left:16px">
-              <div class="form-item-top">
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    type="number"
-                    placeholder="Phone Number"
-                    v-model="formParams.phoneBody"
-                    maxlength="9"
-                    oninput="if(value.length>9)value=value.slice(0,9)"
-                    :class="showHelpBlock2 ? 'show-help' : ''"
-                  />
+              <ValidationProvider name="Phone" rules="required|length:9" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="number"
+                      placeholder="Phone Number"
+                      v-model="formParams.phoneBody"
+                      oninput="if(value.length>9)value=value.slice(0,9)"
+                      :class="showHelpBlock2 ? 'show-help' : ''"
+                    />
+                  </div>
                 </div>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <small ref="phoneFormatErr" class="other-help">Format Error</small>
+                  <small ref="phoneNotValid" class="other-help">Please enter a valid number</small>
+                </div>
+              </ValidationProvider>
             </div>
           </div>
           <!-- code -->
           <div class="form-wrap-box">
             <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">Code</label>
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    style="border-right:40px solid #fff"
-                    type="number"
-                    placeholder="Short Message Verification Code"
-                    v-model="formParams.code"
-                    maxlength="9"
-                    oninput="if(value.length>6)value=value.slice(0,6)"
-                    :class="showHelpBlock3 ? 'show-help' : ''"
-                  />
-                  <button
-                    type="button"
-                    class="btn btn-getcode"
-                    :disabled="!codeDisabled"
-                    @click="getCode"
-                  >Get Code</button>
+              <ValidationProvider name="Code" rules="required|length:6" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">Code</label>
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      style="border-right:40px solid #fff"
+                      type="number"
+                      placeholder="Short Message Verification Code"
+                      v-model="formParams.code"
+                      oninput="if(value.length>6)value=value.slice(0,6)"
+                      :class="showHelpBlock3 ? 'show-help' : ''"
+                    />
+                    <button
+                      ref="getCodeBtn"
+                      type="button"
+                      class="btn btn-getcode"
+                      :disabled="codeBtnDisabled"
+                      @click="getCode"
+                    >Get Code</button>
+                  </div>
                 </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="codeNotEmpty" class="help-block">* Enter code！</small>
-                <small ref="codeFailed" class="help-block">Failed to send text message</small>
-                <small ref="codePhoneEmpty" class="help-block">Cell phone number cannot be empty</small>
-                <small ref="codePhoneError" class="help-block">Phone number format error</small>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <small ref="codeFailed" class="other-help">Failed to send text message</small>
+                  <small ref="notRegistered" class="other-help">Cell phone number not registered</small>
+                  <small ref="codePhoneError" class="other-help">Phone number format error</small>
+                </div>
+              </ValidationProvider>
             </section>
           </div>
           <!-- prePassword -->
           <div class="form-wrap-box">
             <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">Password</label>
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    :type="!showPrePassword ? 'password' : 'text'"
-                    placeholder="8~15 character,at least one letter and one number"
-                    v-model="formParams.prePassword"
-                    maxlength="15"
-                    :class="showHelpBlock4 ? 'show-help' : ''"
-                  />
-                  <i
-                    class="item-icon iconfont icon-yanjing"
-                    v-show="isSeePre"
-                    @click="showPrePassword = !showPrePassword"
-                  ></i>
+              <ValidationProvider name="Password" rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">Password</label>
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      :type="!showPrePassword ? 'password' : 'text'"
+                      placeholder="8~15 character,at least one letter and one number"
+                      v-model="prePassword"
+                      oninput="if(value.length>15)value=value.slice(0,15)"
+                      :class="showHelpBlock4 ? 'show-help' : ''"
+                    />
+                    <i
+                      class="item-icon iconfont icon-yanjing"
+                      v-show="isSeePre"
+                      @click="showPrePassword = !showPrePassword"
+                    ></i>
+                  </div>
                 </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="prePwdError" class="help-block">Please enter a value with valid length</small>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
             </section>
           </div>
           <!-- 密码校验 -->
@@ -162,27 +178,29 @@
           <!-- Confirm -->
           <div class="form-wrap-box">
             <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">Confirm</label>
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    :type="!showPassword ? 'password' : 'text'"
-                    placeholder="Reenter Password"
-                    v-model="formParams.password"
-                    :class="showHelpBlock5 ? 'show-help' : ''"
-                    maxlength="15"
-                  />
-                  <i
-                    class="item-icon iconfont icon-yanjing"
-                    v-show="isSeeConfirm"
-                    @click="showPassword = !showPassword"
-                  ></i>
+              <ValidationProvider name="Confirm Password" rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">Confirm</label>
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      :type="!showPassword ? 'password' : 'text'"
+                      placeholder="Reenter Password"
+                      v-model="formParams.password"
+                      :class="showHelpBlock5 ? 'show-help' : ''"
+                      oninput="if(value.length>15)value=value.slice(0,15)"
+                    />
+                    <i
+                      class="item-icon iconfont icon-yanjing"
+                      v-show="isSeeConfirm"
+                      @click="showPassword = !showPassword"
+                    ></i>
+                  </div>
                 </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="passwordError" class="help-block">Please enter a value with valid length</small>
-              </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
             </section>
           </div>
           <div class="error-item">
@@ -200,16 +218,16 @@
               @click="$router.go(-1)"
               :disabled="disabled"
             >Cancel</button>
-            <button type="submit" class="btn btn-submit" @click.prevent="submitHandle">Submit</button>
+            <button type="submit" class="btn btn-submit">Submit</button>
           </section>
-        </form>
+        </ValidationObserver>
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { getTelCode } from "@/api/index";
+import { getTelCode, distributorResetpwd } from "@/api/index";
 export default {
   data() {
     return {
@@ -222,12 +240,12 @@ export default {
       showHelpBlock4: false,
       showHelpBlock5: false,
       disabled: false,
-      // codeDisabled: false,
+      codeBtnDisabled: true,
+      prePassword: "",
       formParams: {
         country: "",
         phone: "",
         code: "",
-        prePassword: "",
         password: "",
         phoneHead: "",
         phoneBody: ""
@@ -247,7 +265,8 @@ export default {
   },
   computed: {
     isPasswordEqual() {
-      const { prePassword, password } = this.formParams;
+      const { password } = this.formParams;
+      const { prePassword } = this;
       if (prePassword.trim()) {
         return prePassword.trim() === password.trim();
       }
@@ -257,112 +276,63 @@ export default {
       return phoneHead + phoneBody.trim();
     },
     isSeePre() {
-      const { prePassword } = this.formParams;
+      const { prePassword } = this;
       return prePassword.trim();
     },
     isSeeConfirm() {
       const { password } = this.formParams;
       return password.trim();
     },
-    codeDisabled() {
+    shouldCodeDisable() {
       const { computedPhone } = this;
       return computedPhone && computedPhone.length === 12;
     }
   },
   watch: {
     formParams: {
-      handler() {
-        const {
-          country,
-          phone,
-          code,
-          prePassword,
-          password,
-          phoneHead,
-          phoneBody
-        } = this.formParams;
-        // country
-        if (!country) {
-          this.showHelpBlock = true;
+      handler(val) {
+        const { code, prePassword } = val;
+        if (this.computedPhone && this.computedPhone.length === 12) {
+          this.codeBtnDisabled = false;
         } else {
-          this.showHelpBlock = false;
-          this.$refs.countryEmpty.style.display = "none";
-        }
-        // phoneHead
-        if (!phoneHead) {
-          this.showHelpBlock1 = true;
-        } else {
-          this.showHelpBlock1 = false;
-          this.$refs.phoneEmpty.style.display = "none";
-        }
-        // phoneBody
-        if (!phoneBody.trim()) {
-          this.showHelpBlock2 = true;
-        } else {
-          this.showHelpBlock2 = false;
-          this.$refs.phoneEmpty.style.display = "none";
-        }
-        // code
-        if (!code.trim()) {
-          this.showHelpBlock3 = true;
-        } else {
-          this.showHelpBlock3 = false;
-          this.$refs.codeNotEmpty.style.display = "none";
-        }
-        // prePassword
-        if (!prePassword.trim()) {
-          this.showHelpBlock4 = true;
-          this.$refs.prePwdError.display = "block";
-        } else {
-          this.showHelpBlock4 = false;
-          // 长度检测
-          if (/^[a-zA-Z0-9]{8,15}$/.test(prePassword)) {
-            this.$refs.characterPass.style.display = "block";
-            this.$refs.characterErr.style.display = "none";
-          } else {
-            this.$refs.characterPass.style.display = "none";
-            this.$refs.characterErr.style.display = "block";
-          }
-          // 字母检测
-          if (/[a-zA-Z]/.test(prePassword)) {
-            this.$refs.letterPass.style.display = "block";
-            this.$refs.letterErr.style.display = "none";
-          } else {
-            this.$refs.letterPass.style.display = "none";
-            this.$refs.letterErr.style.display = "block";
-          }
-          // 数字检测
-          if (/[0-9]/.test(prePassword)) {
-            this.$refs.numberPass.style.display = "block";
-            this.$refs.numberErr.style.display = "none";
-          } else {
-            this.$refs.numberPass.style.display = "none";
-            this.$refs.numberErr.style.display = "block";
-          }
-          if (this.isPasswordEqual) {
-            this.$refs.confirmErr.style.display = "none";
-            this.$refs.confirmPass.style.display = "block";
-          } else {
-            this.$refs.confirmErr.style.display = "block";
-            this.$refs.confirmPass.style.display = "none";
-          }
-        }
-        // password
-        if (!password.trim()) {
-          this.showHelpBlock5 = true;
-          this.$refs.confirmErr.display = "block";
-        } else {
-          this.showHelpBlock5 = false;
-          if (this.isPasswordEqual) {
-            this.$refs.confirmErr.style.display = "none";
-            this.$refs.confirmPass.style.display = "block";
-          } else {
-            this.$refs.confirmErr.style.display = "block";
-            this.$refs.confirmPass.style.display = "none";
-          }
+          this.codeBtnDisabled = true;
         }
       },
       deep: true
+    },
+    prePassword(val) {
+      // password
+      // 长度检测
+      if (/^[a-zA-Z0-9]{8,15}$/.test(val)) {
+        this.$refs.characterPass.style.display = "block";
+        this.$refs.characterErr.style.display = "none";
+      } else {
+        this.$refs.characterPass.style.display = "none";
+        this.$refs.characterErr.style.display = "block";
+      }
+      // 字母检测
+      if (/[a-zA-Z]/.test(val)) {
+        this.$refs.letterPass.style.display = "block";
+        this.$refs.letterErr.style.display = "none";
+      } else {
+        this.$refs.letterPass.style.display = "none";
+        this.$refs.letterErr.style.display = "block";
+      }
+      // 数字检测
+      if (/[0-9]/.test(val)) {
+        this.$refs.numberPass.style.display = "block";
+        this.$refs.numberErr.style.display = "none";
+      } else {
+        this.$refs.numberPass.style.display = "none";
+        this.$refs.numberErr.style.display = "block";
+      }
+      if (this.isPasswordEqual) {
+        this.$refs.confirmErr.style.display = "none";
+        this.$refs.confirmPass.style.display = "block";
+      } else {
+        this.$refs.confirmErr.style.display = "block";
+        this.$refs.confirmPass.style.display = "none";
+      }
     }
   },
   methods: {
@@ -372,32 +342,42 @@ export default {
     async getCode() {
       let sendBy = "BFSUMA_PWD";
       let phone = this.computedPhone;
-      let result = await getTelCode({ sendBy, phone });
+      let res = await getTelCode({ sendBy, phone });
+
+      if (res) {
+        const rescode = res.code;
+        console.log(res);
+        if (rescode === 0) {
+          this.codeBtnDisabled = true;
+          // 按钮倒计时
+          let time = 60;
+          let interval = setInterval(() => {
+            time = time < 10 ? "0" + time : time;
+            this.$refs.getCodeBtn.innerHTML = time + "s";
+            time--;
+            if (time === 0) {
+              clearInterval(interval);
+              this.codeBtnDisabled = false;
+              this.$refs.getCodeBtn.innerHTML = "Get Code";
+            }
+          }, 1000);
+        }
+        if (rescode === 201) {
+          this.$refs.notRegistered.style.display = "block";
+        }
+      }
     },
-    submitHandle() {
-      const { country, phone, code, prePassword, password } = this.formParams;
-      if (!country) {
-        this.$refs.countryEmpty.style.display = "block";
-        this.showHelpBlock = true;
-      }
-      if (!this.computedPhone) {
-        this.showHelpBlock1 = true;
-        this.$refs.phoneEmpty.style.display = "block";
-      }
-      if (!code.trim()) {
-        this.showHelpBlock3 = true;
-        this.$refs.codeNotEmpty.style.display = "block";
-      }
-      if (!prePassword.trim()) {
-        this.showHelpBlock4 = true;
-        this.$refs.characterErr.style.display = "block";
-        this.$refs.letterErr.style.display = "block";
-        this.$refs.numberErr.style.display = "block";
-      }
-      if (!password.trim()) {
-        this.showHelpBlock5 = true;
-        this.$refs.confirmErr.style.display = "block";
-      }
+    async onSubmit() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) return false;
+      const { phone, password, code } = this.formParams;
+      const reqData = {
+        phone: phone,
+        password: password,
+        verifyCode: code,
+        sendBy: "BFSUMA_PWD"
+      };
+      let res = await distributorResetpwd(reqData);
     }
   },
   components: {}
@@ -482,10 +462,10 @@ export default {
                   border-radius 4px
                   // border-left 40px solid
                   color #fff
-                  background-color #959494
+                  background-color #5ba1cd
                   &:disabled
                     cursor not-allowed
-                    opacity 0.65
+                    background-color #959494
                 span
                   margin-left 15px
                 .item-main-inner
@@ -513,12 +493,16 @@ export default {
               height 20px
               line-height 20px
               .help-block
-                display none
+                font-size 12px
                 color #a94442
                 font-weight normal
                 @media (max-width: 980px)
                   display none
                   margin-top 4px
+              .other-help
+                font-size 12px
+                color #a94442
+                display none
         .error-item
           p
             display flex

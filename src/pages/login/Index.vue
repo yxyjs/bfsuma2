@@ -6,105 +6,111 @@
         <img src="../../../static/img/login_banner.png" />
       </div>
       <div class="login-form">
-        <form action="#" @submit.prevent="loginHandle" class="form-wrap-box">
-          <!-- *account -->
-          <section class="form-item">
-            <label class="item-lable">Account</label>
-            <div class="form-item-top">
-              <div class="item-main">
+        <ValidationObserver v-slot="{ handleSubmit }" tag="div">
+          <form action="#" @submit.prevent="handleSubmit(onSubmit)" class="form-wrap-box">
+            <!-- *account -->
+            <section class="form-item">
+              <ValidationProvider name="Account" rules="required" v-slot="{ errors }">
+                <label class="item-lable">Account</label>
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="text"
+                      placeholder="*Your E-mail /Phone number / Distributor ID"
+                      :class="showHelpBlock ? 'show-help' : ''"
+                      v-model="account"
+                      autofocus
+                      @input="inputChange"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <small
+                    ref="showHelpBlock"
+                    class="help-block"
+                    v-show="showHelpBlock"
+                  >* Enter your E-mail /Phone number / Distributor ID</small>
+                  <small
+                    ref="loginError"
+                    class="help-block"
+                    style="display:none"
+                  >User ID / Distributor ID does not exist, please re-enter</small>
+                </div>
+              </ValidationProvider>
+            </section>
+            <!-- Password -->
+            <section class="form-item">
+              <ValidationProvider name="Password" rules="required" v-slot="{ errors }">
+                <label class="item-lable">Password</label>
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      :type="!showPassword ? 'password' : 'text'"
+                      placeholder="*Fill in"
+                      :class="showHelpBlock1 ? 'show-help' : ''"
+                      v-model="password"
+                      oninput="if(value.length>15)value=value.slice(0,15)"
+                      @input="inputChange"
+                    />
+                    <i
+                      class="item-icon iconfont icon-yanjing"
+                      v-show="isSeePwd"
+                      @click="showPassword = !showPassword"
+                    ></i>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <small
+                    ref="showHelpBlock1"
+                    class="help-block"
+                    v-show="showHelpBlock1"
+                  >* Enter password！</small>
+                  <small
+                    ref="loginError1"
+                    class="help-block"
+                    style="display:none"
+                  >Password error, please re-enter</small>
+                </div>
+              </ValidationProvider>
+            </section>
+            <section class="form-rem-for">
+              <div class="remember">
                 <input
-                  class="item-main-inner"
-                  type="text"
-                  placeholder="*Your E-mail /Phone number / Distributor ID"
-                  :class="showHelpBlock ? 'show-help' : ''"
-                  v-model="account"
-                  autofocus
-                  @input="inputChange"
+                  class="checkbox"
+                  type="checkbox"
+                  name="remember"
+                  id="remember"
+                  value="Remember Password"
+                  v-model="rememberPwd"
                 />
+                <img class="checked-img" src="../../../static/img/checked.png" alt />
+                <img class="remember-img" src="../../../static/img/check_box.png" alt />
+                <label class="remember-label" for="remember">Remember Password</label>
               </div>
-            </div>
-            <div class="form-item-bottom">
-              <small
-                ref="showHelpBlock"
-                class="help-block"
-                v-show="showHelpBlock"
-              >* Enter your E-mail /Phone number / Distributor ID</small>
-              <small
-                ref="loginError"
-                class="help-block"
-                style="display:none"
-              >User ID / Distributor ID does not exist, please re-enter</small>
-            </div>
-          </section>
-          <!-- Password -->
-          <section class="form-item">
-            <label class="item-lable">Password</label>
-            <div class="form-item-top">
-              <div class="item-main">
-                <input
-                  class="item-main-inner"
-                  :type="!showPassword ? 'password' : 'text'"
-                  placeholder="*Fill in"
-                  :class="showHelpBlock1 ? 'show-help' : ''"
-                  v-model="password"
-                  maxlength="15"
-                  @input="inputChange"
-                />
-                <i
-                  class="item-icon iconfont icon-yanjing"
-                  v-show="isSeePwd"
-                  @click="showPassword = !showPassword"
-                ></i>
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small
-                ref="showHelpBlock1"
-                class="help-block"
-                v-show="showHelpBlock1"
-              >* Enter password！</small>
-              <small
-                ref="loginError1"
-                class="help-block"
-                style="display:none"
-              >Password error, please re-enter</small>
-            </div>
-          </section>
-          <section class="form-rem-for">
-            <div class="remember">
-              <input
-                class="checkbox"
-                type="checkbox"
-                name="remember"
-                id="remember"
-                value="Remember Password"
-                v-model="rememberPwd"
-              />
-              <img class="checked-img" src="../../../static/img/checked.png" alt />
-              <img class="remember-img" src="../../../static/img/check_box.png" alt />
-              <label class="remember-label" for="remember">Remember Password</label>
-            </div>
-            <a
-              href="javascript:;"
-              class="forgot"
-              @click="$router.push('/findPassword')"
-            >Forgot Password？</a>
-          </section>
-          <!-- btn -->
-          <section class="form-btns">
-            <button
-              type="submit"
-              class="btn btn-login"
-              @click.prevent="loginHandle"
-              :disabled="disabled"
-            >Login</button>
-            <button
-              type="button"
-              class="btn btn-cancel"
-              @click="$router.replace('/register')"
-            >Cancel</button>
-          </section>
-        </form>
+              <a
+                href="javascript:;"
+                class="forgot"
+                @click="$router.push('/findPassword')"
+              >Forgot Password？</a>
+            </section>
+            <!-- btn -->
+            <section class="form-btns">
+              <button
+                type="submit"
+                class="btn btn-login"
+                :disabled="disabled"
+                @click.prevent="onSubmit"
+              >Login</button>
+              <button
+                type="button"
+                class="btn btn-cancel"
+                @click="$router.replace('/register')"
+              >Cancel</button>
+            </section>
+          </form>
+        </ValidationObserver>
       </div>
     </div>
   </div>
@@ -167,7 +173,7 @@ export default {
               distributorNo: "111",
               password: this.password
             };
-            window.location.href =  
+            window.location.href =
               backstageUrl +
               "/login.jsp?account=" +
               user.distributorNo +
@@ -183,7 +189,7 @@ export default {
         }
       }
     },
-    loginHandle() {
+    onSubmit() {
       const { account, password } = this;
       if (account.trim() && password.trim()) {
         // 登录

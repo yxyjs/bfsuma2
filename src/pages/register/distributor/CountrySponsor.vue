@@ -7,233 +7,245 @@
     <my-step>
       <img src="../../../../static/img/country_sponsor.png" alt />
     </my-step>
-    <form action="/" class="form" @submit.prevent="submitHandle">
-      <p class="top-tips">
-        You are now taking your first steps to becoming a BF Suma Distributor.
-        <br />Begin the registration process by selecting a country and your
-        sponsor below：
-      </p>
-      <p class="required">*Required</p>
-      <div class="checkbox">
-        <label class="checkbox-label">* I am at least 18 years old</label>
-        <div class="checkbox-radio">
-          <div class="radio-item">
-            <input ref="input" type="radio" name="flag" id="yes" checked />
-            <img class="checked-img" src="../../../../static/img/checked.png" alt />
-            <label for="yes">Yes</label>
-          </div>
-          <div class="radio-item" @click="showDialog = true">
-            <input type="radio" name="flag" id="no" />
-            <img class="checked-img" src="../../../../static/img/checked.png" alt />
-            <label for="no">No</label>
+    <ValidationObserver v-slot="{ handleSubmit }" tag="div">
+      <form action="/" class="form" @submit.prevent="handleSubmit(onSubmit)">
+        <p class="top-tips">
+          You are now taking your first steps to becoming a BF Suma Distributor.
+          <br />Begin the registration process by selecting a country and your
+          sponsor below：
+        </p>
+        <p class="required">*Required</p>
+        <div class="checkbox">
+          <label class="checkbox-label">* I am at least 18 years old</label>
+          <div class="checkbox-radio">
+            <div class="radio-item">
+              <input ref="input" type="radio" name="flag" id="yes" checked />
+              <img class="checked-img" src="../../../../static/img/checked.png" alt />
+              <label for="yes">Yes</label>
+            </div>
+            <div class="radio-item" @click="showDialog = true">
+              <input type="radio" name="flag" id="no" />
+              <img class="checked-img" src="../../../../static/img/checked.png" alt />
+              <label for="no">No</label>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="form-wrap">
-        <!-- country -->
-        <section>
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">*Country</label>
-                <div class="item-main">
-                  <select
-                    class="item-main-inner"
-                    v-model="formParams.country"
-                    @input="selectChange"
-                  >
-                    <option disabled value style="display:none;">Select Country</option>
-                    <option
-                      :value="country.value"
-                      v-for="(country, index) in countryList"
-                      :key="index"
-                    >{{ country.text }}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="countryEmpty" class="help-block">Required</small>
-              </div>
-            </section>
-            <section class="form-item margin-l">
-              <div class="form-item-top">
-                <label class="item-lable">*City</label>
-                <div class="item-main">
-                  <select class="item-main-inner" v-model="formParams.city" @input="selectChange">
-                    <option disabled value style="display:none;">Select City</option>
-                    <option value="NAIROBI">NAIROBI</option>
-                    <option value="BUNGOMA">BUNGOMA</option>
-                    <option value="KISUMU">KISUMU</option>
-                    <option value="KISII">KISII</option>
-                    <option value="ELDORET">ELDORET</option>
-                    <option value="KITALE">KITALE</option>
-                    <option value="NAKURU">NAKURU</option>
-                    <option value="EMBU">EMBU</option>
-                    <option value="KIRIAINI">KIRIAINI</option>
-                    <option value="MOMBASA">MOMBASA</option>
-                    <option value="KAKAMEGA">KAKAMEGA</option>
-                  </select>
-                </div>
-              </div>
-              <!-- smallhelp -->
-              <div class="form-item-bottom">
-                <small ref="cityEmpty" class="help-block">Required</small>
-              </div>
-            </section>
-          </div>
-        </section>
-      </div>
-      <hr class="hr" />
-      <!-- click connect -->
-      <div class="form-wrap" v-show="Object.keys(currentSponsor).length !== 0">
-        <!-- Sponsor -->
-        <section>
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">*Sponsor</label>
-                <div class="item-main">
-                  Gage get
-                  <span>
-                    <strong>ID:</strong>
-                    {{ currentSponsor.distributorId }}
-                  </span>
-                  <span>
-                    <strong>Gender:</strong>
-                    {{ currentSponsor.gender }}
-                  </span>
-                  <span>
-                    <strong>Mobile Number:</strong>
-                    {{ currentSponsor.phone }}
-                  </span>
-                  <span>
-                    <strong>E-mail:</strong>
-                    {{ currentSponsor.email }}
-                  </span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
-        <!-- Upline -->
-        <section style="margin-top:10px">
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <div class="form-item-top">
-                <label class="item-lable">*Upline</label>
-                <div class="item-main">
-                  Gage get
-                  <span>
-                    <strong>ID:</strong>
-                    {{ currentSponsor.distributorId }}
-                  </span>
-                  <span>
-                    <strong>Gender:</strong>
-                    {{ currentSponsor.gender }}
-                  </span>
-                  <span>
-                    <strong>Mobile Number:</strong>
-                    {{ currentSponsor.phone }}
-                  </span>
-                  <span>
-                    <strong>E-mail:</strong>
-                    {{ currentSponsor.email }}
-                  </span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
-      </div>
-      <div class="form-wrap" style="margin-top:10px">
-        <!-- *Sponsor -->
-        <section>
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <div class="form-item-top">
-                <p
-                  v-if="Object.keys(currentSponsor).length !== 0"
-                  class="item-p"
-                >Or you want to modify your Upline</p>
-                <label v-else class="item-lable">*Sponsor</label>
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    type="text"
-                    placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-                    v-model="sponsor"
-                  />
-                  <button class="item-searchbtn" @click="searchHandle">Search</button>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <small ref="sponsorEmpty" class="help-block">Required</small>
-                <small ref="noConnect" class="help-block">*Please connect your sponsor</small>
-              </div>
-            </section>
-          </div>
-        </section>
-      </div>
-      <!-- system-recommend -->
-      <div class="system-recommend" v-show="!recommendList.length">
-        <p class="no-data" v-show="!recommendList.length && showNoData">
-          We couldn't find any matching Distributor. Please, try with a
-          different term.
-        </p>
-        <div>
-          <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
-          <img @click="getRecommend" src="../../../../static/img/become.png" alt />
+        <div class="form-wrap">
+          <!-- country -->
+          <section>
+            <div class="form-wrap-box">
+              <section class="form-item">
+                <ValidationProvider name="Country" rules="required" v-slot="{ errors }">
+                  <div class="form-item-top">
+                    <label class="item-lable">*Country</label>
+                    <div class="item-main">
+                      <select
+                        class="item-main-inner"
+                        v-model="formParams.country"
+                        @input="countryChange"
+                      >
+                        <option disabled value style="display:none;">Select Country</option>
+                        <option
+                          :value="country.value"
+                          v-for="(country, index) in countryList"
+                          :key="index"
+                        >{{ country.text }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-item-bottom">
+                    <span class="help-block">{{ errors[0] }}</span>
+                    <span ref="countryEmpty" class="show-required">Required</span>
+                  </div>
+                </ValidationProvider>
+              </section>
+              <section class="form-item margin-l">
+                <ValidationProvider name="City" rules="required" v-slot="{ errors }">
+                  <div class="form-item-top">
+                    <label class="item-lable">*City</label>
+                    <div class="item-main">
+                      <select class="item-main-inner" v-model="formParams.city" @input="cityChange">
+                        <option disabled value style="display:none;">Select City</option>
+                        <option value="NAIROBI">NAIROBI</option>
+                        <option value="BUNGOMA">BUNGOMA</option>
+                        <option value="KISUMU">KISUMU</option>
+                        <option value="KISII">KISII</option>
+                        <option value="ELDORET">ELDORET</option>
+                        <option value="KITALE">KITALE</option>
+                        <option value="NAKURU">NAKURU</option>
+                        <option value="EMBU">EMBU</option>
+                        <option value="KIRIAINI">KIRIAINI</option>
+                        <option value="MOMBASA">MOMBASA</option>
+                        <option value="KAKAMEGA">KAKAMEGA</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- spanhelp -->
+                  <div class="form-item-bottom">
+                    <span class="help-block">{{ errors[0] }}</span>
+                    <span ref="cityEmpty" class="show-required">Required</span>
+                  </div>
+                </ValidationProvider>
+              </section>
+            </div>
+          </section>
         </div>
-      </div>
-      <!-- 赞助商列表 -->
-      <div class="recommend-list" v-show="recommendList.length">
-        <p class="tableTips" v-show="tableTips">
-          We can recommend
-          <span>{{ recommendList.length }}</span> matches for you to choose from
-        </p>
-        <p class="tableTips" v-show="!tableTips">
-          We found
-          <span>{{ recommendList.length }}</span> matches based on your search
-        </p>
-        <!-- loading -->
-        <my-loading :show="showLoading"></my-loading>
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Distributor Name</th>
-                <th>Distributor ID</th>
-                <th>Gender</th>
-                <th>City</th>
-                <th>Mobile Number</th>
-                <th>E-mail</th>
-                <th>Connect</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(recommend, index) in recommendList" :key="index">
-                <td>{{ recommend.distributorName }}</td>
-                <td style="backgroundColor:#DCDCDC">{{ recommend.distributorId }}</td>
-                <td>{{ recommend.gender }}</td>
-                <td>{{ recommend.city }}</td>
-                <td>{{ recommend.phone }}</td>
-                <td>{{ recommend.email }}</td>
-                <td>
-                  <button
-                    type="button"
-                    class="connect-btn"
-                    @click="connectHandle(recommend)"
-                  >Connect</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <hr class="hr" />
+        <!-- click connect -->
+        <div class="form-wrap" v-show="Object.keys(currentSponsor).length !== 0">
+          <!-- Sponsor -->
+          <section>
+            <div class="form-wrap-box">
+              <section class="form-item">
+                <div class="form-item-top">
+                  <label class="item-lable">*Sponsor</label>
+                  <div class="item-main">
+                    Gage get
+                    <span>
+                      <strong>ID:</strong>
+                      {{ currentSponsor.distributorId }}
+                    </span>
+                    <span>
+                      <strong>Gender:</strong>
+                      {{ currentSponsor.gender }}
+                    </span>
+                    <span>
+                      <strong>Mobile Number:</strong>
+                      {{ currentSponsor.phone }}
+                    </span>
+                    <span>
+                      <strong>E-mail:</strong>
+                      {{ currentSponsor.email }}
+                    </span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+          <!-- Upline -->
+          <section style="margin-top:10px">
+            <div class="form-wrap-box">
+              <section class="form-item">
+                <div class="form-item-top">
+                  <label class="item-lable">*Upline</label>
+                  <div class="item-main">
+                    Gage get
+                    <span>
+                      <strong>ID:</strong>
+                      {{ currentSponsor.distributorId }}
+                    </span>
+                    <span>
+                      <strong>Gender:</strong>
+                      {{ currentSponsor.gender }}
+                    </span>
+                    <span>
+                      <strong>Mobile Number:</strong>
+                      {{ currentSponsor.phone }}
+                    </span>
+                    <span>
+                      <strong>E-mail:</strong>
+                      {{ currentSponsor.email }}
+                    </span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
         </div>
-      </div>
-      <div class="next-btn-wrap">
-        <button type="submit" class="next-btn" @click.prevent="submitHandle">Next</button>
-      </div>
-    </form>
+        <div class="form-wrap" style="margin-top:10px">
+          <!-- *Sponsor -->
+          <section>
+            <div class="form-wrap-box">
+              <section class="form-item">
+                <div class="form-item-top">
+                  <p
+                    v-if="Object.keys(currentSponsor).length !== 0"
+                    class="item-p"
+                  >Or you want to modify your Upline</p>
+                  <label v-else class="item-lable">*Sponsor</label>
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="text"
+                      placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+                      v-model="sponsor"
+                    />
+                    <button class="item-searchbtn" type="button" @click="onSearch">Search</button>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span ref="searchEmpty" class="show-required">Required</span>
+                  <span
+                    ref="noConnect"
+                    class="help-block"
+                    style="display:none"
+                  >*Please connect your sponsor</span>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+        <!-- system-recommend -->
+        <div class="system-recommend" v-show="!recommendList.length">
+          <p class="no-data" v-show="!recommendList.length && showNoData">
+            We couldn't find any matching Distributor. Please, try with a
+            different term.
+          </p>
+          <div>
+            <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
+            <img @click="getRecommend" src="../../../../static/img/become.png" alt />
+          </div>
+        </div>
+        <!-- 赞助商列表 -->
+        <div class="recommend-list" v-show="recommendList.length">
+          <p class="tableTips" v-show="tableTips">
+            We can recommend
+            <span>{{ recommendList.length }}</span> matches for you to choose from
+          </p>
+          <p class="tableTips" v-show="!tableTips">
+            We found
+            <span>{{ recommendList.length }}</span> matches based on your search
+          </p>
+          <!-- loading -->
+          <my-loading :show="showLoading"></my-loading>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Distributor Name</th>
+                  <th>Distributor ID</th>
+                  <th>Gender</th>
+                  <th>City</th>
+                  <th>Mobile Number</th>
+                  <th>E-mail</th>
+                  <th>Connect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(recommend, index) in recommendList" :key="index">
+                  <td>{{ recommend.distributorName }}</td>
+                  <td style="backgroundColor:#DCDCDC">{{ recommend.distributorId }}</td>
+                  <td>{{ recommend.gender }}</td>
+                  <td>{{ recommend.city }}</td>
+                  <td>{{ recommend.phone }}</td>
+                  <td>{{ recommend.email }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="connect-btn"
+                      @click="connectHandle(recommend)"
+                    >Connect</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="next-btn-wrap">
+          <button type="submit" class="next-btn" @click="onSubmit">Next</button>
+        </div>
+      </form>
+    </ValidationObserver>
     <!-- 年龄不足18的弹框 -->
     <my-dialog
       title="Minor reminder"
@@ -303,7 +315,15 @@ export default {
       return country && city;
     }
   },
-  watch: {},
+  watch: {
+    sponsor(val) {
+      if (!val.trim()) {
+        this.$refs.searchEmpty.style.display = "block";
+      } else {
+        this.$refs.searchEmpty.style.display = "none";
+      }
+    }
+  },
   mounted() {
     // this.getAllCountry();
     // this.getRecommend();
@@ -321,22 +341,37 @@ export default {
       this.showDialog = false;
       this.$refs.input.checked = true;
     },
-    selectChange() {
+    countryChange() {
+      if (event.target.value) this.$refs.countryEmpty.style.display = "none";
       this.recommendList = [];
     },
-    async searchHandle() {
-      this._formVerify();
-      if (this.emptyVerify && this.sponsor.trim()) {
+    cityChange() {
+      if (event.target.value) this.$refs.cityEmpty.style.display = "none";
+      this.recommendList = [];
+    },
+    async onSearch() {
+      const { country, city } = this.formParams;
+      if (!country) {
+        this.$refs.countryEmpty.style.display = "block";
+      }
+      if (!city) {
+        this.$refs.cityEmpty.style.display = "block";
+      }
+      if (!this.sponsor.trim()) {
+        this.$refs.searchEmpty.style.display = "block";
+      } else {
+        this.$refs.searchEmpty.style.display = "none";
         // 发送异步请求搜索赞助者
-        let { country, city } = this.formParams;
-        let res = await searchSponsor(
-          country,
-          city,
-          this.sponsor.trim(),
-          6,
-          1,
-          1573693207826
-        );
+        const { country, city } = this.formParams;
+        const { sponsor } = this;
+        const reqData = {
+          country: country,
+          city: city,
+          page: 1,
+          rows: 6,
+          keyword: sponsor
+        };
+        let res = await searchSponsor(reqData);
         console.log(res);
         this.recommendList = res.list;
         if (!this.recommendList.length) {
@@ -347,14 +382,24 @@ export default {
     },
     // 获取推荐赞助商列表
     async getRecommend() {
-      this._formVerify();
+      const { country, city } = this.formParams;
+      if (!country) {
+        this.$refs.countryEmpty.style.display = "block";
+      }
+      if (!city) {
+        this.$refs.cityEmpty.style.display = "block";
+      }
       if (this.emptyVerify) {
-        const { country, city } = this.formParams;
         this.showLoading = true;
         let res = await sponsorRecommend(country, city);
-        if (res) this.showLoading = false;
-        this.recommendList = res.data;
-        this.tableTips = true;
+        if (res) {
+          this.showLoading = false;
+          const rescode = res.code;
+          if (rescode === 0) {
+            this.recommendList = res.data;
+            this.tableTips = true;
+          }
+        }
       }
     },
     // 异步请求国家
@@ -368,6 +413,7 @@ export default {
       let distSponsor = JSON.parse(JSON.stringify(this.formParams));
       sessionStorage.setItem("distSponsor", JSON.stringify(distSponsor));
       sessionStorage.setItem("distributorId", item.distributorId);
+      sessionStorage.setItem("uplineId", item.distributorId);
       sessionStorage.setItem("sponsorData", JSON.stringify(item));
       sessionStorage.setItem("uplineData", JSON.stringify(item));
 
@@ -376,29 +422,13 @@ export default {
       this.sponsor = "";
     },
 
-    submitHandle() {
-      // 表单验证
-      this._formVerify();
-      // 是否连接赞助商验证
+    onSubmit() {
+      // 是否连接赞助商
       let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {};
       if (!Object.keys(distSponsor).length) {
         this.$refs.noConnect.style.display = "block";
       } else {
         this.$router.push("/register/distributor/personalInformation");
-      }
-    },
-    // require验证
-    _formVerify() {
-      const { country, city } = this.formParams;
-      if (!country) {
-        this.$refs.countryEmpty.style.display = "block";
-      } else {
-        this.$refs.countryEmpty.style.display = "none";
-      }
-      if (!city) {
-        this.$refs.cityEmpty.style.display = "block";
-      } else {
-        this.$refs.cityEmpty.style.display = "none";
       }
     }
   },
@@ -565,11 +595,16 @@ select, input
               line-height 20px
               .help-block
                 color #a94442
+                font-size 12px
                 font-weight normal
-                display none
                 @media (max-width: 980px)
                   display none
                   margin-top 4px
+              .show-required
+                display none
+                color #a94442
+                font-size 12px
+                font-weight normal
           .form-btn
             width 90px
             background #5ba2cc

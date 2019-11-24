@@ -28,15 +28,12 @@ export const sponsorIsbind = (id) => ajax(BASE_URL + '/sponsor/isbind', { id }, 
 //校验邮箱和手机号码唯一性
 export const registerCheck = (email, phone) => ajax(BASE_URL + '/register/check', { email, phone })
 
-//注册成为经销商
-export const registerDistributor = ({ country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }) => ajax(BASE_URL + '/register/distributor', { country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }, "POST")
-
 //经销商设置密码
 export const distributorSetpwd = ({ distributorNo, password }) => ajax(BASE_URL + '/distributor/setpwd', { distributorNo, password }, "POST")
 
 // 注册成为顾客
-export const registerCustomer = ({ country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }) => ajax(BASE_URL + '/register/customer', { country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }, "POST")
-// export const registerCustomer = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }) => ajax(BASE_URL + '/register/customer', { city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }, "POST")
+// export const registerCustomer = ({ country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }) => ajax(BASE_URL + '/register/customer', { country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }, "POST")
+export const registerCustomer = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }) => ajax(BASE_URL + '/register/customer', { city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }, "POST")
 
 // 顾客升级为经销商
 export const distributorUpgrade = ({ id, payPhone, orderNo }) => ajax(BASE_URL + '/distributor/upgrade', { id, payPhone, orderNo }, "POST")
@@ -48,10 +45,10 @@ export const distributorLogin = ({ account, password, rememberPwd }) => ajax(BAS
 export const distributorCustomer = (id) => ajax(BASE_URL + '/distributor/customer', { id })
 
 // 忘记密码
-export const distributorResetpwd = ({ phone, password, verifyCode, sendBy }) => ajax(BASE_URL + '/distributor/resetpwd', { phone, password, verifyCode, sendBy }, "POST")
+export const distributorResetpwd = ({ phone, password, verifyCode, sendBy = "BFSUMA_PWD" }) => ajax(BASE_URL + '/distributor/resetpwd', { phone, password, verifyCode, sendBy }, "POST")
 
 // 获取code
-export const getTelCode = ({ sendBy, phone }) => ajax(BASE_URL + '/getTelCode', { sendBy, phone })
+export const getTelCode = ({ sendBy = "BFSUMA_PWD", phone }) => ajax(BASE_URL + '/getTelCode', { sendBy, phone })
 
 //填写地址
 export const distributorAddress = (address) => ajax(BASE_URL + '/distributor/address', { address }, "POST")
