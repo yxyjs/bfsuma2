@@ -35,6 +35,8 @@ export const distributorSetpwd = ({ distributorNo, password }) => ajax(BASE_URL 
 // export const registerCustomer = ({ country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }) => ajax(BASE_URL + '/register/customer', { country, city, sponsor, name, gender, email, phone, productInterests, source, payPhone, orderNo }, "POST")
 export const registerCustomer = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }) => ajax(BASE_URL + '/register/customer', { city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, sponsor, upline, password }, "POST")
 
+
+
 // 顾客升级为经销商
 export const distributorUpgrade = ({ id, payPhone, orderNo }) => ajax(BASE_URL + '/distributor/upgrade', { id, payPhone, orderNo }, "POST")
 
@@ -60,7 +62,7 @@ export const registerSysLog = ({ request, module }) => ajax(BASE_URL + '/registe
 //---------------------------------------PaymentController-----------------------------------------
 
 // 商户信息
-export const payBill = (id) => ajax(BASE_URL + '/pay/bill', { id })
+export const payBill = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId }) => ajax(BASE_URL + '/pay/bill', { city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId })
 
 // 支付接口
 export const payRequest = ({ amount, payPhone, orderNo }) => ajax(BASE_URL + '/pay/request', { amount, payPhone, orderNo }, "POST")

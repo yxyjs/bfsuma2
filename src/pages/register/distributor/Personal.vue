@@ -64,7 +64,11 @@
           </div>
         </section>
       </div>
-      <button class="goback" type="button" @click="$router.go(-1)">go pay now</button>
+      <button
+        class="goback"
+        type="button"
+        @click="$router.push('/register/distributor/payment')"
+      >go pay now</button>
     </div>
   </div>
 </template>
@@ -84,10 +88,8 @@ export default {
     };
   },
   mounted() {
-    let user = JSON.parse(sessionStorage.getItem('user'))
-    this.distributorCustomer(user.id)
-
-    
+    let user = JSON.parse(sessionStorage.getItem("user"));
+    this.distributorCustomer(user.id);
 
     // let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
     // // this.firstName = payInfo.firstName;
@@ -99,17 +101,17 @@ export default {
     // this.uplineData = connectObj.uplineData;
     // this.distSponsor = connectObj.distSponsor;
   },
-  methods:{
-    async distributorCustomer(id){
-      let result = await distributorCustomer(id)
-      const res = result.data
-      const rescode = result.code
-      if(rescode === 0){
-        this.sponsorData = res.sponsor
-        this.uplineData = res.upline
-        this.firstName = res.firstName
-        this.lastName = res.lastName
-        this.payAmount = res.payAmount
+  methods: {
+    async distributorCustomer(id) {
+      let result = await distributorCustomer(id);
+      const res = result.data;
+      const rescode = result.code;
+      if (rescode === 0) {
+        this.sponsorData = res.sponsor;
+        this.uplineData = res.upline;
+        this.firstName = res.firstName;
+        this.lastName = res.lastName;
+        this.payAmount = res.payAmount;
       }
     }
   },

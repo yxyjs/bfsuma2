@@ -22,17 +22,16 @@
                   <label class="item-lable">Country</label>
                   <div class="item-main">
                     <select
-                      ref="showHelpBlock"
                       class="item-main-inner"
                       v-model="formParams.country"
-                      :class="showHelpBlock ? 'show-help' : ''"
+                      @change="countryChange"
                     >
                       <option disabled value style="display:none;">Select Country</option>
                       <option
                         :value="country.value"
                         v-for="(country, index) in countryList"
                         :key="index"
-                      >{{ country.text }}</option>
+                      >{{ country.value }}</option>
                     </select>
                   </div>
                 </div>
@@ -53,7 +52,6 @@
                       class="item-main-inner"
                       name="phoneHead"
                       id="phoneHead"
-                      :class="showHelpBlock1 ? 'show-help' : ''"
                       v-model="formParams.phoneHead"
                     >
                       <option disabled value style="display: none;">Aera Cod</option>
@@ -83,7 +81,7 @@
                       placeholder="Phone Number"
                       v-model="formParams.phoneBody"
                       oninput="if(value.length>9)value=value.slice(0,9)"
-                      :class="showHelpBlock2 ? 'show-help' : ''"
+                      @focus="phoneBodyFocus"
                     />
                   </div>
                 </div>
@@ -109,7 +107,6 @@
                       placeholder="Short Message Verification Code"
                       v-model="formParams.code"
                       oninput="if(value.length>6)value=value.slice(0,6)"
-                      :class="showHelpBlock3 ? 'show-help' : ''"
                     />
                     <button
                       ref="getCodeBtn"
@@ -124,7 +121,12 @@
                   <span class="help-block">{{ errors[0] }}</span>
                   <small ref="codeFailed" class="other-help">Failed to send text message</small>
                   <small ref="notRegistered" class="other-help">Cell phone number not registered</small>
+                  <small ref="codeError" class="other-help">Verification code error</small>
                   <small ref="codePhoneError" class="other-help">Phone number format error</small>
+                  <small ref="noAuth" class="other-help">
+                    No authentication code has been
+                    acquired or has expired.Please reacquire it
+                  </small>
                 </div>
               </ValidationProvider>
             </section>
@@ -142,7 +144,6 @@
                       placeholder="8~15 character,at least one letter and one number"
                       v-model="prePassword"
                       oninput="if(value.length>15)value=value.slice(0,15)"
-                      :class="showHelpBlock4 ? 'show-help' : ''"
                     />
                     <i
                       class="item-icon iconfont icon-yanjing"
@@ -187,8 +188,8 @@
                       :type="!showPassword ? 'password' : 'text'"
                       placeholder="Reenter Password"
                       v-model="formParams.password"
-                      :class="showHelpBlock5 ? 'show-help' : ''"
                       oninput="if(value.length>15)value=value.slice(0,15)"
+                      @focus="confirmPasswordFocus"
                     />
                     <i
                       class="item-icon iconfont icon-yanjing"
@@ -223,24 +224,23 @@
         </ValidationObserver>
       </div>
     </div>
+    <!-- toast -->
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { getTelCode, distributorResetpwd } from "@/api/index";
+import myToast from "@/components/my-toast";
 export default {
   data() {
     return {
       showPrePassword: false,
       showPassword: false,
-      showHelpBlock: false,
-      showHelpBlock1: false,
-      showHelpBlock2: false,
-      showHelpBlock3: false,
-      showHelpBlock4: false,
-      showHelpBlock5: false,
       disabled: false,
       codeBtnDisabled: true,
+      showToast: false,
+      toastText: "",
       prePassword: "",
       formParams: {
         country: "",
@@ -251,15 +251,16 @@ export default {
         phoneBody: ""
       },
       countryList: [
-        { text: "Kenya", value: "Kenya" },
-        { text: "Cameroon", value: "Cameroon" },
-        { text: "China", value: "China" },
-        { text: "Ghana", value: "Ghana" },
-        { text: "Benin", value: "Benin" },
-        { text: "Nigeria", value: "Nigeria" },
-        { text: "Tanzania", value: "Tanzania" },
-        { text: "Uganda", value: "Uganda" },
-        { text: "Zambia", value: "Zambia" }
+        { value: "Kenya" },
+        { value: "Cameroon" },
+        // { value: "China" },
+        { value: "Ghana" },
+        { value: "Benin" },
+        { value: "Nigeria" },
+        { value: "Tanzania" },
+        { value: "Uganda" },
+        { value: "Zambia" },
+        { value: "Albania" }
       ]
     };
   },
@@ -291,11 +292,20 @@ export default {
   watch: {
     formParams: {
       handler(val) {
-        const { code, prePassword } = val;
+        const { code, password } = val;
+        const { prePassword } = this;
         if (this.computedPhone && this.computedPhone.length === 12) {
           this.codeBtnDisabled = false;
         } else {
           this.codeBtnDisabled = true;
+        }
+        // password
+        if (prePassword === password) {
+          this.$refs.confirmErr.style.display = "none";
+          this.$refs.confirmPass.style.display = "block";
+        } else {
+          this.$refs.confirmErr.style.display = "block";
+          this.$refs.confirmPass.style.display = "none";
         }
       },
       deep: true
@@ -336,8 +346,50 @@ export default {
     }
   },
   methods: {
-    selectChange(item) {
-      // console.log(item);
+    phoneBodyFocus() {
+      if ((this.$refs.notRegistered.style.display = "block")) {
+        this.$refs.notRegistered.style.display = "none";
+      }
+    },
+    confirmPasswordFocus() {},
+    closeToast() {
+      this.showToast = false;
+    },
+    countryChange(event) {
+      let val = event.target.value;
+      console.log(val);
+
+      let { phoneHead } = this.formParams;
+      console.log("111");
+
+      switch (val) {
+        case "Kenya":
+          phoneHead = "254";
+          break;
+        case "Nigeria":
+          phoneHead = "234";
+          break;
+        case "Tanzania":
+          phoneHead = "255";
+          break;
+        case "Uganda":
+          phoneHead = "256";
+          break;
+        case "Zambia":
+          phoneHead = "264";
+          break;
+        case "Ghana":
+          phoneHead = "233";
+          break;
+        case "Cameroon":
+          phoneHead = "237";
+          break;
+        case "Albania":
+          phoneHead = "229";
+          break;
+        default:
+          break;
+      }
     },
     async getCode() {
       let sendBy = "BFSUMA_PWD";
@@ -348,15 +400,15 @@ export default {
         const rescode = res.code;
         console.log(res);
         if (rescode === 0) {
-          this.codeBtnDisabled = true;
           // 按钮倒计时
           let time = 60;
-          let interval = setInterval(() => {
+          this.interval = setInterval(() => {
+            this.codeBtnDisabled = true;
             time = time < 10 ? "0" + time : time;
             this.$refs.getCodeBtn.innerHTML = time + "s";
             time--;
             if (time === 0) {
-              clearInterval(interval);
+              clearInterval(this.interval);
               this.codeBtnDisabled = false;
               this.$refs.getCodeBtn.innerHTML = "Get Code";
             }
@@ -378,9 +430,30 @@ export default {
         sendBy: "BFSUMA_PWD"
       };
       let res = await distributorResetpwd(reqData);
+      if (res) {
+        const rescode = res.code;
+        if (rescode === 0) {
+        }
+        if (rescode === 201) {
+          // 未获取验证码或者已过期，请重新获取
+          this.$refs.codeError.style.display = "block";
+          clearInterval(this.interval);
+          this.codeBtnDisabled = false;
+          this.$refs.getCodeBtn.innerHTML = "Get Code";
+        }
+        if (rescode === 202) {
+          this.$refs.noAuth.style.display = "block";
+        }
+        if (rescode === 101 || rescode === 102) {
+          this.showToast = true;
+          this.toastText = "Failed to change password";
+        }
+      }
     }
   },
-  components: {}
+  components: {
+    "my-toast": myToast
+  }
 };
 </script>
 
@@ -471,12 +544,12 @@ export default {
                 .item-main-inner
                   flex 1
                   height 100%
-                  color rgb(183, 183, 183)
+                  color #575757
                   padding-left 10px
                   border-radius 4px
                   // border-right 40px solid #fff
                   &::placeholder
-                    color rgb(183, 183, 183)
+                    color #b7b7b7
                   &.show-help
                     box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
                     &::placeholder
@@ -500,9 +573,9 @@ export default {
                   display none
                   margin-top 4px
               .other-help
+                display none
                 font-size 12px
                 color #a94442
-                display none
         .error-item
           p
             display flex

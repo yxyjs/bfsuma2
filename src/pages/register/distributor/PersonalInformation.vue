@@ -31,7 +31,6 @@
                         placeholder="First Name"
                         v-model="formParams.firstName"
                         autofocus
-                        :class="showHelp ? 'show-help' : ''"
                       />
                     </div>
                   </div>
@@ -54,7 +53,6 @@
                         type="text"
                         placeholder="Last Name"
                         v-model="formParams.lastName"
-                        :class="showHelp1 ? 'show-help' : ''"
                       />
                     </div>
                   </div>
@@ -101,7 +99,7 @@
                         type="email"
                         placeholder="Email Address"
                         v-model.lazy="formParams.email"
-                        :class="showHelp2 ? 'show-help' : ''"
+                        @focus="emailFocus"
                       />
                     </div>
                   </div>
@@ -156,7 +154,7 @@
                         placeholder="Phone Number"
                         v-model="phoneBody"
                         oninput="if(value.length>9)value=value.slice(0,9)"
-                        :class="showHelp3 ? 'show-help' : ''"
+                        @focus="phoneBodyFocus"
                       />
                     </div>
                   </div>
@@ -225,8 +223,6 @@
             </div>
           </section>
         </div>
-        <!-- 错误提示框 -->
-        <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
         <!-- 密码验证提示 -->
         <div class="error-wrap">
           <div class="error-item" v-show="prePassword">
@@ -304,6 +300,8 @@
         </div>
       </form>
     </ValidationObserver>
+    <!-- 错误提示框 -->
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
     <!-- dialog -->
     <my-dialog
       title="Create account"
@@ -330,23 +328,19 @@ export default {
     return {
       showPrePassword: false,
       showPassword: false,
-      showHelp: false,
-      showHelp1: false,
-      showHelp2: false,
-      showHelp3: false,
       showToast: false,
       showDialog: false,
       toastText: "",
-      prePassword: "",
+      prePassword: "abc111111",
       phoneHead: "",
       phoneBody: "",
       formParams: {
-        firstName: "",
-        lastName: "",
+        firstName: "aa",
+        lastName: "bb",
         gender: "",
-        email: "",
+        email: "a@qq.com",
         phone: "",
-        password: "",
+        password: "abc111111",
         productInterests: [],
         source: "",
         country: "",
@@ -475,8 +469,24 @@ export default {
       deep: true
     }
   },
-  mounted() {},
+  mounted() {
+    let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    this.formParams.country = distSponsor.country;
+    this.formParams.city = distSponsor.city;
+    let uplineId = sessionStorage.getItem("uplineId");
+    this.formParams.upline = uplineId;
+    let distributorId = sessionStorage.getItem("distributorId");
+    this.formParams.sponsor = distributorId;
+  },
   methods: {
+    emailFocus() {
+      if (this.$refs.emailBound.style.display === "block")
+        this.$refs.emailBound.style.display = "none ";
+    },
+    phoneBodyFocus() {
+      if (this.$refs.phoneBound.style.display === "block")
+        this.$refs.phoneBound.style.display = "none ";
+    },
     async onSubmit() {
       // 验证密码是否匹配
       if (!this.isPasswordEqual) {
@@ -497,17 +507,13 @@ export default {
           this.registerCustomer();
           break;
         case 101: //邮箱和手机被使用了
-          this.showHelp3 = true;
           this.$refs.phoneBound.style.display = "block";
-          this.showHelp2 = true;
           this.$refs.emailBound.style.display = "block";
           break;
         case 102: //邮箱被使用了
-          this.showHelp2 = true;
           this.$refs.emailBound.style.display = "block";
           break;
         case 103: //手机号码被使用了
-          this.showHelp3 = true;
           this.$refs.phoneBound.style.display = "block";
           break;
         default:
@@ -515,38 +521,11 @@ export default {
       }
     },
     async registerCustomer() {
-      let { phone, country, city, sponsor, upline } = this.formParams;
-      phone = this.computedPhone;
-      let distSponsor = sessionStorage.getItem("distSponsor");
-      let uplineId = sessionStorage.getItem("uplineId");
-      let distributorId = sessionStorage.getItem("distributorId");
-      if (distSponsor) {
-        country = JSON.parse(distSponsor).country;
-        city = JSON.parse(distSponsor).city;
-      }
-      if (uplineId) {
-        upline = uplineId;
-      }
-      if (distributorId) {
-        sponsor = distributorId;
-      }
-      // sessionStorage.setItem(
-      //   "distInformation",
-      //   JSON.stringify(this.formParams)
-      // );
-      // let distributorId = {
-      //   sponsor: sessionStorage.getItem("distributorId") || ""
-      // };
-      // let uplineId = {
-      //   uplineId: sessionStorage.getItem("uplineId") || ""
-      // };
-      // let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {
-      //   country: "",
-      //   city: ""
-      // };
-
+      let { country, city, sponsor, upline } = this.formParams;
       const reqData = Object.assign({}, this.formParams);
+      reqData.phone = this.computedPhone;
       reqData.productInterests = JSON.stringify(reqData.productInterests);
+      sessionStorage.setItem("distInformation", JSON.stringify(reqData));
       const res = await registerCustomer(reqData);
       if (!res) {
         this.showToast = true;
@@ -571,7 +550,7 @@ export default {
     },
     dialogHandle(flag) {
       if (flag) {
-        this.$router.push("/Payment");
+        this.$router.push("/register/distributor/payment");
       }
     }
   },

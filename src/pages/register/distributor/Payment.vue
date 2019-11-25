@@ -1,6 +1,9 @@
 <template>
   <div id="payment-cont">
-    <my-header />
+    <my-header>
+      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <span>/ Distributor Register</span>
+    </my-header>
     <my-step>
       <img src="../../../../static/img/payment.png" alt />
     </my-step>
@@ -32,7 +35,7 @@
           <p>Please pay the EXACT amount to complete your order</p>
           <div class="pay-account-main">
             <p
-              v-show="showNoPhone"
+              ref="notOpened"
               class="pay-error"
             >Sorry,your phone hasn't been opened for M-pesa payment.</p>
             <form class="form">
@@ -42,7 +45,6 @@
                   <input
                     id="payPhone"
                     class="form-input-inner"
-                    :class="showHelpBlockPayPhone ? 'show-help' : ''"
                     type="number"
                     placeholder="Phone Number"
                     v-model="formParams.payPhone"
@@ -51,23 +53,24 @@
                   />
                 </div>
                 <button
+                  ref="payBtn"
                   class="form-button"
                   type="submit"
                   @click="payHandle"
-                  :disabled="disabled"
+                  :disabled="payBtnDisabled"
                 >Pay</button>
               </div>
               <div class="form-bottom">
-                <small
-                  ref="showHelpBlock"
-                  class="help-block"
-                  v-show="showHelpBlockPayPhone"
-                >Required</small>
+                <small ref="phoneEmpty" class="help-block">Format Error</small>
               </div>
             </form>
             <!-- loading -->
             <my-loading :show="showLoading"></my-loading>
             <ul ref="payUl">
+              <li>
+                <span class="info-title">Mpesa Paybill:</span>
+                <span class="info-content">{{paybill}}</span>
+              </li>
               <li>
                 <span class="info-title">Account:</span>
                 <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
@@ -78,7 +81,11 @@
               </li>
             </ul>
           </div>
-          <button class="form-button" type="button" @click="$router.push('/Personal')">Skip</button>
+          <button
+            class="form-button"
+            type="button"
+            @click="$router.push('/register/distributor/personal')"
+          >Skip</button>
         </section>
         <!-- 支付失败盒子 -->
         <section ref="payFailBox" class="pay-account" style="display:none">
@@ -115,12 +122,11 @@
                   class="item-main-inner"
                   placeholder="First Name"
                   v-model="dialogParams.firstName"
-                  :class="showHelpBlock ? 'show-help' : ''"
                 />
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock" class="help-block" v-show="showHelpBlock">Required</small>
+              <small ref="firstNameEmpty" class="help-block">Required</small>
             </div>
           </section>
           <section class="form-item" style="margin-left:16px">
@@ -131,12 +137,11 @@
                   type="text"
                   placeholder="Last Name"
                   v-model="dialogParams.lastName"
-                  :class="showHelpBlock1 ? 'show-help' : ''"
                 />
               </div>
             </div>
             <div class="form-item-bottom">
-              <small class="help-block" v-show="showHelpBlock1">Required</small>
+              <small class="help-block">Required</small>
             </div>
           </section>
         </div>
@@ -165,7 +170,7 @@
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock2">Required</small>
+              <small ref="showHelpBlock2" class="help-block">Required</small>
             </div>
           </section>
           <section class="form-item" style="margin-left:16px">
@@ -176,14 +181,12 @@
                   type="number"
                   placeholder="Phone Number"
                   v-model="dialogParams.phoneBody"
-                  maxlength="9"
                   oninput="if(value.length>9)value=value.slice(0,9)"
-                  :class="showHelpBlock3 ? 'show-help' : ''"
                 />
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock3">Required</small>
+              <small ref="showHelpBlock3" class="help-block">Required</small>
             </div>
           </section>
         </div>
@@ -197,14 +200,13 @@
                   class="item-main-inner"
                   type="text"
                   placeholder="Street Name/Building/Apartment No./Floor"
-                  :class="showHelpBlock4 ? 'show-help' : ''"
                   v-model="dialogParams.address"
                   autofocus
                 />
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock2" class="help-block" v-show="showHelpBlock4">Required</small>
+              <small ref="showHelpBlock2" class="help-block">Required</small>
             </div>
           </section>
         </div>
@@ -217,7 +219,6 @@
                 <select
                   class="item-main-inner"
                   v-model="dialogParams.country"
-                  :class="showHelpBlock6 ? 'show-help' : ''"
                   @input="selectChange"
                 >
                   <option disabled value style="display:none;">Choose Country</option>
@@ -230,7 +231,7 @@
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock6">Required</small>
+              <small ref="showHelpBlock3" class="help-block">Required</small>
             </div>
           </section>
           <!-- city -->
@@ -238,12 +239,7 @@
             <div class="form-item-top">
               <label class="item-lable">*City</label>
               <div class="item-main">
-                <select
-                  class="item-main-inner"
-                  v-model="dialogParams.city"
-                  :class="showHelpBlock5 ? 'show-help' : ''"
-                  @input="selectChange"
-                >
+                <select class="item-main-inner" v-model="dialogParams.city" @input="selectChange">
                   <option disabled value style="display:none;">Choose City</option>
                   <option value="NAIROBI">NAIROBI</option>
                   <option value="BUNGOMA">BUNGOMA</option>
@@ -260,12 +256,14 @@
               </div>
             </div>
             <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block" v-show="showHelpBlock5">Required</small>
+              <small ref="showHelpBlock3" class="help-block">Required</small>
             </div>
           </section>
         </div>
       </div>
     </my-dialog>
+    <!-- 错误提示框 -->
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
 </template>
 
@@ -274,6 +272,7 @@ import {
   payBill,
   payRequest,
   payStatus,
+  distributorCustomer,
   distributorUpgrade,
   distributorAddress
 } from "@/api/index";
@@ -282,22 +281,18 @@ import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myLoading from "@/components/my-loading";
+import myToast from "@/components/my-toast";
 export default {
   data() {
     return {
-      showHelpBlock: false,
-      showHelpBlock1: false,
-      showHelpBlock2: false,
-      showHelpBlock3: false,
-      showHelpBlock4: false,
-      showHelpBlock5: false,
-      showHelpBlock6: false,
-      showHelpBlockPayPhone: false,
-      showNoPhone: false,
       showDialog: false,
       isPay: false,
       showLoading: false,
+      payBtnDisabled: false,
+      showToast: false,
+      toastText: "",
       email: "",
+      paybill: "",
       rightAmount: "",
       countryList: [
         { text: "Kenya", value: "Kenya" },
@@ -311,6 +306,7 @@ export default {
         { text: "Zambia", value: "Zambia" }
       ],
       // 页面参数
+
       formParams: {
         amount: "",
         payPhone: "",
@@ -332,139 +328,144 @@ export default {
   watch: {
     formParams: {
       handler() {
-        const { payPhone } = this.formParams;
         // payPhone
-        if (payPhone.trim().length !== 12) {
-          this.showHelpBlockPayPhone = true;
-          this.isPay = false;
-          this.showNoPhone = false;
+        if (this.formParams.payPhone.trim().length !== 12) {
+          this.$refs.phoneEmpty.style.display = "block";
+          this.payBtnDisabled = true
         } else {
-          this.showHelpBlockPayPhone = false;
+          this.$refs.phoneEmpty.style.display = "none";
+          this.payBtnDisabled = false
         }
       },
       deep: true
     },
     dialogParams: {
-      handler: function() {
-        const {
-          firstName,
-          lastName,
-          phoneHead,
-          phoneBody,
-          address,
-          country,
-          city
-        } = this.dialogParams;
-        //firstName
-        if (!firstName) {
-          this.showHelpBlock = true;
-        } else {
-          this.showHelpBlock = false;
-        }
-        //lastName
-        if (!lastName) {
-          this.showHelpBlock1 = true;
-        } else {
-          this.showHelpBlock1 = false;
-        }
-        //phoneHead
-        if (!phoneHead) {
-          this.showHelpBlock2 = true;
-        } else {
-          this.showHelpBlock2 = false;
-        }
-        //phoneBody
-        if (phoneBody.length !== 9) {
-          this.$refs.showHelpBlock3.innerHTML = "Format error";
-          this.showHelpBlock3 = true;
-        } else {
-          this.showHelpBlock3 = false;
-        }
-        //country
-        if (!country) {
-          this.showHelpBlock6 = true;
-        } else {
-          this.showHelpBlock6 = false;
-        }
-        //city
-        if (!city) {
-          this.showHelpBlock5 = true;
-        } else {
-          this.showHelpBlock5 = false;
-        }
-      },
+      handler: function() {},
       deep: true
     }
   },
   mounted() {
-    this.customerId = sessionStorage.getItem("customerInfo");
-    // 获取商户信息
-    this.payBill();
-    // 从session拿注册信息
-    let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
-    const phone = payInfo.phone;
-    payInfo.phoneHead = phone.slice(0, 3);
-    payInfo.phoneBody = phone.slice(3);
-    payInfo.address = "";
-    this.dialogParams = payInfo;
+    let distributorId = sessionStorage.getItem("distributorId");
+    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
+    distInformation.distributorId = distributorId;
+    this.payBill(distInformation);
 
-    console.log(this.dialogParams);
+    let id = sessionStorage.getItem("customerInfo");
+    this.distributorCustomer(id);
+
+    // const phone = distInformation.phone;
+    // payPhone = distInformation.phone;
+    // distInformation.phoneHead = phone.slice(0, 3);
+    // distInformation.phoneBody = phone.slice(3);
+    // distInformation.address = "";
+    // this.dialogParams = distInformation;
+    // this.email = payInfo.email;
+
+    // console.log(this.dialogParams);
 
     // 给页面参数赋值
     let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
-    this.rightAmount = mySponsor.payAmount;
-    this.formParams.amount = toThousands(mySponsor.payAmount);
-    this.formParams.payPhone = payInfo.phone;
-    this.formParams.orderNo = mySponsor.orderNo;
-    this.email = payInfo.email;
   },
   methods: {
-    async payBill() {
-      let res = await payBill(this.customerId);
-      let rescode = res.code;
-      if (rescode === 0) {
-        // 存到session
-        sessionStorage.setItem("mySponsor", JSON.stringify(res.data));
+    async distributorCustomer(id) {
+      let res = await distributorCustomer(id);
+      if (!res) {
+      } else {
+        let rescode = res.code;
+        let data = res.data;
+        if (rescode === 0) {
+          this.formParams.payPhone = data.phone;
+          this.email = data.email;
+        }
+      }
+    },
+    async payBill(id) {
+      let res = await payBill(id);
+      if (!res) {
+      } else {
+        let rescode = res.code;
+        let data = res.data;
+        if (rescode === 0) {
+          this.paybill = data.paybill;
+          this.formParams.orderNo = data.orderNo;
+          this.formParams.amount = toThousands(data.payAmount);
+          this.rightAmount = data.payAmount;
+          // 存到session
+          sessionStorage.setItem("mySponsor", JSON.stringify(data));
+        }
       }
     },
     async payHandle() {
+      // if ((this.$refs.phoneEmpty.style.display = "block")) {
+      //   return;
+      // }
       this.isPay = true;
       this.showLoading = true;
       this.$refs.payUl.style.display = "none";
       let res = await payRequest(this.formParams);
-      if (res) {
+      if (!res) {
+        console.log("失败了");
+      } else {
         this.showLoading = false;
         this.$refs.payUl.style.display = "block";
-      }
-      let rescode = res.code;
-      if (rescode === 0) {
-        // 获取支付状态
-        this.payStatus();
-      }
-      if (rescode === 101) {
-        // 支付失败
-        // this.showNoPhone = true;
-        this.$refs.payAccount.style.display = "none";
-        this.$refs.payFailBox.style.display = "block";
+        let rescode = res.code;
+        if (rescode === 0) {
+          // 按钮倒计时
+          let time = 60;
+          this.interval = setInterval(() => {
+            this.payBtnDisabled = true;
+            time = time < 10 ? "0" + time : time;
+            this.$refs.payBtn.innerHTML = time + "s";
+            time--;
+            if (time === 0) {
+              clearInterval(this.interval);
+              this.payBtnDisabled = false;
+              this.$refs.payBtn.innerHTML = "Pay";
+            }
+          }, 1000);
+          // 获取支付状态
+          this.payStatus();
+        }
+        if (rescode === 101) {
+          // 支付失败
+          this.$refs.notOpened.style.display = "block";
+          this.$refs.payAccount.style.display = "none";
+          this.$refs.payFailBox.style.display = "block";
+        }
       }
     },
     async payStatus() {
       let res = await payStatus(this.formParams.orderNo);
-      console.log(res);
       const rescode = res.code;
       if (rescode === 0) {
         // 顾客升级为经销商
         this.distributorUpgrade();
-
-        this.showDialog = true;
       } else if (rescode === 102) {
         //失败处理
+        console.log("失败啦");
       }
     },
     async distributorUpgrade() {
-      let customerId = this.customerId;
-      const reqData = { customerId, payPhone, orderNo };
+      let distInformation = JSON.parse(
+        sessionStorage.getItem("distInformation")
+      );
+      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+      let customerInfo = sessionStorage.getItem("customerInfo");
+
+      let reqData = Object.assign(distInformation, distSponsor, {
+        id: customerInfo
+      });
       let res = await distributorUpgrade(reqData);
+      if (!res) console.log("失败啦");
+      let rescode = res.code;
+      if (rescode === 0) {
+        this.showDialog = true;
+      }
+      if ([101, 102, 103, 104].includes(rescode)) {
+        this.showToast = true;
+        this.toastText = "Payment failure";
+        clearInterval(this.interval);
+      }
     },
     async distributorAddress() {
       const reqData = {};
@@ -494,7 +495,8 @@ export default {
     "my-dialog": myDialog,
     "my-header": myHeader,
     "my-step": myStep,
-    "my-loading": myLoading
+    "my-loading": myLoading,
+    "my-toast": myToast
   }
 };
 </script>
@@ -535,6 +537,7 @@ export default {
           padding 30px 20px
           background-color #fafafa
           .pay-error
+            display none
             position absolute
             color #a94442
           .fail-img
@@ -562,6 +565,7 @@ export default {
                     color #fff
           .form-bottom
             .help-block
+              display none
               color #a94442
       .form-button
         color #fff
@@ -571,9 +575,10 @@ export default {
         border-radius 4px
         &:hover
           background-color #286090
-        &:disabled
+        &:disabled  
+          cursor not-allowed
           color #fff
-          opacity 0.2
+          opacity .5
           background-color #5BA2CC
       ul
         margin 30px 0 0 10px
@@ -650,6 +655,7 @@ export default {
         height 20px
         line-height 20px
         .help-block
+          display none
           color #a94442
           @media (max-width: 980px)
             display none

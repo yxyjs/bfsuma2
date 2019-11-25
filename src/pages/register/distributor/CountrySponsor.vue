@@ -49,7 +49,7 @@
                           :value="country.value"
                           v-for="(country, index) in countryList"
                           :key="index"
-                        >{{ country.text }}</option>
+                        >{{ country.value }}</option>
                       </select>
                     </div>
                   </div>
@@ -66,7 +66,7 @@
                     <div class="item-main">
                       <select class="item-main-inner" v-model="formParams.city" @input="cityChange">
                         <option disabled value style="display:none;">Select City</option>
-                        <option value="NAIROBI">NAIROBI</option>
+                        <option value="KENYAX1">KENYAX1</option>
                         <option value="BUNGOMA">BUNGOMA</option>
                         <option value="KISUMU">KISUMU</option>
                         <option value="KISII">KISII</option>
@@ -185,30 +185,32 @@
             </div>
           </section>
         </div>
-        <!-- system-recommend -->
-        <div class="system-recommend" v-show="!recommendList.length">
-          <p class="no-data" v-show="!recommendList.length && showNoData">
+        <div class="table-tips">
+          <p ref="noData" class="table-tip no-data">
             We couldn't find any matching Distributor. Please, try with a
             different term.
           </p>
+          <p ref="recommendMatches" class="table-tip">
+            We can recommend
+            <span>{{ recommendList.length }}</span> matches for you to choose from
+          </p>
+          <p ref="searchMatches" class="table-tip">
+            We found
+            <span>{{ recommendList.length }}</span> matches based on your search
+          </p>
+        </div>
+        <!-- system-recommend -->
+        <div ref="systemRecommend" class="system-recommend">
           <div>
             <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
             <img @click="getRecommend" src="../../../../static/img/become.png" alt />
           </div>
         </div>
         <!-- 赞助商列表 -->
-        <div class="recommend-list" v-show="recommendList.length">
-          <p class="tableTips" v-show="tableTips">
-            We can recommend
-            <span>{{ recommendList.length }}</span> matches for you to choose from
-          </p>
-          <p class="tableTips" v-show="!tableTips">
-            We found
-            <span>{{ recommendList.length }}</span> matches based on your search
-          </p>
+        <div class="recommend-list">
           <!-- loading -->
           <my-loading :show="showLoading"></my-loading>
-          <div class="table-wrap">
+          <div ref="tableWrap" class="table-wrap">
             <table class="table">
               <thead>
                 <tr>
@@ -296,15 +298,15 @@ export default {
       // sponsor: "KE220228",
       sponsor: "",
       countryList: [
-        { text: "Kenya", value: "Kenya" },
-        { text: "Cameroon", value: "Cameroon" },
-        { text: "China", value: "China" },
-        { text: "Ghana", value: "Ghana" },
-        { text: "Benin", value: "Benin" },
-        { text: "Nigeria", value: "Nigeria" },
-        { text: "Tanzania", value: "Tanzania" },
-        { text: "Uganda", value: "Uganda" },
-        { text: "Zambia", value: "Zambia" }
+        { value: "Kenya" },
+        { value: "Cameroon" },
+        { value: "China" },
+        { value: "Ghana" },
+        { value: "Benin" },
+        { value: "Nigeria" },
+        { value: "Tanzania" },
+        { value: "Uganda" },
+        { value: "Zambia" }
       ],
       recommendList: []
     };
@@ -361,6 +363,7 @@ export default {
         this.$refs.searchEmpty.style.display = "block";
       } else {
         this.$refs.searchEmpty.style.display = "none";
+        this.showLoading = true;
         // 发送异步请求搜索赞助者
         const { country, city } = this.formParams;
         const { sponsor } = this;
@@ -373,11 +376,16 @@ export default {
         };
         let res = await searchSponsor(reqData);
         console.log(res);
-        this.recommendList = res.list;
-        if (!this.recommendList.length) {
-          this.showNoData = true;
+        if (res) {
+          this.showLoading = false;
+          this.recommendList = res.list;
+          if (!this.recommendList.length) {
+            this.$refs.tableWrap.style.display = "none";
+            this.$refs.recommendMatches.style.display = "none";
+            this.$refs.noData.style.display = "block";
+            this.$refs.systemRecommend.style.display = "block";
+          }
         }
-        this.tableTips = false;
       }
     },
     // 获取推荐赞助商列表
@@ -390,6 +398,7 @@ export default {
         this.$refs.cityEmpty.style.display = "block";
       }
       if (this.emptyVerify) {
+        this.$refs.systemRecommend.style.display = "none";
         this.showLoading = true;
         let res = await sponsorRecommend(country, city);
         if (res) {
@@ -397,7 +406,11 @@ export default {
           const rescode = res.code;
           if (rescode === 0) {
             this.recommendList = res.data;
-            this.tableTips = true;
+            this.$refs.recommendMatches.style.display = "block";
+            this.$refs.tableWrap.style.display = "block";
+            if ((this.$refs.noData.style.display = "block")) {
+              this.$refs.noData.style.display = "none";
+            }
           }
         }
       }
@@ -409,9 +422,13 @@ export default {
     },
     // 连接赞助商
     connectHandle(item) {
+      this.$refs.noConnect.style.display = "none";
+      this.$refs.tableWrap.style.display = "none";
+      this.$refs.recommendMatches.style.display = "none";
+      this.$refs.systemRecommend.style.display = "block";
       // 存储到session
-      let distSponsor = JSON.parse(JSON.stringify(this.formParams));
-      sessionStorage.setItem("distSponsor", JSON.stringify(distSponsor));
+      let distSponsor = JSON.stringify(this.formParams);
+      sessionStorage.setItem("distSponsor", distSponsor);
       sessionStorage.setItem("distributorId", item.distributorId);
       sessionStorage.setItem("uplineId", item.distributorId);
       sessionStorage.setItem("sponsorData", JSON.stringify(item));
@@ -423,6 +440,10 @@ export default {
     },
 
     onSubmit() {
+      if (this.$refs.countryEmpty.style.display === "block")
+        this.$refs.countryEmpty.style.display = "none";
+      if (this.$refs.cityEmpty.style.display === "block")
+        this.$refs.cityEmpty.style.display = "none";
       // 是否连接赞助商
       let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {};
       if (!Object.keys(distSponsor).length) {
@@ -650,6 +671,10 @@ select, input
           @media (max-width: 980px)
             margin-left 4px
             padding 6px
+    .table-tips
+      margin-top 20px
+      .table-tip
+        display none
     .system-recommend
       text-align center
       .no-data
@@ -677,10 +702,13 @@ select, input
       margin 12px
       @media (max-width: 980px)
         margin 0
+      .table-tip
+        display none
       p
         span
           color #5BA2CC
       .table-wrap
+        display none
         @media (max-width: 980px)
           width 'cale(100vw - %s)' 5px
           overflow auto

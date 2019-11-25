@@ -21,21 +21,16 @@
                       :class="showHelpBlock ? 'show-help' : ''"
                       v-model="account"
                       autofocus
-                      @input="inputChange"
+                      @focus="accountFocus"
                     />
                   </div>
                 </div>
                 <div class="form-item-bottom">
-                  <small
-                    ref="showHelpBlock"
-                    class="help-block"
-                    v-show="showHelpBlock"
-                  >* Enter your E-mail /Phone number / Distributor ID</small>
-                  <small
-                    ref="loginError"
-                    class="help-block"
-                    style="display:none"
-                  >User ID / Distributor ID does not exist, please re-enter</small>
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <span
+                    ref="accountError"
+                    class="other-help"
+                  >User ID / Distributor ID does not exist, please re-enter</span>
                 </div>
               </ValidationProvider>
             </section>
@@ -52,7 +47,7 @@
                       :class="showHelpBlock1 ? 'show-help' : ''"
                       v-model="password"
                       oninput="if(value.length>15)value=value.slice(0,15)"
-                      @input="inputChange"
+                      @focus="passwordFocus"
                     />
                     <i
                       class="item-icon iconfont icon-yanjing"
@@ -62,16 +57,8 @@
                   </div>
                 </div>
                 <div class="form-item-bottom">
-                  <small
-                    ref="showHelpBlock1"
-                    class="help-block"
-                    v-show="showHelpBlock1"
-                  >* Enter password！</small>
-                  <small
-                    ref="loginError1"
-                    class="help-block"
-                    style="display:none"
-                  >Password error, please re-enter</small>
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <span ref="passwordError" class="other-help">Password error, please re-enter</span>
                 </div>
               </ValidationProvider>
             </section>
@@ -97,12 +84,7 @@
             </section>
             <!-- btn -->
             <section class="form-btns">
-              <button
-                type="submit"
-                class="btn btn-login"
-                :disabled="disabled"
-                @click.prevent="onSubmit"
-              >Login</button>
+              <button type="submit" class="btn btn-login" :disabled="disabled">Login</button>
               <button
                 type="button"
                 class="btn btn-cancel"
@@ -135,32 +117,22 @@ export default {
       return this.password.trim();
     }
   },
-  watch: {
-    account(val) {
-      if (!val.trim()) {
-        this.showHelpBlock = true;
-      } else {
-        this.showHelpBlock = false;
-        if (this.disabled) this.disabled = false;
-      }
-    },
-    password(val) {
-      if (!val.trim()) {
-        this.showHelpBlock1 = true;
-      } else {
-        this.showHelpBlock1 = false;
-        if (this.disabled) this.disabled = false;
-      }
-    }
-  },
   methods: {
+    accountFocus() {
+      if (this.$refs.accountError.style.display === "block")
+        this.$refs.accountError.style.display = "none";
+    },
+    passwordFocus() {
+      if (this.$refs.passwordError.style.display === "block")
+        this.$refs.passwordError.style.display = "none";
+    },
     async distributorLogin() {
       const { account, password, rememberPwd } = this;
       let res = await distributorLogin({ account, password, rememberPwd });
       console.log(res);
       if (res) {
         let rescode = res.code;
-        this.disabled = true;
+        // this.disabled = true;
         if (rescode === 0) {
           // 成功
           sessionStorage.setItem("user", JSON.stringify(res.data));
@@ -182,36 +154,14 @@ export default {
           }
         }
         if (rescode === 101) {
-          //
-          this.$refs.loginError.style.display = "block";
-          this.$refs.loginError1.style.display = "block";
-          // this.inputChange(true);
+          this.$refs.accountError.style.display = "block";
+          this.$refs.passwordError.style.display = "block";
         }
       }
     },
     onSubmit() {
-      const { account, password } = this;
-      if (account.trim() && password.trim()) {
-        // 登录
-        this.distributorLogin();
-        this.disabled = true;
-      } else {
-        !account.trim()
-          ? (this.showHelpBlock = true)
-          : (this.showHelpBlock = false);
-        !password.trim()
-          ? (this.showHelpBlock1 = true)
-          : (this.showHelpBlock1 = false);
-      }
-    },
-    inputChange(flag) {
-      if (flag) {
-        this.showHelpBlock = false;
-        this.showHelpBlock1 = false;
-      } else {
-        this.showHelpBlock = true;
-        this.showHelpBlock1 = true;
-      }
+      // 登录
+      this.distributorLogin();
     }
   },
   components: {}
@@ -308,11 +258,16 @@ export default {
             height 20px
             line-height 20px
             .help-block
+              font-size 12px
               color #a94442
               font-weight normal
               @media (max-width: 980px)
                 display none
                 margin-top 4px
+            .other-help
+              display none
+              font-size 12px
+              color #a94442
         .form-rem-for
           display flex
           justify-content space-between
