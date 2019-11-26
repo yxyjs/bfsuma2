@@ -8,8 +8,16 @@
       </div>
 
       <div class="link">
+        <div class="link-box" v-show="$route.path.indexOf('personal')!=-1">
+          <span>Welcome to BF Suma，{{name}}</span>
+          <a href="javascript:;" class="guide" @click="handleExit">
+            <span><img class="exit-img" src="../../static/img/exit.png" alt /></span>
+            <span>&nbsp;Exit</span>
+          </a>
+        </div>
+
         <a
-          v-show="$route.path.indexOf('register')!=-1 || $route.path.indexOf('findPassword')!=-1"
+          v-show="$route.path.indexOf('personal')==-1 && $route.path.indexOf('register')!=-1 || $route.path.indexOf('findPassword')!=-1"
           href="javascript:;"
           class="guide"
           @click="$router.push('/login')"
@@ -28,8 +36,18 @@
 
 <script type="text/ecmascript-6">
 export default {
+  props: {
+    name: {
+      type: String
+    }
+  },
   data() {
     return {};
+  },
+  methods:{
+    handleExit(){
+      this.$emit('handleExit')
+    }
   },
   components: {}
 };
@@ -53,7 +71,14 @@ export default {
         >img
           max-width 100%
     .link
+      .link-box
+        display flex
+        align-items center
+        .exit-img
+          width 14px
       .guide
+        display flex
+        align-items center
         text-align right
         margin 10px
         &:hover

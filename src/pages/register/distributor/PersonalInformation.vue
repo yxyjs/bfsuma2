@@ -278,6 +278,9 @@
               :value="learn.value"
               v-model="formParams.source"
             />
+            <!-- <label :for="learn.value" class="interest-label-box">
+              <img class="check-img" src="../../../../static/img/checked.png" alt />
+            </label>-->
             <img class="check-img" src="../../../../static/img/checked.png" alt />
             <label class="check-label before" :for="learn.value">
               {{
@@ -718,6 +721,7 @@ select, input
             content ''
             display inline-block
             margin 0 6px 0 -20px
+            // margin-left -30px
             width 11px
             height 11px
             border-radius 50%

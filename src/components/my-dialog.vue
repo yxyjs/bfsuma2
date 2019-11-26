@@ -7,6 +7,7 @@
       <main class="dialog-main">
         <slot name="dialog-text"></slot>
         <slot name="dialog-table"></slot>
+        <slot name="dialog-img"></slot>
       </main>
       <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
       <footer class="dialog-buttons">
@@ -98,6 +99,11 @@ export default {
             margin 10px 0 0 10px
       .dialog-table
         margin-top 20px
+      .dialog-img
+        text-align center
+        color #d04848
+        i
+          font-size 70px
     .dialog-icon
       position absolute
       right 20px

@@ -4,10 +4,9 @@
  */
 import ajax from './ajax'
 import { type } from 'os'
-const BASE_URL = 'http://172.18.1.240:73'
+export const BASE_URL = 'http://172.18.1.240:73'
 // const BASE_URL = 'http://www.bfsuma.com' //正式
 // const BASE_URL = '/api'
-
 
 //---------------------------------------SponsorController-----------------------------------------
 
@@ -38,7 +37,7 @@ export const registerCustomer = ({ city, country, gender, firstName, lastName, e
 
 
 // 顾客升级为经销商
-export const distributorUpgrade = ({ id, payPhone, orderNo }) => ajax(BASE_URL + '/distributor/upgrade', { id, payPhone, orderNo }, "POST")
+export const distributorUpgrade = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, id, payPhone, orderNo }) => ajax(BASE_URL + '/distributor/upgrade', { city, country, gender, firstName, lastName, email, phone, productInterests, source, mobile, id, payPhone, orderNo }, "POST")
 
 // 登录
 export const distributorLogin = ({ account, password, rememberPwd }) => ajax(BASE_URL + '/distributor/login', { account, password, rememberPwd })
@@ -53,7 +52,7 @@ export const distributorResetpwd = ({ phone, password, verifyCode, sendBy = "BFS
 export const getTelCode = ({ sendBy = "BFSUMA_PWD", phone }) => ajax(BASE_URL + '/getTelCode', { sendBy, phone })
 
 //填写地址
-export const distributorAddress = (address) => ajax(BASE_URL + '/distributor/address', { address }, "POST")
+export const distributorAddress = ({ firstName, lastName, country, city, address, phone, province }) => ajax(BASE_URL + '/distributor/address', { firstName, lastName, country, city, address, phone, province }, "POST")
 
 // 注册页埋点
 export const registerSysLog = ({ request, module }) => ajax(BASE_URL + '/register/sysLog', { request, module }, "POST")
@@ -62,7 +61,9 @@ export const registerSysLog = ({ request, module }) => ajax(BASE_URL + '/registe
 //---------------------------------------PaymentController-----------------------------------------
 
 // 商户信息
-export const payBill = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId }) => ajax(BASE_URL + '/pay/bill', { city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId })
+// export const payBill = ({ city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId }) => ajax(BASE_URL + '/pay/bill', { city, country, gender, firstName, lastName, email, phone, productInterests, source, sponsor, distributorId })
+// 商户信息
+export const payBill = (id) => ajax(BASE_URL + '/pay/bill', { id })
 
 // 支付接口
 export const payRequest = ({ amount, payPhone, orderNo }) => ajax(BASE_URL + '/pay/request', { amount, payPhone, orderNo }, "POST")
@@ -75,6 +76,11 @@ export const payStatus = (orderNo) => ajax(BASE_URL + '/pay/status', { orderNo }
 
 // 获取国家
 export const getAllCountry = () => ajax(BASE_URL + '/country/all')
+
+// 获取城市
+export const getAllCity = (id) => ajax(BASE_URL + '/district/upper', { id })
+
+
 
 
 

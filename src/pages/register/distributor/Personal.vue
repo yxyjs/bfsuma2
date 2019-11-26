@@ -10,7 +10,7 @@
           <div class="item-list-box" style="border-left:none">
             <img class="item-img" src="../../../../static/img/payment_banner.png" alt />
             <p class="item-text">Distributor Register Fee</p>
-            <p class="item-text">KES {{payAmount}}</p>
+            <p class="item-text">KES {{payAmount || '1,800'}}</p>
           </div>
         </section>
         <section class="main-item">
@@ -18,15 +18,17 @@
           <div class="item-list-box">
             <div class="item-list">
               <p>Distributor ID：</p>
-              <p class="item-list-right">{{uplineData.distributorId}}</p>
+              <p class="item-list-right">{{uplineData.distributorId || uplineData.membId}}</p>
             </div>
             <div class="item-list">
               <p>Name：</p>
-              <p class="item-list-right">{{uplineData.name}}</p>
+              <p class="item-list-right">{{uplineData.distributorName || uplineData.name}}</p>
             </div>
             <div class="item-list">
               <p>Address：</p>
-              <p class="item-list-right">{{distSponsor.city}}&nbsp;&nbsp;{{distSponsor.country}}</p>
+              <p
+                class="item-list-right"
+              >{{distSponsor.city || uplineData.city}}&nbsp;&nbsp;{{distSponsor.country || uplineData.country}}</p>
             </div>
             <div class="item-list">
               <p>Phone:</p>
@@ -43,15 +45,17 @@
           <div class="item-list-box">
             <div class="item-list">
               <p>Distributor ID：</p>
-              <p class="item-list-right">{{sponsorData.distributorId}}</p>
+              <p class="item-list-right">{{sponsorData.distributorId || sponsorData.membId}}</p>
             </div>
             <div class="item-list">
               <p>Name：</p>
-              <p class="item-list-right">{{sponsorData.name}}</p>
+              <p class="item-list-right">{{sponsorData.distributorName || sponsorData.name}}</p>
             </div>
             <div class="item-list">
               <p>Address：</p>
-              <p class="item-list-right">{{distSponsor.city}}&nbsp;&nbsp;{{distSponsor.country}}</p>
+              <p
+                class="item-list-right"
+              >{{distSponsor.city || sponsorData.city}}&nbsp;&nbsp;{{distSponsor.country || sponsorData.country}}</p>
             </div>
             <div class="item-list">
               <p>Phone:</p>
@@ -89,29 +93,47 @@ export default {
   },
   mounted() {
     let user = JSON.parse(sessionStorage.getItem("user"));
-    this.distributorCustomer(user.id);
-
-    // let payInfo = JSON.parse(sessionStorage.getItem("payInfo"));
-    // // this.firstName = payInfo.firstName;
-    // this.lastName = payInfo.lastName;
-    // let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
-    // this.payAmount = toThousands(mySponsor.payAmount);
-    // let connectObj = JSON.parse(sessionStorage.getItem("connectObj"));
-    // this.sponsorData = connectObj.sponsorData;
-    // this.uplineData = connectObj.uplineData;
-    // this.distSponsor = connectObj.distSponsor;
+    if (user) {
+      this.distributorCustomer(user.id);
+    } else {
+      let sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
+      if (sponsorData) {
+        this.sponsorData = sponsorData;
+      }
+      let uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
+      if (uplineData) {
+        this.uplineData = uplineData;
+      }
+      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+      if (distSponsor) {
+        this.distSponsor = distSponsor;
+      }
+      let distInformation = JSON.parse(
+        sessionStorage.getItem("distInformation")
+      );
+      if (distInformation) {
+        this.firstName = distInformation.firstName;
+        this.lastName = distInformation.lastName;
+      }
+      let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+      if (mySponsor) {
+        this.payAmount = toThousands(mySponsor.payAmount);
+      }
+    }
   },
   methods: {
     async distributorCustomer(id) {
-      let result = await distributorCustomer(id);
-      const res = result.data;
-      const rescode = result.code;
-      if (rescode === 0) {
-        this.sponsorData = res.sponsor;
-        this.uplineData = res.upline;
-        this.firstName = res.firstName;
-        this.lastName = res.lastName;
-        this.payAmount = res.payAmount;
+      let res = await distributorCustomer(id);
+      if (res) {
+        const rescode = res.code;
+        if (rescode === 0) {
+          const resdata = res.data;
+          this.firstName = resdata.firstName;
+          this.lastName = resdata.lastName;
+          this.sponsorData = resdata.sponsor;
+          this.uplineData = resdata.upline;
+          this.payAmount = resdata.payAmount;
+        }
       }
     }
   },

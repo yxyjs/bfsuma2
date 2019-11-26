@@ -1,7 +1,7 @@
 <template>
   <div id="payment-cont">
     <my-header>
-      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <a :href="BASE_URL">Register</a>
       <span>/ Distributor Register</span>
     </my-header>
     <my-step>
@@ -19,7 +19,7 @@
           <ul>
             <li>
               <span class="info-title">User:</span>
-              <span class="info-content">{{email}}</span>
+              <span class="info-content">{{account}}</span>
             </li>
             <li>
               <span class="info-title">Order:</span>
@@ -55,8 +55,8 @@
                 <button
                   ref="payBtn"
                   class="form-button"
-                  type="submit"
-                  @click="payHandle"
+                  type="button"
+                  @click="payRequest"
                   :disabled="payBtnDisabled"
                 >Pay</button>
               </div>
@@ -102,7 +102,7 @@
       title="Shipping Address"
       :showDialog="showDialog"
       @dialogHandle="dialogHandle"
-      @closeDialog="showDialog=false"
+      @closeDialog="dialogHandle(false)"
       showCancel
     >
       <div slot="dialog-text" class="dialog-text">
@@ -111,155 +111,174 @@
         Please write the address where you will want your welcome kit delivered or send. Thank you
       </div>
       <div slot="dialog-table" class="dialog-table">
-        <!-- name -->
-        <div class="form-wrap-box">
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Name</label>
-              <div class="item-main">
-                <input
-                  type="text"
-                  class="item-main-inner"
-                  placeholder="First Name"
-                  v-model="dialogParams.firstName"
-                />
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="firstNameEmpty" class="help-block">Required</small>
-            </div>
-          </section>
-          <section class="form-item" style="margin-left:16px">
-            <div class="form-item-top">
-              <div class="item-main">
-                <input
-                  class="item-main-inner"
-                  type="text"
-                  placeholder="Last Name"
-                  v-model="dialogParams.lastName"
-                />
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small class="help-block">Required</small>
-            </div>
-          </section>
-        </div>
-        <!-- Phone -->
-        <div class="form-wrap-box">
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Phone</label>
-              <div class="item-main">
-                <select
-                  class="item-main-inner"
-                  name="phoneHead"
-                  id="phoneHead"
-                  v-model="dialogParams.phoneHead"
-                >
-                  <option style="display: none;" value="Aera Cod">Aera Cod</option>
-                  <option value="254">254</option>
-                  <option value="234">234</option>
-                  <option value="255">255</option>
-                  <option value="256">256</option>
-                  <option value="264">264</option>
-                  <option value="233">233</option>
-                  <option value="237">237</option>
-                  <option value="229">229</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="showHelpBlock2" class="help-block">Required</small>
-            </div>
-          </section>
-          <section class="form-item" style="margin-left:16px">
-            <div class="form-item-top">
-              <div class="item-main">
-                <input
-                  class="item-main-inner"
-                  type="number"
-                  placeholder="Phone Number"
-                  v-model="dialogParams.phoneBody"
-                  oninput="if(value.length>9)value=value.slice(0,9)"
-                />
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block">Required</small>
-            </div>
-          </section>
-        </div>
-        <!-- address -->
-        <div class="form-wrap-box">
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Address</label>
-              <div class="item-main">
-                <input
-                  class="item-main-inner"
-                  type="text"
-                  placeholder="Street Name/Building/Apartment No./Floor"
-                  v-model="dialogParams.address"
-                  autofocus
-                />
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="showHelpBlock2" class="help-block">Required</small>
-            </div>
-          </section>
-        </div>
-        <div class="form-wrap-box">
-          <!-- country -->
-          <section class="form-item">
-            <div class="form-item-top">
-              <label class="item-lable">*Country</label>
-              <div class="item-main">
-                <select
-                  class="item-main-inner"
-                  v-model="dialogParams.country"
-                  @input="selectChange"
-                >
-                  <option disabled value style="display:none;">Choose Country</option>
-                  <option
-                    :value="country.value"
-                    v-for="(country,index) in countryList"
-                    :key="index"
-                  >{{country.text}}</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block">Required</small>
-            </div>
-          </section>
-          <!-- city -->
-          <section class="form-item" style="margin-left:16px">
-            <div class="form-item-top">
-              <label class="item-lable">*City</label>
-              <div class="item-main">
-                <select class="item-main-inner" v-model="dialogParams.city" @input="selectChange">
-                  <option disabled value style="display:none;">Choose City</option>
-                  <option value="NAIROBI">NAIROBI</option>
-                  <option value="BUNGOMA">BUNGOMA</option>
-                  <option value="KISUMU">KISUMU</option>
-                  <option value="KISII">KISII</option>
-                  <option value="ELDORET">ELDORET</option>
-                  <option value="KITALE">KITALE</option>
-                  <option value="NAKURU">NAKURU</option>
-                  <option value="EMBU">EMBU</option>
-                  <option value="KIRIAINI">KIRIAINI</option>
-                  <option value="MOMBASA">MOMBASA</option>
-                  <option value="KAKAMEGA">KAKAMEGA</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-item-bottom">
-              <small ref="showHelpBlock3" class="help-block">Required</small>
-            </div>
-          </section>
-        </div>
+        <ValidationObserver
+          ref="observer"
+          @submit.prevent="onSubmit"
+          v-slot="{ invalid }"
+          tag="form"
+          class="form"
+        >
+          <!-- name -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*Name</label>
+                  <div class="item-main">
+                    <input
+                      type="text"
+                      class="item-main-inner"
+                      placeholder="First Name"
+                      v-model="dialogParams.firstName"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+            <section class="form-item" style="margin-left:16px">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="text"
+                      placeholder="Last Name"
+                      v-model="dialogParams.lastName"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+          <!-- Phone -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*Phone</label>
+                  <div class="item-main">
+                    <select
+                      class="item-main-inner"
+                      name="phoneHead"
+                      id="phoneHead"
+                      v-model="dialogParams.phoneHead"
+                    >
+                      <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                      <option value="254">254</option>
+                      <option value="234">234</option>
+                      <option value="255">255</option>
+                      <option value="256">256</option>
+                      <option value="264">264</option>
+                      <option value="233">233</option>
+                      <option value="237">237</option>
+                      <option value="229">229</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+            <section class="form-item" style="margin-left:16px">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="number"
+                      placeholder="Phone Number"
+                      v-model="dialogParams.phoneBody"
+                      oninput="if(value.length>9)value=value.slice(0,9)"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+          <!-- address -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top" style="height:60px;">
+                  <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
+                  <div class="item-main">
+                    <textarea
+                      class="item-main-inner"
+                      style="padding-top:15px"
+                      type="text"
+                      placeholder="Street Name/Building/Apartment No./Floor"
+                      v-model="dialogParams.address"
+                      autofocus
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+          <div class="form-wrap-box">
+            <!-- country -->
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*Country</label>
+                  <div class="item-main">
+                    <select class="item-main-inner" v-model="dialogParams.country">
+                      <option disabled value style="display:none;">Choose Country</option>
+                      <option
+                        :value="country.value"
+                        v-for="(country,index) in countryList"
+                        :key="index"
+                      >{{country.text}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+            <!-- city -->
+            <section class="form-item" style="margin-left:16px">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*City</label>
+                  <div class="item-main">
+                    <select class="item-main-inner" v-model="dialogParams.city">
+                      <option disabled value style="display:none;">Choose City</option>
+                      <option value="NAIROBI">NAIROBI</option>
+                      <option value="BUNGOMA">BUNGOMA</option>
+                      <option value="KISUMU">KISUMU</option>
+                      <option value="KISII">KISII</option>
+                      <option value="ELDORET">ELDORET</option>
+                      <option value="KITALE">KITALE</option>
+                      <option value="NAKURU">NAKURU</option>
+                      <option value="EMBU">EMBU</option>
+                      <option value="KIRIAINI">KIRIAINI</option>
+                      <option value="MOMBASA">MOMBASA</option>
+                      <option value="KAKAMEGA">KAKAMEGA</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+        </ValidationObserver>
       </div>
     </my-dialog>
     <!-- 错误提示框 -->
@@ -269,6 +288,7 @@
 
 <script type="text/ecmascript-6">
 import {
+  BASE_URL,
   payBill,
   payRequest,
   payStatus,
@@ -285,13 +305,13 @@ import myToast from "@/components/my-toast";
 export default {
   data() {
     return {
+      BASE_URL: BASE_URL,
       showDialog: false,
-      isPay: false,
       showLoading: false,
       payBtnDisabled: false,
       showToast: false,
       toastText: "",
-      email: "",
+      account: "",
       paybill: "",
       rightAmount: "",
       countryList: [
@@ -306,7 +326,6 @@ export default {
         { text: "Zambia", value: "Zambia" }
       ],
       // 页面参数
-
       formParams: {
         amount: "",
         payPhone: "",
@@ -316,57 +335,52 @@ export default {
       dialogParams: {}
     };
   },
-  computed: {
-    disabled() {
-      let flag = false;
-      if (this.isPay) {
-        flag = true;
-      }
-      return flag;
-    }
-  },
   watch: {
     formParams: {
       handler() {
         // payPhone
         if (this.formParams.payPhone.trim().length !== 12) {
           this.$refs.phoneEmpty.style.display = "block";
-          this.payBtnDisabled = true
+          this.payBtnDisabled = true;
         } else {
           this.$refs.phoneEmpty.style.display = "none";
-          this.payBtnDisabled = false
+          this.payBtnDisabled = false;
         }
       },
-      deep: true
-    },
-    dialogParams: {
-      handler: function() {},
       deep: true
     }
   },
   mounted() {
-    let distributorId = sessionStorage.getItem("distributorId");
-    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
-    distInformation.distributorId = distributorId;
-    this.payBill(distInformation);
-
-    let id = sessionStorage.getItem("customerInfo");
+    let user = JSON.parse(sessionStorage.getItem("user"));
+    let customerInfo = sessionStorage.getItem("customerInfo");
+    let id = customerInfo || user.id;
     this.distributorCustomer(id);
+    this.payBill(id);
 
-    // const phone = distInformation.phone;
-    // payPhone = distInformation.phone;
-    // distInformation.phoneHead = phone.slice(0, 3);
-    // distInformation.phoneBody = phone.slice(3);
-    // distInformation.address = "";
-    // this.dialogParams = distInformation;
-    // this.email = payInfo.email;
+    // let userLogin = JSON.parse(sessionStorage.getItem("userLogin"));
+    // if (userLogin) {
+    //   //直接登录后进来的
+    //   this.account = userLogin.account;
+    //   let user = JSON.parse(sessionStorage.getItem("user"));
+    //   this.distributorCustomer(user.id);
+    //   this.payBill(user.id);
+    // } else {
+    //   //注册后进来的
+    //   let distributorId = sessionStorage.getItem("distributorId");
+    //   let distInformation = JSON.parse(
+    //     sessionStorage.getItem("distInformation")
+    //   );
+    //   distInformation.distributorId = distributorId;
+    //   this.payBill(distInformation);
 
-    // console.log(this.dialogParams);
+    //   let id = sessionStorage.getItem("customerInfo");
+    //   this.distributorCustomer(id);
+    // }
 
-    // 给页面参数赋值
-    let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+    // let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
   },
   methods: {
+    // 获取基本信息
     async distributorCustomer(id) {
       let res = await distributorCustomer(id);
       if (!res) {
@@ -375,13 +389,24 @@ export default {
         let data = res.data;
         if (rescode === 0) {
           this.formParams.payPhone = data.phone;
-          this.email = data.email;
+          this.account = data.email;
+          const { phone, firstName, lastName, country, city } = data;
+          let phoneHead = phone.slice(0, 3);
+          let phoneBody = phone.slice(3);
+          this.dialogParams.firstName = firstName;
+          this.dialogParams.lastName = lastName;
+          this.dialogParams.phoneHead = phoneHead;
+          this.dialogParams.phoneBody = phoneBody;
+          this.dialogParams.country = country;
+          this.dialogParams.city = city;
         }
       }
     },
+    // 获取基本信息
     async payBill(id) {
       let res = await payBill(id);
       if (!res) {
+        console.error(res.fullMessage);
       } else {
         let rescode = res.code;
         let data = res.data;
@@ -395,11 +420,8 @@ export default {
         }
       }
     },
-    async payHandle() {
-      // if ((this.$refs.phoneEmpty.style.display = "block")) {
-      //   return;
-      // }
-      this.isPay = true;
+    // 发起支付请求
+    async payRequest() {
       this.showLoading = true;
       this.$refs.payUl.style.display = "none";
       let res = await payRequest(this.formParams);
@@ -423,7 +445,6 @@ export default {
               this.$refs.payBtn.innerHTML = "Pay";
             }
           }, 1000);
-          // 获取支付状态
           this.payStatus();
         }
         if (rescode === 101) {
@@ -434,61 +455,96 @@ export default {
         }
       }
     },
+    // 获取支付状态
     async payStatus() {
       let res = await payStatus(this.formParams.orderNo);
-      const rescode = res.code;
-      if (rescode === 0) {
-        // 顾客升级为经销商
-        this.distributorUpgrade();
-      } else if (rescode === 102) {
-        //失败处理
+      if (!res) {
         console.log("失败啦");
+      } else {
+        const rescode = res.code;
+        if (rescode === 0) {
+          this.distributorUpgrade();
+          this.showDialog = true;
+          // 表单默认赋值
+        }
+        if ([201].includes(rescode)) {
+          //失败处理
+          console.log("支付状态失败啦");
+          this.$refs.notOpened.style.display = "block";
+          this.$refs.payAccount.style.display = "none";
+          this.$refs.payFailBox.style.display = "block";
+        }
       }
     },
+    // 顾客升级为经销商
     async distributorUpgrade() {
       let distInformation = JSON.parse(
         sessionStorage.getItem("distInformation")
       );
       let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
       let customerInfo = sessionStorage.getItem("customerInfo");
-
-      let reqData = Object.assign(distInformation, distSponsor, {
-        id: customerInfo
-      });
-      let res = await distributorUpgrade(reqData);
-      if (!res) console.log("失败啦");
-      let rescode = res.code;
-      if (rescode === 0) {
-        this.showDialog = true;
-      }
-      if ([101, 102, 103, 104].includes(rescode)) {
-        this.showToast = true;
-        this.toastText = "Payment failure";
-        clearInterval(this.interval);
+      let distributorId = sessionStorage.getItem("distributorId");
+      if (distInformation && distSponsor && distributorId) {
+        let reqData = Object.assign(distInformation, distSponsor, {
+          id: customerInfo
+        });
+        let res = await distributorUpgrade(reqData);
+        if (!res) {
+          console.log("失败啦");
+          return;
+        } else {
+          let rescode = res.code;
+          if (rescode === 0) {
+            const resdata = res.data;
+            sessionStorage.setItem("myDistributorId", resdata);
+            this.showDialog = true;
+          }
+          if ([101, 102, 103, 104].includes(rescode)) {
+            this.showToast = true;
+            this.toastText = "Payment failure";
+            clearInterval(this.interval);
+          }
+        }
       }
     },
     async distributorAddress() {
-      const reqData = {};
-      let res = await distributorAddress(this.dialogParams);
-    },
-    selectChange() {},
-    dialogHandle(flag) {
-      if (flag) {
-        // 地址非空验证
-        if (!this.dialogParams.address.trim()) {
-          this.showHelpBlock4 = true;
-          return;
-        } else {
-          this.showHelpBlock4 = false;
-          // 发起请求
-          this.distributorAddress();
+      const reqData = Object.assign({}, this.dialogParams);
+      reqData.province = "aac";
+      reqData.phone = reqData.phoneHead + reqData.phoneBody;
+      let distributorNo = sessionStorage.getItem("myDistributorId");
+      reqData.distributorNo = distributorNo || "";
+
+      console.log(reqData);
+      let res = await distributorAddress(reqData);
+      if (!res) {
+        console.log("提交地址信息失败啦");
+      } else {
+        const rescode = res.code;
+        if (rescode === 0) {
+          this.$router.replace("/register/distributor/business");
+        }
+        if (rescode === 101) {
+          console.error(res.fullMessage);
         }
       }
+    },
+    dialogHandle(flag) {
+      if (flag) {
+        // 确定
+        this.onSubmit();
+      } else {
+        // 取消
+        this.$router.replace("/register/distributor/business");
+      }
+    },
+    async onSubmit() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) return;
+      this.distributorAddress();
     },
     repayHandle() {
       this.$refs.payFailBox.style.display = "none";
       this.$refs.payAccount.style.display = "block";
-      this.isPay = false;
     }
   },
   components: {
@@ -565,7 +621,6 @@ export default {
                     color #fff
           .form-bottom
             .help-block
-              display none
               color #a94442
       .form-button
         color #fff
@@ -575,10 +630,10 @@ export default {
         border-radius 4px
         &:hover
           background-color #286090
-        &:disabled  
+        &:disabled
           cursor not-allowed
           color #fff
-          opacity .5
+          opacity 0.5
           background-color #5BA2CC
       ul
         margin 30px 0 0 10px
@@ -655,7 +710,7 @@ export default {
         height 20px
         line-height 20px
         .help-block
-          display none
+          font-size 12px
           color #a94442
           @media (max-width: 980px)
             display none

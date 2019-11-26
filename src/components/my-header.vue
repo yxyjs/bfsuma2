@@ -3,13 +3,14 @@
     <p class="header-title">{{ title }}</p>
     <p class="header-crumbs">
       You are here：
-      <a href="http://www.bfsuma.com/">Home /</a>
+      <a :href="baseUrl">Home /</a>
       <slot></slot>
     </p>
   </header>
 </template>
 
 <script type="text/ecmascript-6">
+import { BASE_URL } from "../api/index";
 export default {
   props: {
     title: {
@@ -18,9 +19,13 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      baseUrl: ""
+    };
   },
-  mounted() {},
+  mounted() {
+    this.baseUrl = BASE_URL;
+  },
   components: {}
 };
 </script>

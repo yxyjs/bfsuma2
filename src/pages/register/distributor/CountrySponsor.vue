@@ -46,10 +46,10 @@
                       >
                         <option disabled value style="display:none;">Select Country</option>
                         <option
-                          :value="country.value"
+                          :value="country.areaCode"
                           v-for="(country, index) in countryList"
                           :key="index"
-                        >{{ country.value }}</option>
+                        >{{ country.name }}</option>
                       </select>
                     </div>
                   </div>
@@ -273,7 +273,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { sponsorRecommend, searchSponsor, getAllCountry } from "@/api/index";
+import {
+  sponsorRecommend,
+  searchSponsor,
+  getAllCountry,
+  getAllCity
+} from "@/api/index";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -327,8 +332,15 @@ export default {
     }
   },
   mounted() {
-    // this.getAllCountry();
+    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
+    if (!countryList) {
+      this.getAllCountry();
+    } else {
+      this.countryList = countryList;
+    }
     // this.getRecommend();
+    let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    if (distSponsor) this.formParams = distSponsor;
   },
   methods: {
     dialogHandle(flag) {
@@ -344,7 +356,12 @@ export default {
       this.$refs.input.checked = true;
     },
     countryChange() {
-      if (event.target.value) this.$refs.countryEmpty.style.display = "none";
+      let areaCode = event.target.value
+      if(areaCode){
+        this.getAllCity(areaCode)
+      }
+      
+      if (event.target.value) this.$refs.countryEmpty.style.display = "none"; 
       this.recommendList = [];
     },
     cityChange() {
@@ -418,7 +435,18 @@ export default {
     // 异步请求国家
     async getAllCountry() {
       let res = await getAllCountry();
-      this.countryList = res.data;
+      if (!res) {
+        console.error("获取国家失败");
+      } else {
+        const rescode = res.code;
+        if (rescode === 0) {
+          this.countryList = res.data;
+          sessionStorage.setItem("countryList", JSON.stringify(res.data));
+        }
+      }
+    },
+    async getAllCity(areaCode){
+      let res = await getAllCity(areaCode)
     },
     // 连接赞助商
     connectHandle(item) {

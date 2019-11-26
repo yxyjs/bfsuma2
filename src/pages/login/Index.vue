@@ -73,7 +73,9 @@
                   v-model="rememberPwd"
                 />
                 <img class="checked-img" src="../../../static/img/checked.png" alt />
-                <img class="remember-img" src="../../../static/img/check_box.png" alt />
+                <label for="remember" class="remember-label-box">
+                  <img class="check-box-img" src="../../../static/img/check_box.png" alt />
+                </label>
                 <label class="remember-label" for="remember">Remember Password</label>
               </div>
               <a
@@ -117,6 +119,14 @@ export default {
       return this.password.trim();
     }
   },
+  mounted() {
+    let userLogin = JSON.parse(sessionStorage.getItem("userLogin"));
+    if (userLogin) {
+      this.account = userLogin.account;
+      this.password = userLogin.password;
+      this.rememberPwd = true;
+    }
+  },
   methods: {
     accountFocus() {
       if (this.$refs.accountError.style.display === "block")
@@ -129,20 +139,28 @@ export default {
     async distributorLogin() {
       const { account, password, rememberPwd } = this;
       let res = await distributorLogin({ account, password, rememberPwd });
-      console.log(res);
       if (res) {
         let rescode = res.code;
         // this.disabled = true;
         if (rescode === 0) {
+          let userInfo = {
+            account: account,
+            password: password
+          };
+          if (this.rememberPwd) {
+            sessionStorage.setItem("userLogin", JSON.stringify(userInfo));
+          }
+
+          const resdata = res.data;
           // 成功
-          sessionStorage.setItem("user", JSON.stringify(res.data));
+          sessionStorage.setItem("user", JSON.stringify(resdata));
           // 判断是顾客还是经销商
           if (res.data.userType == "customer") {
             this.$router.push("/register/distributor/personal");
           } else {
             let backstageUrl = "http://report.bfsuma.com";
             let user = {
-              distributorNo: "111",
+              distributorNo: resdata.distributorNo,
               password: this.password
             };
             window.location.href =
@@ -274,20 +292,25 @@ export default {
           .remember
             display flex
             align-items center
-            transform translate(-18px)
             .checkbox
+              position absolute
               display none
               &:checked+img
                 opacity 1
             .checked-img
+              position absolute
               opacity 0
               width 19px
               height 16px
-              transform translate(19px)
-            .remember-img
-              max-width 14px
-              height 14px
-              margin-right 10px
+            .remember-label-box
+              position absolute
+              @media (max-width: 980px)
+                top 0
+                left -14px
+              .check-box-img
+                width 12px
+            .remember-label
+              margin-left 20px
           .forgot
             color #FF5B5B
         .form-btns
