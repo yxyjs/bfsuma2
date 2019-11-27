@@ -145,6 +145,9 @@ export default {
 #personal-cont
   margin 38px 0
   background-color #fff
+  @media (max-width: 980px)
+    margin 0
+    min-height 100vh
   .personal-mid
     padding 20px
     .top-tips
@@ -160,10 +163,16 @@ export default {
     .personal-main
       display flex
       margin-top 50px
+      @media (max-width: 980px)
+        display block
+        margin-top 20px
       .main-item
         flex 1
         &:not(:first-child)
           padding-left 26px
+          @media (max-width: 980px)
+            padding-left 0
+            margin-top 20px
         &::before
           position absolute
           content ''
@@ -192,6 +201,8 @@ export default {
           padding-left 26px
           margin-top 4px
           border-left 1px solid #c2c2c2
+          @media (max-width: 980px)
+            border-left none
           .item-list
             .item-list-right
               text-align right
@@ -202,6 +213,10 @@ export default {
       padding 10px 14px
       border-radius 4px
       font-size 14px
+      @media (max-width: 980px)
+        width 100%
+        margin-left 0
+        margin-top 20px
       &:hover
         background-color #286090
 </style>

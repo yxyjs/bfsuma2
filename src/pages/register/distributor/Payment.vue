@@ -509,12 +509,10 @@ export default {
     },
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
-      reqData.province = "aac";
       reqData.phone = reqData.phoneHead + reqData.phoneBody;
       let distributorNo = sessionStorage.getItem("myDistributorId");
       reqData.distributorNo = distributorNo || "";
-
-      console.log(reqData);
+      sessionStorage.setItem('addressInformation',JSON.stringify(reqData))
       let res = await distributorAddress(reqData);
       if (!res) {
         console.log("提交地址信息失败啦");
@@ -525,6 +523,7 @@ export default {
         }
         if (rescode === 101) {
           console.error(res.fullMessage);
+          this.$router.replace("/register/distributor/business");
         }
       }
     },
@@ -564,6 +563,8 @@ export default {
     background #fff
     margin-bottom 38px
     margin-top 20px
+    @media (max-width: 980px)
+      margin 0
     .top-tips
       font-size 14px
       font-weight bold
@@ -577,6 +578,9 @@ export default {
     .pay-main
       display flex
       margin 50px 0
+      @media (max-width: 980px)
+        display block
+        margin-top 10px
       .pay-info
         flex 0.47
         .img-wrap
@@ -588,10 +592,18 @@ export default {
         flex 0.53
         padding-left 30px
         border-left 1px solid #B7B7B7
+        @media (max-width: 980px)
+          border-left none
+          border-top 1px solid #B7B7B7
+          padding-left 0
+          padding-top 30px
+          margin-top 20px
         .pay-account-main
           margin 28px 0 20px 0
           padding 30px 20px
           background-color #fafafa
+          @media (max-width: 980px)
+            padding 10px 0
           .pay-error
             display none
             position absolute
@@ -605,16 +617,21 @@ export default {
             margin-top 40px
             .form-input
               display flex
+              align-items center
               border 1px solid #C1C3C3
               .form-input-label
                 font-weight bold
                 padding 8px 20px
                 color #4AA3D7
                 border-right 1px solid #BABABA
+                @media (max-width: 980px)
+                  padding 0
               .form-input-inner
                 color #575757
-                padding 8px 20px
+                padding 11px 20px
                 box-shadow rgb(230, 240, 243) 0px 0px 0px 100px inset
+                @media (max-width: 980px)
+                  padding 8px 0 8px 8px
                 &.show-help
                   box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
                   &::placeholder
@@ -628,6 +645,9 @@ export default {
         margin-left 20px
         padding 10px 49px
         border-radius 4px
+        @media (max-width: 980px)
+          margin-left 6px
+          padding 10px 20px
         &:hover
           background-color #286090
         &:disabled
@@ -637,6 +657,8 @@ export default {
           background-color #5BA2CC
       ul
         margin 30px 0 0 10px
+        @media (max-width: 980px)
+          margin 10px 0 0 0
         li
           line-height 40px
           .info-title
@@ -653,7 +675,6 @@ export default {
     .form-item
       flex 1
       @media (max-width: 980px)
-        margin 12px 0
         background-color #fff
         flex-direction column
       .form-item-top
@@ -661,6 +682,9 @@ export default {
         background-color #E6F0F3
         height 40px
         line-height 40px
+        @media (max-width: 980px)
+          height 30px
+          line-height 30px
         .item-lable
           font-size 12px
           font-weight bold
@@ -673,6 +697,8 @@ export default {
           @media (max-width: 980px)
             margin-left 0
             border-right none
+            height: 30px;
+            line-height: 6px;
         .item-p
           line-height 40px
           padding-right 10px
@@ -712,7 +738,4 @@ export default {
         .help-block
           font-size 12px
           color #a94442
-          @media (max-width: 980px)
-            display none
-            margin-top 4px
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div id="dialog-cont" v-if="showDialog">
+    <div class="dialog-mask"></div>
     <div class="dialog-wrap">
       <header>
         <h2>{{ title }}</h2>
@@ -56,29 +57,30 @@ export default {
 
 <style scoped lang="stylus">
 #dialog-cont
-  position fixed
-  top 0
-  left 0
-  margin auto
-  width 100vw
-  min-height 100vh
-  text-align center
-  background-color rgba(0, 0, 0, 0.3)
-  z-index 2
-  @media (max-width: 980px)
-    background-color rgba(0, 0, 0, 0.5)
+  .dialog-mask
+    position fixed
+    top 0
+    left 0
+    right 0
+    bottom 0
+    margin auto
+    background-color rgba(0, 0, 0, 0.3)
+    z-index 2
+    @media (max-width: 980px)
+      background-color rgba(0, 0, 0, 0.5)
   .dialog-wrap
-    position absolute
+    position fixed
     top 50%
     left 50%
     transform translate(-50%) translateY(-50%)
     width 50%
-    padding 0 50px
+    z-index 3
+    // padding 0 50px
     background-color #fff
     border-radius 10px
+    overflow hidden
     @media (max-width: 980px)
       width 80%
-      padding 0 10px
     h2
       color #56a7d8
       text-align center
@@ -87,6 +89,7 @@ export default {
       text-align left
       font-size 16px
       line-height 32px
+      padding 0 10px
       @media (max-width: 980px)
         font-size 12px
         line-height 26px
@@ -99,6 +102,8 @@ export default {
             margin 10px 0 0 10px
       .dialog-table
         margin-top 20px
+        @media (max-width: 980px)
+          margin-top 0
       .dialog-img
         text-align center
         color #d04848
@@ -131,6 +136,7 @@ export default {
           border-radius 4px
           @media (max-width: 980px)
             width 100%
+            padding 10px
             border-radius 0
         .btn-cancel
           background-color #ddd

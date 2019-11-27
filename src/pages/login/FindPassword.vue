@@ -16,63 +16,76 @@
           <p class="form-title">Find Password</p>
           <!-- *Country -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">Country</label>
-                  <div class="item-main">
-                    <select
-                      class="item-main-inner"
-                      v-model="formParams.country"
-                      @change="countryChange"
-                    >
-                      <option disabled value style="display:none;">Select Country</option>
-                      <option
-                        :value="country.value"
-                        v-for="(country, index) in countryList"
-                        :key="index"
-                      >{{ country.value }}</option>
-                    </select>
-                  </div>
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">Country</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="formParams.country"
+                    @change="countryChange"
+                  >
+                    <option disabled value style="display:none;">Select Country</option>
+                    <option
+                      :value="country.value"
+                      v-for="(country, index) in countryList"
+                      :key="index"
+                    >{{ country.value }}</option>
+                  </select>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
           </div>
           <!-- Phone -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">Phone</label>
-                  <div class="item-main">
-                    <select
-                      class="item-main-inner"
-                      name="phoneHead"
-                      id="phoneHead"
-                      v-model="formParams.phoneHead"
-                    >
-                      <option disabled value style="display: none;">Aera Cod</option>
-                      <option value="254">254</option>
-                      <option value="234">234</option>
-                      <option value="255">255</option>
-                      <option value="256">256</option>
-                      <option value="264">264</option>
-                      <option value="233">233</option>
-                      <option value="237">237</option>
-                      <option value="229">229</option>
-                    </select>
-                  </div>
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">Phone</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    name="phoneHead"
+                    id="phoneHead"
+                    v-model="formParams.phoneHead"
+                  >
+                    <option disabled value style="display: none;">Aera Cod</option>
+                    <option value="254">254</option>
+                    <option value="234">234</option>
+                    <option value="255">255</option>
+                    <option value="256">256</option>
+                    <option value="264">264</option>
+                    <option value="233">233</option>
+                    <option value="237">237</option>
+                    <option value="229">229</option>
+                  </select>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
-            <div class="form-item" style="margin-left:16px">
-              <ValidationProvider name="Phone" rules="required|length:9" v-slot="{ errors }">
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+            <div class="form-item">
+              <ValidationProvider
+                name="Phone"
+                rules="required|length:9"
+                v-slot="{ errors }"
+                tag="section"
+                class="form-item"
+                style="margin-left:16px"
+              >
                 <div class="form-item-top">
                   <div class="item-main">
                     <input
@@ -95,68 +108,76 @@
           </div>
           <!-- code -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider name="Code" rules="required|length:6" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">Code</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      style="border-right:40px solid #fff"
-                      type="number"
-                      placeholder="Short Message Verification Code"
-                      v-model="formParams.code"
-                      oninput="if(value.length>6)value=value.slice(0,6)"
-                    />
-                    <button
-                      ref="getCodeBtn"
-                      type="button"
-                      class="btn btn-getcode"
-                      :disabled="codeBtnDisabled"
-                      @click="getCode"
-                    >Get Code</button>
-                  </div>
+            <ValidationProvider
+              name="Code"
+              rules="required|length:6"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">Code</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    style="border-right:40px solid #fff"
+                    type="number"
+                    placeholder="Short Message Verification Code"
+                    v-model="formParams.code"
+                    oninput="if(value.length>6)value=value.slice(0,6)"
+                  />
+                  <button
+                    ref="getCodeBtn"
+                    type="button"
+                    class="btn btn-getcode"
+                    :disabled="codeBtnDisabled"
+                    @click="getCode"
+                  >Get Code</button>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <small ref="codeFailed" class="other-help">Failed to send text message</small>
-                  <small ref="notRegistered" class="other-help">Cell phone number not registered</small>
-                  <small ref="codeError" class="other-help">Verification code error</small>
-                  <small ref="codePhoneError" class="other-help">Phone number format error</small>
-                  <small ref="noAuth" class="other-help">
-                    No authentication code has been
-                    acquired or has expired.Please reacquire it
-                  </small>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <small ref="codeFailed" class="other-help">Failed to send text message</small>
+                <small ref="notRegistered" class="other-help">Cell phone number not registered</small>
+                <small ref="codeError" class="other-help">Verification code error</small>
+                <small ref="codePhoneError" class="other-help">Phone number format error</small>
+                <small ref="noAuth" class="other-help">
+                  No authentication code has been
+                  acquired or has expired.Please reacquire it
+                </small>
+              </div>
+            </ValidationProvider>
           </div>
           <!-- prePassword -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider name="Password" rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">Password</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      :type="!showPrePassword ? 'password' : 'text'"
-                      placeholder="8~15 character,at least one letter and one number"
-                      v-model="prePassword"
-                      oninput="if(value.length>15)value=value.slice(0,15)"
-                    />
-                    <i
-                      class="item-icon iconfont icon-yanjing"
-                      v-show="isSeePre"
-                      @click="showPrePassword = !showPrePassword"
-                    ></i>
-                  </div>
+            <ValidationProvider
+              name="Password"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">Password</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPrePassword ? 'password' : 'text'"
+                    placeholder="8~15 character,at least one letter and one number"
+                    v-model="prePassword"
+                    oninput="if(value.length>15)value=value.slice(0,15)"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeePre"
+                    @click="showPrePassword = !showPrePassword"
+                  ></i>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
           </div>
           <!-- 密码校验 -->
           <div class="error-item">
@@ -178,31 +199,35 @@
           </div>
           <!-- Confirm -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider name="Confirm Password" rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">Confirm</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      :type="!showPassword ? 'password' : 'text'"
-                      placeholder="Reenter Password"
-                      v-model="formParams.password"
-                      oninput="if(value.length>15)value=value.slice(0,15)"
-                      @focus="confirmPasswordFocus"
-                    />
-                    <i
-                      class="item-icon iconfont icon-yanjing"
-                      v-show="isSeeConfirm"
-                      @click="showPassword = !showPassword"
-                    ></i>
-                  </div>
+            <ValidationProvider
+              name="Confirm Password"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">Confirm</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPassword ? 'password' : 'text'"
+                    placeholder="Reenter Password"
+                    v-model="formParams.password"
+                    oninput="if(value.length>15)value=value.slice(0,15)"
+                    @focus="confirmPasswordFocus"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeeConfirm"
+                    @click="showPassword = !showPassword"
+                  ></i>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
           </div>
           <div class="error-item">
             <p>
@@ -463,6 +488,8 @@ export default {
     color #5BA2CC
     font-size 36px
     margin 20px
+    @media (max-width: 980px)
+      font-size 26px
   .find-main
     display flex
     padding-bottom 60px
@@ -470,22 +497,32 @@ export default {
       flex 0.4
       max-width 50%
       padding 150px 30px
+      @media (max-width: 980px)
+        display none
       img
         max-width 100%
     .find-form
       flex 0.6
-      margin 0 0 0 120px
+      margin-left 120px
       border-top 4px solid #529ECB
+      @media (max-width: 980px)
+        flex 1
+        margin-left 0
+        border-top 1px solid #529ECB
       .form
         padding 40px
         background-color #fff
+        @media (max-width: 980px)
+          padding 10px
         .form-title
           font-size 18px
           margin 0 0 30px -20px
+          @media (max-width: 980px)
+            display none
         .form-wrap-box
           display flex
           @media (max-width: 980px)
-            display block
+            display flex
             margin 0
           .form-item
             flex 1
@@ -505,6 +542,7 @@ export default {
               @media (max-width: 980px)
                 display flex
                 flex-direction column
+                background-color #fff
               .item-lable
                 color #4295C5
                 font-weight bold
@@ -526,7 +564,6 @@ export default {
                 align-items center
                 color rgb(87, 87, 87)
                 @media (max-width: 980px)
-                  padding-top 4px
                   line-height 36px
                   background-color #E6F0F3
                 .btn-getcode
@@ -547,7 +584,8 @@ export default {
                   color #575757
                   padding-left 10px
                   border-radius 4px
-                  // border-right 40px solid #fff
+                  @media (max-width: 980px)
+                    padding 10px 0
                   &::placeholder
                     color #b7b7b7
                   &.show-help
@@ -570,7 +608,6 @@ export default {
                 color #a94442
                 font-weight normal
                 @media (max-width: 980px)
-                  display none
                   margin-top 4px
               .other-help
                 display none

@@ -34,59 +34,67 @@
           <!-- country -->
           <section>
             <div class="form-wrap-box">
-              <section class="form-item">
-                <ValidationProvider name="Country" rules="required" v-slot="{ errors }">
-                  <div class="form-item-top">
-                    <label class="item-lable">*Country</label>
-                    <div class="item-main">
-                      <select
-                        class="item-main-inner"
-                        v-model="formParams.country"
-                        @input="countryChange"
-                      >
-                        <option disabled value style="display:none;">Select Country</option>
-                        <option
-                          :value="country.areaCode"
-                          v-for="(country, index) in countryList"
-                          :key="index"
-                        >{{ country.name }}</option>
-                      </select>
-                    </div>
+              <ValidationProvider
+                name="Country"
+                rules="required"
+                v-slot="{ errors }"
+                tag="section"
+                class="form-item"
+              >
+                <div class="form-item-top">
+                  <label class="item-lable">*Country</label>
+                  <div class="item-main">
+                    <select
+                      class="item-main-inner"
+                      v-model="formParams.country"
+                      @change="countryChange"
+                    >
+                      <option disabled value style="display:none;">Select Country</option>
+                      <option
+                        :value="country.name"
+                        v-for="(country, index) in countryList"
+                        :key="index"
+                      >{{ country.name }}</option>
+                    </select>
                   </div>
-                  <div class="form-item-bottom">
-                    <span class="help-block">{{ errors[0] }}</span>
-                    <span ref="countryEmpty" class="show-required">Required</span>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <span ref="countryEmpty" class="show-required">Required</span>
+                </div>
+              </ValidationProvider>
+              <ValidationProvider
+                name="City"
+                rules="required"
+                v-slot="{ errors }"
+                tag="section"
+                class="form-item margin-l"
+              >
+                <div class="form-item-top">
+                  <label class="item-lable">*City</label>
+                  <div class="item-main">
+                    <select class="item-main-inner" v-model="formParams.city" @change="cityChange">
+                      <option disabled value style="display:none;">Select City</option>
+                      <option value="KENYAX1">KENYAX1</option>
+                      <option value="BUNGOMA">BUNGOMA</option>
+                      <option value="KISUMU">KISUMU</option>
+                      <option value="KISII">KISII</option>
+                      <option value="ELDORET">ELDORET</option>
+                      <option value="KITALE">KITALE</option>
+                      <option value="NAKURU">NAKURU</option>
+                      <option value="EMBU">EMBU</option>
+                      <option value="KIRIAINI">KIRIAINI</option>
+                      <option value="MOMBASA">MOMBASA</option>
+                      <option value="KAKAMEGA">KAKAMEGA</option>
+                    </select>
                   </div>
-                </ValidationProvider>
-              </section>
-              <section class="form-item margin-l">
-                <ValidationProvider name="City" rules="required" v-slot="{ errors }">
-                  <div class="form-item-top">
-                    <label class="item-lable">*City</label>
-                    <div class="item-main">
-                      <select class="item-main-inner" v-model="formParams.city" @input="cityChange">
-                        <option disabled value style="display:none;">Select City</option>
-                        <option value="KENYAX1">KENYAX1</option>
-                        <option value="BUNGOMA">BUNGOMA</option>
-                        <option value="KISUMU">KISUMU</option>
-                        <option value="KISII">KISII</option>
-                        <option value="ELDORET">ELDORET</option>
-                        <option value="KITALE">KITALE</option>
-                        <option value="NAKURU">NAKURU</option>
-                        <option value="EMBU">EMBU</option>
-                        <option value="KIRIAINI">KIRIAINI</option>
-                        <option value="MOMBASA">MOMBASA</option>
-                        <option value="KAKAMEGA">KAKAMEGA</option>
-                      </select>
-                    </div>
-                  </div>
-                  <!-- spanhelp -->
-                  <div class="form-item-bottom">
-                    <span class="help-block">{{ errors[0] }}</span>
-                    <span ref="cityEmpty" class="show-required">Required</span>
-                  </div>
-                </ValidationProvider>
-              </section>
+                </div>
+                <!-- spanhelp -->
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                  <span ref="cityEmpty" class="show-required">Required</span>
+                </div>
+              </ValidationProvider>
             </div>
           </section>
         </div>
@@ -99,7 +107,7 @@
               <section class="form-item">
                 <div class="form-item-top">
                   <label class="item-lable">*Sponsor</label>
-                  <div class="item-main">
+                  <div class="item-main sponsor">
                     Gage get
                     <span>
                       <strong>ID:</strong>
@@ -128,7 +136,7 @@
               <section class="form-item">
                 <div class="form-item-top">
                   <label class="item-lable">*Upline</label>
-                  <div class="item-main">
+                  <div class="item-main sponsor">
                     Gage get
                     <span>
                       <strong>ID:</strong>
@@ -295,10 +303,10 @@ export default {
       currentStep: 0,
       currentSponsor: {},
       formParams: {
-        // country: "Kenya",
-        country: "",
-        // city: "NAIROBI",
-        city: ""
+        country: "Kenya",
+        // country: "",
+        city: "KENYAX1"
+        // city: ""
       },
       // sponsor: "KE220228",
       sponsor: "",
@@ -329,6 +337,12 @@ export default {
       } else {
         this.$refs.searchEmpty.style.display = "none";
       }
+    },
+    formParams:{
+      handler(val){
+        const {country,city} = val
+      },
+      deep:true
     }
   },
   mounted() {
@@ -355,16 +369,34 @@ export default {
       this.showDialog = false;
       this.$refs.input.checked = true;
     },
-    countryChange() {
-      let areaCode = event.target.value
-      if(areaCode){
-        this.getAllCity(areaCode)
+    countryChange(event) {
+      // 赋值
+      let value = event.target.value
+      this.formParams.country = value
+      console.log(value)
+      // 切换显示
+      this.$refs.tableWrap.style.display = "none";
+      this.$refs.recommendMatches.style.display = "none";
+      this.$refs.systemRecommend.style.display = "block";
+      let areaCode = event.target.value;
+
+      for(let i = 0;i<this.countryList.length;i++){
+        if(this.countryList[i].name === this.formParams.country){
+          this.getAllCity(this.countryList[i].areaCode)
+        }
       }
-      
-      if (event.target.value) this.$refs.countryEmpty.style.display = "none"; 
+
+      if (event.target.value) this.$refs.countryEmpty.style.display = "none";
       this.recommendList = [];
     },
-    cityChange() {
+    cityChange(event) {
+      // 赋值
+      let value = event.target.value
+      this.formParams.city = value
+      // 切换显示
+      this.$refs.tableWrap.style.display = "none";
+      this.$refs.recommendMatches.style.display = "none";
+      this.$refs.systemRecommend.style.display = "block";
       if (event.target.value) this.$refs.cityEmpty.style.display = "none";
       this.recommendList = [];
     },
@@ -401,6 +433,11 @@ export default {
             this.$refs.recommendMatches.style.display = "none";
             this.$refs.noData.style.display = "block";
             this.$refs.systemRecommend.style.display = "block";
+          } else {
+            this.$refs.tableWrap.style.display = "block";
+            this.$refs.recommendMatches.style.display = "block";
+            this.$refs.noData.style.display = "none";
+            this.$refs.systemRecommend.style.display = "none";
           }
         }
       }
@@ -445,8 +482,8 @@ export default {
         }
       }
     },
-    async getAllCity(areaCode){
-      let res = await getAllCity(areaCode)
+    async getAllCity(areaCode) {
+      let res = await getAllCity(areaCode);
     },
     // 连接赞助商
     connectHandle(item) {
@@ -510,7 +547,6 @@ select, input
       color #575757
       line-height 30px
       @media (max-width: 980px)
-        font-size 13px
         line-height 1.5
         font-weight normal
         padding 10px
@@ -585,17 +621,15 @@ select, input
               @media (max-width: 980px)
                 margin-left 0
             @media (max-width: 980px)
-              margin 12px 0
               background-color #fff
               flex-direction column
             .form-item-top
               display flex
-              height 40px
-              line-height 40px
               background-color #E6F0F3
               @media (max-width: 980px)
                 display flex
                 flex-direction column
+                background-color #fff
               .item-lable
                 display inline-block
                 font-weight bold
@@ -619,16 +653,21 @@ select, input
                 align-items center
                 color rgb(87, 87, 87)
                 padding-left 6px
+                &.sponsor
+                  @media (max-width: 980px)
+                    display block
                 @media (max-width: 980px)
-                  padding-top 4px
-                  line-height 36px
                   background-color #E6F0F3
                 span
                   margin-left 15px
+                  @media (max-width: 980px)
+                    display block
                 .item-main-inner
                   flex 1
                   height 100%
                   color rgb(87, 87, 87)
+                  @media (max-width: 980px)
+                    padding 10px 0
                   &.show-help
                     box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
                     &::placeholder
@@ -639,6 +678,8 @@ select, input
                   background-color #5ba2cc
                   border-radius 4px
                   padding 0 8px
+                  @media (max-width: 980px)
+                    padding 10px
             .form-item-bottom
               height 20px
               line-height 20px
@@ -647,7 +688,6 @@ select, input
                 font-size 12px
                 font-weight normal
                 @media (max-width: 980px)
-                  display none
                   margin-top 4px
               .show-required
                 display none
@@ -667,8 +707,6 @@ select, input
       margin-bottom 20px
       border 0
       border-top 1px solid #b7b7b7
-      @media (max-width: 980px)
-        display none
     .connect-foot
       display flex
       justify-content space-between
@@ -757,7 +795,7 @@ select, input
               background-color #F3F3F3
               border-top 10px solid #fff
               @media (max-width: 980px)
-                height 30px
+                height 36px
                 border-top none
               td
                 @media (max-width: 980px)
@@ -768,7 +806,6 @@ select, input
                   border-radius 4px
                   background-color #55ABD9
                   @media (max-width: 980px)
-                    padding 2px 3px
                     font-size 12px
     .next-btn-wrap
       margin-top 30px

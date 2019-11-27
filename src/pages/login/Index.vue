@@ -9,59 +9,65 @@
         <ValidationObserver v-slot="{ handleSubmit }" tag="div">
           <form action="#" @submit.prevent="handleSubmit(onSubmit)" class="form-wrap-box">
             <!-- *account -->
-            <section class="form-item">
-              <ValidationProvider name="Account" rules="required" v-slot="{ errors }">
-                <label class="item-lable">Account</label>
-                <div class="form-item-top">
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="text"
-                      placeholder="*Your E-mail /Phone number / Distributor ID"
-                      :class="showHelpBlock ? 'show-help' : ''"
-                      v-model="account"
-                      autofocus
-                      @focus="accountFocus"
-                    />
-                  </div>
+            <ValidationProvider
+              name="Account"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <label class="item-lable">Account</label>
+              <div class="form-item-top">
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="*Your E-mail /Phone number / Distributor ID"
+                    v-model="account"
+                    autofocus
+                    @focus="accountFocus"
+                  />
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <span
-                    ref="accountError"
-                    class="other-help"
-                  >User ID / Distributor ID does not exist, please re-enter</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <span
+                  ref="accountError"
+                  class="other-help"
+                >User ID / Distributor ID does not exist, please re-enter</span>
+              </div>
+            </ValidationProvider>
             <!-- Password -->
-            <section class="form-item">
-              <ValidationProvider name="Password" rules="required" v-slot="{ errors }">
-                <label class="item-lable">Password</label>
-                <div class="form-item-top">
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      :type="!showPassword ? 'password' : 'text'"
-                      placeholder="*Fill in"
-                      :class="showHelpBlock1 ? 'show-help' : ''"
-                      v-model="password"
-                      oninput="if(value.length>15)value=value.slice(0,15)"
-                      @focus="passwordFocus"
-                    />
-                    <i
-                      class="item-icon iconfont icon-yanjing"
-                      v-show="isSeePwd"
-                      @click="showPassword = !showPassword"
-                    ></i>
-                  </div>
+            <ValidationProvider
+              name="Password"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <label class="item-lable">Password</label>
+              <div class="form-item-top">
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPassword ? 'password' : 'text'"
+                    placeholder="*Fill in"
+                    v-model="password"
+                    oninput="if(value.length>15)value=value.slice(0,15)"
+                    @focus="passwordFocus"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeePwd"
+                    @click="showPassword = !showPassword"
+                  ></i>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <span ref="passwordError" class="other-help">Password error, please re-enter</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="passwordError" class="other-help">Password error, please re-enter</span>
+              </div>
+            </ValidationProvider>
             <section class="form-rem-for">
               <div class="remember">
                 <input
@@ -106,8 +112,6 @@ export default {
   data() {
     return {
       disabled: false,
-      showHelpBlock: false,
-      showHelpBlock1: false,
       showPassword: false,
       rememberPwd: false,
       account: "",
@@ -192,25 +196,34 @@ export default {
     color #5BA2CC
     font-size 36px
     margin 20px
+    @media (max-width 980px)
+      font-size 26px
   .login-main
     display flex
     .login-banner
       flex 0.4
       max-width 50%
       padding 150px 30px
+      @media (max-width: 980px)
+        display none
       img
         max-width 100%
     .login-form
       flex 0.6
-      padding 0 0 0 120px
+      padding-left 120px
+      @media (max-width: 980px)
+        flex 1
+        padding-left 0
       .form-wrap-box
         border-top 4px solid #529ECB
         background-color #fff
-        padding 40px 60px 40px 40px
+        padding 40px
         box-shadow 0px 4px 40px 0px rgba(204, 204, 204, 0.1)
         @media (max-width: 980px)
           display block
+          padding 20px
           margin 0
+          border-top 1px solid #529ECB
         .form-item
           flex 1
           margin-bottom 15px
@@ -280,7 +293,6 @@ export default {
               color #a94442
               font-weight normal
               @media (max-width: 980px)
-                display none
                 margin-top 4px
             .other-help
               display none
@@ -304,9 +316,6 @@ export default {
               height 16px
             .remember-label-box
               position absolute
-              @media (max-width: 980px)
-                top 0
-                left -14px
               .check-box-img
                 width 12px
             .remember-label
