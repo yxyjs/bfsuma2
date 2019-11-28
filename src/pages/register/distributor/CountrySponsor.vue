@@ -1,7 +1,7 @@
 <template>
   <div id="country-cont">
     <my-header>
-      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
     </my-header>
     <my-step>
@@ -77,15 +77,11 @@
                       <option disabled value style="display:none;">Select City</option>
                       <option value="KENYAX1">KENYAX1</option>
                       <option value="BUNGOMA">BUNGOMA</option>
-                      <option value="KISUMU">KISUMU</option>
-                      <option value="KISII">KISII</option>
-                      <option value="ELDORET">ELDORET</option>
-                      <option value="KITALE">KITALE</option>
-                      <option value="NAKURU">NAKURU</option>
-                      <option value="EMBU">EMBU</option>
-                      <option value="KIRIAINI">KIRIAINI</option>
-                      <option value="MOMBASA">MOMBASA</option>
-                      <option value="KAKAMEGA">KAKAMEGA</option>
+                      <option
+                        :value="city.name"
+                        v-for="(city,index) in cityList"
+                        :key="index"
+                      >{{city.name}}</option>
                     </select>
                   </div>
                 </div>
@@ -274,7 +270,7 @@
           to become distributors of BFSuma!
         </p>
         <p>If you are over 16, you can try our products.</p>
-        <a href="http://www.bfsuma.com/products/en">Now，have a look at the product！</a>
+        <a :href="BASE_URL + '/products/en'">Now，have a look at the product！</a>
       </div>
     </my-dialog>
   </div>
@@ -282,6 +278,7 @@
 
 <script type="text/ecmascript-6">
 import {
+  BASE_URL,
   sponsorRecommend,
   searchSponsor,
   getAllCountry,
@@ -295,6 +292,7 @@ import myLoading from "@/components/my-loading";
 export default {
   data() {
     return {
+      BASE_URL: "",
       checked: true,
       showDialog: false,
       showNoData: false,
@@ -303,10 +301,10 @@ export default {
       currentStep: 0,
       currentSponsor: {},
       formParams: {
-        country: "Kenya",
-        // country: "",
-        city: "KENYAX1"
-        // city: ""
+        // country: "Kenya",
+        country: "",
+        // city: "KENYAX1"
+        city: ""
       },
       // sponsor: "KE220228",
       sponsor: "",
@@ -321,6 +319,7 @@ export default {
         { value: "Uganda" },
         { value: "Zambia" }
       ],
+      cityList: [],
       recommendList: []
     };
   },
@@ -338,22 +337,28 @@ export default {
         this.$refs.searchEmpty.style.display = "none";
       }
     },
-    formParams:{
-      handler(val){
-        const {country,city} = val
+    formParams: {
+      handler(val) {
+        const { country, city } = val;
       },
-      deep:true
+      deep: true
     }
   },
   mounted() {
-    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
+    const countryList = JSON.parse(localStorage.getItem("countryList"));
     if (!countryList) {
       this.getAllCountry();
     } else {
       this.countryList = countryList;
     }
-    // this.getRecommend();
-    let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    const cityList = JSON.parse(localStorage.getItem("cityList"));
+    const areaCode = localStorage.getItem("areaCode");
+    if (!cityList) {
+      this.getAllCity(areaCode);
+    } else {
+      this.cityList = cityList;
+    }
+    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
     if (distSponsor) this.formParams = distSponsor;
   },
   methods: {
@@ -362,7 +367,7 @@ export default {
         this.showDialog = false;
         this.$refs.input.checked = true;
       } else {
-        location.href = "http://www.bfsuma.com/en";
+        location.href = BASE_URL;
       }
     },
     closeDialog() {
@@ -371,34 +376,31 @@ export default {
     },
     countryChange(event) {
       // 赋值
-      let value = event.target.value
-      this.formParams.country = value
-      console.log(value)
+      let value = event.target.value;
+      this.formParams.country = value;
       // 切换显示
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
-      let areaCode = event.target.value;
 
-      for(let i = 0;i<this.countryList.length;i++){
-        if(this.countryList[i].name === this.formParams.country){
-          this.getAllCity(this.countryList[i].areaCode)
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        if (countryList[i].name === this.formParams.country) {
+          const areaCode = countryList[i].areaCode;
+          console.log(areaCode);
+          this.getAllCity(areaCode);
+          sessionStorage.setItem("areaCode", areaCode);
         }
       }
-
-      if (event.target.value) this.$refs.countryEmpty.style.display = "none";
-      this.recommendList = [];
     },
     cityChange(event) {
       // 赋值
-      let value = event.target.value
-      this.formParams.city = value
+      let value = event.target.value;
+      this.formParams.city = value;
       // 切换显示
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
-      if (event.target.value) this.$refs.cityEmpty.style.display = "none";
-      this.recommendList = [];
     },
     async onSearch() {
       const { country, city } = this.formParams;
@@ -412,8 +414,8 @@ export default {
         this.$refs.searchEmpty.style.display = "block";
       } else {
         this.$refs.searchEmpty.style.display = "none";
+        this.$refs.systemRecommend.style.display = "none";
         this.showLoading = true;
-        // 发送异步请求搜索赞助者
         const { country, city } = this.formParams;
         const { sponsor } = this;
         const reqData = {
@@ -424,25 +426,24 @@ export default {
           keyword: sponsor
         };
         let res = await searchSponsor(reqData);
-        console.log(res);
-        if (res) {
-          this.showLoading = false;
-          this.recommendList = res.list;
-          if (!this.recommendList.length) {
-            this.$refs.tableWrap.style.display = "none";
-            this.$refs.recommendMatches.style.display = "none";
-            this.$refs.noData.style.display = "block";
-            this.$refs.systemRecommend.style.display = "block";
-          } else {
-            this.$refs.tableWrap.style.display = "block";
-            this.$refs.recommendMatches.style.display = "block";
-            this.$refs.noData.style.display = "none";
-            this.$refs.systemRecommend.style.display = "none";
-          }
+        const rescode = res.code;
+        this.showLoading = false;
+        const resdata = res.list;
+
+        if (!resdata.length) {
+          this.$refs.tableWrap.style.display = "none";
+          this.$refs.recommendMatches.style.display = "none";
+          this.$refs.noData.style.display = "block";
+          this.$refs.systemRecommend.style.display = "block";
+        } else {
+          this.recommendList = resdata;
+          this.$refs.tableWrap.style.display = "block";
+          this.$refs.recommendMatches.style.display = "block";
+          this.$refs.noData.style.display = "none";
+          this.$refs.systemRecommend.style.display = "none";
         }
       }
     },
-    // 获取推荐赞助商列表
     async getRecommend() {
       const { country, city } = this.formParams;
       if (!country) {
@@ -455,37 +456,41 @@ export default {
         this.$refs.systemRecommend.style.display = "none";
         this.showLoading = true;
         let res = await sponsorRecommend(country, city);
-        if (res) {
-          this.showLoading = false;
-          const rescode = res.code;
-          if (rescode === 0) {
-            this.recommendList = res.data;
-            this.$refs.recommendMatches.style.display = "block";
-            this.$refs.tableWrap.style.display = "block";
-            if ((this.$refs.noData.style.display = "block")) {
-              this.$refs.noData.style.display = "none";
-            }
+        this.showLoading = false;
+        const rescode = res.code;
+        if (rescode === 0) {
+          const resdata = res.data;
+          this.recommendList = resdata;
+          this.$refs.recommendMatches.style.display = "block";
+          this.$refs.tableWrap.style.display = "block";
+          if ((this.$refs.noData.style.display = "block")) {
+            this.$refs.noData.style.display = "none";
           }
         }
       }
     },
-    // 异步请求国家
     async getAllCountry() {
       let res = await getAllCountry();
-      if (!res) {
-        console.error("获取国家失败");
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.countryList = res.data;
+        localStorage.setItem("countryList", JSON.stringify(res.data));
       } else {
-        const rescode = res.code;
-        if (rescode === 0) {
-          this.countryList = res.data;
-          sessionStorage.setItem("countryList", JSON.stringify(res.data));
-        }
+        console.error(res.fullMessage);
       }
     },
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.cityList = resdata;
+        this.formParams.city = resdata[0].name;
+        localStorage.setItem("cityList", JSON.stringify(res.data));
+      } else {
+        console.error(res.fullMessage);
+      }
     },
-    // 连接赞助商
     connectHandle(item) {
       this.$refs.noConnect.style.display = "none";
       this.$refs.tableWrap.style.display = "none";
@@ -528,6 +533,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import '../../../../static/stylus/common.styl'
+
 select, input
   padding-left 10px
 ::placeholder
@@ -668,10 +675,6 @@ select, input
                   color rgb(87, 87, 87)
                   @media (max-width: 980px)
                     padding 10px 0
-                  &.show-help
-                    box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                    &::placeholder
-                      color #fff
                 .item-searchbtn
                   height 100%
                   color #fff
@@ -707,6 +710,8 @@ select, input
       margin-bottom 20px
       border 0
       border-top 1px solid #b7b7b7
+      @media (max-width: 980px)
+        display none
     .connect-foot
       display flex
       justify-content space-between

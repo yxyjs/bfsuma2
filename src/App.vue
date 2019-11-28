@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <SumaHeader :name="name" @handleExit="handleExit"></SumaHeader>
+    <SumaHeader :username="username" @handleExit="handleExit"></SumaHeader>
     <div class="app-md">
       <router-view />
     </div>
@@ -29,13 +29,18 @@ export default {
   data() {
     return {
       showDialog: false,
-      name: ""
+      username: ""
     };
   },
   mounted() {
     let user = JSON.parse(sessionStorage.getItem("user"));
+    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
     if (user) {
-      this.name = user.name;
+      this.username = user.name;
+    } else if (distInformation) {
+      this.username = distInformation.firstName + distInformation.lastName;
+    } else {
+      this.username = "";
     }
   },
   methods: {
@@ -62,4 +67,5 @@ export default {
     @media (max-width: 980px)
       max-width 100vw
       overflow hidden
+      background-color #fff
 </style>

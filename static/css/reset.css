@@ -133,102 +133,18 @@ body {
   -webkit-text-size-adjust: none;
   font: 14px/1.5 arial, Microsoft YaHei, tahoma, Hiragino Sans GB, \\5b8b\4f53, sans-serif
 }
+@media (max-width: 980px){
+  body {
+  color                   : #696969;
+  background-color        : #fff;
+  -webkit-text-size-adjust: none;
+  font                    : 14px/1.5 arial, Microsoft YaHei, tahoma, Hiragino Sans GB, \\5b8b\4f53, sans-serif
+}
+}
 
 a {
   color: #666;
   text-decoration: none;
-}
-
-/* 打点... */
-
-.ellipsis {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-/* 边框图片实现1px-border */
-
-.border-image-1px {
-  border-width: 1px 0px;
-  border: 1px solid;
-  -webkit-border-image: url("../../images/border.png") 2 0 stretch;
-  border-image: url("../../images/border.png") 2 0 stretch;
-}
-
-/* css3 transform实现1px */
-
-/* 上下边框 */
-
-.border-1px-tb {
-  position: relative;
-}
-
-.border-1px-tb:after {
-  position: absolute;
-  content: '';
-  top: -50%;
-  bottom: -50%;
-  left: -50%;
-  right: -50%;
-  -webkit-transform: scale(0.5);
-  transform: scale(0.5);
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-}
-
-/* 上边框 */
-
-.border-1px-t {
-  position: relative;
-}
-
-.border-1px:after {
-  position: absolute;
-  content: '';
-  top: -50%;
-  bottom: -50%;
-  left: -50%;
-  right: -50%;
-  -webkit-transform: scale(0.5);
-  transform: scale(0.5);
-  border-top: 1px solid #ccc;
-}
-
-/* 下边框 */
-
-.border-1px-b {
-  position: relative;
-}
-
-.border-1px:after {
-  position: absolute;
-  content: '';
-  top: -50%;
-  bottom: -50%;
-  left: -50%;
-  right: -50%;
-  -webkit-transform: scale(0.5);
-  transform: scale(0.5);
-  border-bottom: 1px solid #ccc;
-}
-
-/* 右边框 */
-
-.border-1px-r {
-  position: relative;
-}
-
-.border-1px:after {
-  position: absolute;
-  content: '';
-  top: -50%;
-  bottom: -50%;
-  left: -50%;
-  right: -50%;
-  -webkit-transform: scale(0.5);
-  transform: scale(0.5);
-  border-right: 1px solid #ccc;
 }
 
 @media (min-width:980px) {

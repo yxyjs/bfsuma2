@@ -2,8 +2,8 @@
   <div id="dialog-cont" v-if="showDialog">
     <div class="dialog-mask"></div>
     <div class="dialog-wrap">
-      <header>
-        <h2>{{ title }}</h2>
+      <header class="header">
+        <p class="dialog-title">{{ title }}</p>
       </header>
       <main class="dialog-main">
         <slot name="dialog-text"></slot>
@@ -13,10 +13,10 @@
       <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
       <footer class="dialog-buttons">
         <div class="buttons-item" v-show="showCancel">
-          <button class="btn btn-cancel" @click.prevent="dialogHandle(false)">Cancel</button>
+          <button class="btn btn-cancel" type="button" @click="dialogHandle(false)">Cancel</button>
         </div>
         <div class="buttons-item">
-          <button class="btn btn-confirm" @click.prevent="dialogHandle(true)">Confirm</button>
+          <button class="btn btn-confirm" type="button" @click="dialogHandle(true)">Confirm</button>
         </div>
       </footer>
     </div>
@@ -75,16 +75,21 @@ export default {
     transform translate(-50%) translateY(-50%)
     width 50%
     z-index 3
-    // padding 0 50px
     background-color #fff
     border-radius 10px
     overflow hidden
     @media (max-width: 980px)
       width 80%
-    h2
-      color #56a7d8
-      text-align center
-      margin 25px 0
+    .header
+      .dialog-title
+        font-size 20px
+        font-weight bold
+        color #56a7d8
+        text-align center
+        margin 25px 0
+        @media (max-width: 980px)
+          font-size 16px
+          margin 10px 0 15px 0
     .dialog-main
       text-align left
       font-size 16px
@@ -107,8 +112,12 @@ export default {
       .dialog-img
         text-align center
         color #d04848
+        @media (max-width: 980px)
+          margin-top 10px
         i
           font-size 70px
+          @media (max-width: 980px)
+            font-size 50px
     .dialog-icon
       position absolute
       right 20px
@@ -116,6 +125,9 @@ export default {
       font-size 26px
       color #ccc
       cursor pointer
+      @media (max-width: 980px)
+        right 10px
+        top 6px
       &:hover
         color #aaa
     .dialog-buttons

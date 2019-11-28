@@ -1,6 +1,9 @@
 <template>
   <div id="business-cont">
-    <my-header />
+    <my-header>
+      <a href="javascript:;" @click="$router.replace('/register')">Register</a>
+      <span>/ Distributor Register</span>
+    </my-header>
     <my-step>
       <img src="../../../../static/img/business.png" alt />
     </my-step>
@@ -20,11 +23,12 @@
           You have not filled in the shipping address yet.
           <button
             class="btn add-address"
+            @click="showDialog=true"
           >Add Shipping Address</button>
         </p>
         <div class="item-content">
-          <p>{{firstName}} {{lastName}} {{phone}}</p>
-          <p>{{address}} {{city}} {{country}}</p>
+          <p>{{formParams.firstName}} {{formParams.lastName}} {{formParams.phone}}</p>
+          <p>{{formParams.address}} {{formParams.city}} {{formParams.country}}</p>
         </div>
       </section>
       <section class="md-item">
@@ -47,15 +51,17 @@
             <div class="item-list-box" style="border-left:none">
               <div class="item-list">
                 <p>Distributor ID：</p>
-                <p class="item-list-right">{{uplineData.distributorId}}</p>
+                <p class="item-list-right">{{myDistributorId}}</p>
               </div>
               <div class="item-list">
                 <p>Name：</p>
-                <p class="item-list-right">{{firstName}}&nbsp;&nbsp;{{lastName}}</p>
+                <p
+                  class="item-list-right"
+                >{{formParams.firstName}}&nbsp;&nbsp;{{formParams.lastName}}</p>
               </div>
               <div class="item-list">
                 <p>Phone:</p>
-                <p class="item-list-right">{{phone}}</p>
+                <p class="item-list-right">{{formParams.phone}}</p>
               </div>
             </div>
           </section>
@@ -72,7 +78,7 @@
               </div>
               <div class="item-list">
                 <p>Address：</p>
-                <p class="item-list-right">{{city}}&nbsp;&nbsp;{{country}}</p>
+                <p class="item-list-right">{{uplineData.city}}&nbsp;&nbsp;{{uplineData.country}}</p>
               </div>
               <div class="item-list">
                 <p>Phone:</p>
@@ -97,7 +103,7 @@
               </div>
               <div class="item-list">
                 <p>Address：</p>
-                <p class="item-list-right">{{city}}&nbsp;&nbsp;{{country}}</p>
+                <p class="item-list-right">{{sponsorData.city}}&nbsp;&nbsp;{{sponsorData.country}}</p>
               </div>
               <div class="item-list">
                 <p>Phone:</p>
@@ -112,7 +118,7 @@
         </div>
       </section>
     </div>
-    <!-- 填写收货地址弹窗 -->
+    <!-- 收货地址弹窗 -->
     <my-dialog
       title="Shipping Address"
       :showDialog="showDialog"
@@ -148,7 +154,7 @@
                     type="text"
                     class="item-main-inner"
                     placeholder="First Name"
-                    v-model="dialogParams.firstName"
+                    v-model="formParams.firstName"
                   />
                 </div>
               </div>
@@ -160,8 +166,7 @@
               rules="required"
               v-slot="{ errors }"
               tag="section"
-              class="form-item"
-              style="margin-left:16px"
+              class="form-item margin-l"
             >
               <div class="form-item-top">
                 <div class="item-main">
@@ -169,7 +174,7 @@
                     class="item-main-inner"
                     type="text"
                     placeholder="Last Name"
-                    v-model="dialogParams.lastName"
+                    v-model="formParams.lastName"
                   />
                 </div>
               </div>
@@ -193,7 +198,7 @@
                     class="item-main-inner"
                     name="phoneHead"
                     id="phoneHead"
-                    v-model="dialogParams.phoneHead"
+                    v-model="formParams.phone.slice(0,3)"
                   >
                     <option style="display: none;" value="Aera Cod">Aera Cod</option>
                     <option value="254">254</option>
@@ -215,8 +220,7 @@
               rules="required"
               v-slot="{ errors }"
               tag="section"
-              class="form-item"
-              style="margin-left:16px"
+              class="form-item margin-l"
             >
               <div class="form-item-top">
                 <div class="item-main">
@@ -224,7 +228,7 @@
                     class="item-main-inner"
                     type="number"
                     placeholder="Phone Number"
-                    v-model="dialogParams.phoneBody"
+                    v-model="formParams.phone.slice(3)"
                     oninput="if(value.length>9)value=value.slice(0,9)"
                   />
                 </div>
@@ -250,7 +254,7 @@
                     style="padding-top:15px"
                     type="text"
                     placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model="dialogParams.address"
+                    v-model="formParams.address"
                     autofocus
                   ></textarea>
                 </div>
@@ -271,13 +275,17 @@
               <div class="form-item-top">
                 <label class="item-lable">*Country</label>
                 <div class="item-main">
-                  <select class="item-main-inner" v-model="dialogParams.country">
+                  <select
+                    class="item-main-inner"
+                    v-model="formParams.country"
+                    @change="countryChange"
+                  >
                     <option disabled value style="display:none;">Choose Country</option>
                     <option
-                      :value="country.value"
+                      :value="country.name"
                       v-for="(country,index) in countryList"
                       :key="index"
-                    >{{country.text}}</option>
+                    >{{country.name}}</option>
                   </select>
                 </div>
               </div>
@@ -290,25 +298,18 @@
               rules="required"
               v-slot="{ errors }"
               tag="section"
-              class="form-item"
-              style="margin-left:16px"
+              class="form-item margin-l"
             >
               <div class="form-item-top">
                 <label class="item-lable">*City</label>
                 <div class="item-main">
-                  <select class="item-main-inner" v-model="dialogParams.city">
+                  <select class="item-main-inner" v-model="formParams.city">
                     <option disabled value style="display:none;">Choose City</option>
-                    <option value="NAIROBI">NAIROBI</option>
-                    <option value="BUNGOMA">BUNGOMA</option>
-                    <option value="KISUMU">KISUMU</option>
-                    <option value="KISII">KISII</option>
-                    <option value="ELDORET">ELDORET</option>
-                    <option value="KITALE">KITALE</option>
-                    <option value="NAKURU">NAKURU</option>
-                    <option value="EMBU">EMBU</option>
-                    <option value="KIRIAINI">KIRIAINI</option>
-                    <option value="MOMBASA">MOMBASA</option>
-                    <option value="KAKAMEGA">KAKAMEGA</option>
+                    <option
+                      :value="city.name"
+                      v-for="(city,index) in cityList"
+                      :key="index"
+                    >{{city.name}}</option>
                   </select>
                 </div>
               </div>
@@ -324,7 +325,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { distributorCustomer, distributorAddress } from "@/api/index";
+import {
+  distributorCustomer,
+  distributorAddress,
+  getAllCity,
+  getAllCountry
+} from "@/api/index";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -334,39 +340,37 @@ export default {
     return {
       showDialog: false,
       showEditAddress: true,
-      firstName: "",
-      lastName: "",
-      phone: "",
-      country: "",
-      city: "",
-      address: "",
       countryList: [],
-      dialogParams: {},
+      cityList: [],
       sponsorData: {},
-      uplineData: {}
+      uplineData: {},
+      formParams: {
+        firstName: "",
+        lastName: "",
+        phone: "",
+        country: "",
+        city: "",
+        address: ""
+      },
+      myDistributorId: ""
     };
   },
-  computed: {
-    phoneHead() {
-      return this.phone.slice(0, 3);
-    },
-    phoneBody() {
-      return this.phone.slice(3);
-    }
-  },
   mounted() {
-    let sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
-    let uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
-    let addressInformation = JSON.parse(
-      sessionStorage.getItem("addressInformation")
-    );
-    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
+    const sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
+    const uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
     if (sponsorData) {
       this.sponsorData = sponsorData;
     }
     if (uplineData) {
       this.uplineData = uplineData;
     }
+    const myDistributorId = sessionStorage.getItem("myDistributorId");
+    if (myDistributorId) {
+      this.myDistributorId = myDistributorId;
+    }
+    const addressInformation = JSON.parse(
+      sessionStorage.getItem("addressInformation")
+    );
     if (addressInformation) {
       this.showEditAddress = true;
       const {
@@ -377,31 +381,68 @@ export default {
         city,
         address
       } = addressInformation;
-      this.firstName = firstName;
-      this.dialogParams.firstName = firstName;
-      this.lastName = lastName;
-      this.dialogParams.lastName = lastName;
-      this.phone = phone;
-      this.dialogParams.phone = phone;
-      this.dialogParams.phoneHead = phone.slice(0, 3);
-      this.dialogParams.phoneBody = phone.slice(3);
-      this.country = country;
-      this.dialogParams.country = country;
-      this.city = city;
-      this.dialogParams.city = city;
-      this.address = address;
-      this.dialogParams.address = address;
+      this.formParams.firstName = firstName;
+      this.formParams.lastName = lastName;
+      this.formParams.phone = phone;
+      this.formParams.country = country;
+      this.formParams.city = city;
+      this.formParams.address = address;
     } else {
       this.showEditAddress = false;
     }
+    const countryList = JSON.parse(localStorage.getItem("countryList"));
     if (countryList) {
       this.countryList = countryList;
+    } else {
+      this.getAllCountry();
     }
-    this.$nextTick(() => {
-      this.distributorCustomer();
-    });
+    const cityList = JSON.parse(localStorage.getItem("cityList"));
+    if (cityList) {
+      this.cityList = cityList;
+    } else {
+      const areaCode = sessionStorage.getItem("areaCode");
+      this.getAllCity(areaCode);
+    }
+    const distInformation = JSON.parse(
+      sessionStorage.getItem("distInformation")
+    );
+    if (distInformation) {
+      this.formParams.firstName = distInformation.firstName;
+      this.formParams.lastName = distInformation.lastName;
+      this.formParams.phone = distInformation.phone;
+    }
+    // this.distributorCustomer();
   },
   methods: {
+    countryChange(event) {
+      const value = event.target.value;
+      this.formParams.country = value;
+
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        if (countryList[i].name === this.formParams.country) {
+          const areaCode = countryList[i].areaCode;
+          this.getAllCity(areaCode);
+          sessionStorage.setItem("areaCode", areaCode);
+        }
+      }
+    },
+    async getAllCountry(areaCode) {
+      let res = await getAllCountry();
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.countryList = resdata;
+      }
+    },
+    async getAllCity(areaCode) {
+      let res = await getAllCity(areaCode);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.cityList = resdata;
+      }
+    },
     async distributorCustomer() {
       const id = sessionStorage.getItem("customerInfo");
       let res = await distributorCustomer({ id });
@@ -410,34 +451,27 @@ export default {
         const resData = res.data;
         this.sponsorData = resData.sponsor;
         this.uplineData = resData.upline;
-        this.firstName = resData.firstName;
-        this.lastName = resData.lastName;
-        this.phone = resData.phone;
-        this.country = resData.country;
-        this.address = resData.city;
+        this.formParams.firstName = resData.firstName;
+        this.formParams.lastName = resData.lastName;
+        this.formParams.phone = resData.phone;
+        this.formParams.country = resData.country;
+        this.formParams.address = resData.city;
       }
     },
     async submitAddress() {
-      let reqData = Object.assign({}, this.dialogParams);
-      let user = JSON.parse(sessionStorage.getItem("user"));
+      const reqData = Object.assign({}, this.formParams);
+      const user = JSON.parse(sessionStorage.getItem("user"));
       if (user) {
         reqData.distributorNo = user.distributorId;
       }
-      console.log(reqData);
-      delete reqData.phoneHead;
-      delete reqData.phoneBody;
-
       let res = await distributorAddress(reqData);
-      if (!res) {
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.showDialog = false;
+        sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+      }
+      if (rescode === 101) {
         console.error(res.fullMessage);
-      } else {
-        const rescode = res.code;
-        if (rescode === 0) {
-          this.showDialog = false;
-        }
-        if (rescode === 101) {
-          console.error(res.fullMessage);
-        }
       }
     },
     dialogHandle(flag) {
@@ -458,17 +492,23 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import '../../../../static/stylus/common.styl'
+
 #business-cont
   .business-mid
     padding 20px
     background #fff
     margin 20 0 38px 0
     @media (max-width: 980px)
+      padding 8px
       margin 0
     .md-item
       padding 10px 0
       &:not(:last-child)
         border-bottom 1px solid #C2C2C2
+        @media (max-width: 980px)
+          border-bottom none
+          border-1px-b(#ccc)
       &:first-child
         padding-top 0
       .item-title
@@ -542,6 +582,10 @@ export default {
       @media (max-width: 980px)
         background-color #fff
         flex-direction column
+      &.margin-l
+        margin-left 16px
+        @media (max-width: 980px)
+          margin-left 0
       .form-item-top
         display flex
         background-color #E6F0F3

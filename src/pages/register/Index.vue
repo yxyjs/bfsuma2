@@ -21,7 +21,7 @@
         <a href="javascript:;">
           <img
             src="../../../static/img/register1.png"
-            @click="$router.push('/register/distributor')"
+            @click="$router.push('/register/distributor/countrySponsor')"
             alt
           />
         </a>
@@ -56,12 +56,18 @@ export default {
     margin 20px 0 38px 0
     padding 20px
     background-color #fff
+    @media (max-width: 980px)
+      padding 18px
     .md-text
       margin 20px 0 20px 20px
+      @media (max-width: 980px)
+        margin 0
       p
         font-size 18px
         line-height 34px
         margin-bottom 20px
+        @media (max-width: 980px)
+          font-size 17px
         span
           color #5BA2CC
     .md-btn
@@ -70,8 +76,10 @@ export default {
         display inline
         width 290px
     .md-link
-      margin 30px 30px 0 0
+      margin-top 30px
       text-align right
+      @media (max-width: 980px)
+        margin-top 20px
       .link-login
         color #5BA2CC
         &:hover

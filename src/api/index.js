@@ -4,9 +4,9 @@
  */
 import ajax from './ajax'
 import { type } from 'os'
-export const BASE_URL = 'http://172.18.1.240:73'
-// const BASE_URL = 'http://www.bfsuma.com' //正式
-// const BASE_URL = '/api'
+export const BASE_URL = 'http://172.18.1.240:73' //测试
+
+//export const BASE_URL = 'http://www.bfsuma.com' //正式
 
 //---------------------------------------SponsorController-----------------------------------------
 
@@ -52,7 +52,7 @@ export const distributorResetpwd = ({ phone, password, verifyCode, sendBy = "BFS
 export const getTelCode = ({ sendBy = "BFSUMA_PWD", phone }) => ajax(BASE_URL + '/getTelCode', { sendBy, phone })
 
 //填写地址
-export const distributorAddress = ({ firstName, lastName, country, city, address, phone, province }) => ajax(BASE_URL + '/distributor/address', { firstName, lastName, country, city, address, phone, province }, "POST")
+export const distributorAddress = ({ firstName, lastName, country, city, address, phone, distributorNo }) => ajax(BASE_URL + '/distributor/address', { firstName, lastName, country, city, address, phone, distributorNo }, "POST")
 
 // 注册页埋点
 export const registerSysLog = ({ request, module }) => ajax(BASE_URL + '/register/sysLog', { request, module }, "POST")

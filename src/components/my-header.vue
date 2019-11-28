@@ -37,6 +37,7 @@ export default {
   margin-top 32px
   line-height 50px
   @media (max-width: 980px)
+    // margin 0
     display none
   .header-title
     font-size 36px

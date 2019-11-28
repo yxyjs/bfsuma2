@@ -1,7 +1,7 @@
 <template>
   <div id="personal-cont">
     <my-header>
-      <a href="javascript:;" @click="$router.go(-1)">Register</a>
+      <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
     </my-header>
     <my-step>
@@ -45,8 +45,7 @@
                 rules="required|alpha_spaces"
                 v-slot="{ errors }"
                 tag="section"
-                class="form-item"
-                style="margin-left:16px"
+                class="form-item margin-l"
               >
                 <div class="form-item-top">
                   <label class="item-lable hidden-lable">&nbsp;</label>
@@ -65,7 +64,7 @@
               </ValidationProvider>
             </div>
             <!-- Gender -->
-            <div class="form-wrap-box gender">
+            <div class="form-wrap-box">
               <section class="form-item">
                 <div class="form-item-top">
                   <label class="item-lable">Gender</label>
@@ -88,7 +87,7 @@
               </section>
             </div>
           </section>
-          <section>
+          <section class="section-two">
             <!-- Email -->
             <div class="form-wrap-box">
               <ValidationProvider
@@ -135,6 +134,7 @@
                       v-model="phoneHead"
                     >
                       <option disabled value style="display: none;">Aera Cod</option>
+                      <option value="86">86</option>
                       <option value="254">254</option>
                       <option value="234">234</option>
                       <option value="255">255</option>
@@ -155,8 +155,7 @@
                 rules="required|length:9"
                 v-slot="{ errors }"
                 tag="section"
-                class="form-item"
-                style="margin-left:16px"
+                class="form-item margin-l"
               >
                 <div class="form-item-top">
                   <label class="item-lable hidden-lable">&nbsp;</label>
@@ -323,7 +322,6 @@
         </div>
       </form>
     </ValidationObserver>
-    <!-- 错误提示框 -->
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
     <!-- dialog -->
     <my-dialog
@@ -354,16 +352,16 @@ export default {
       showToast: false,
       showDialog: false,
       toastText: "",
-      prePassword: "",
+      prePassword: "abc111111",
       phoneHead: "",
       phoneBody: "",
       formParams: {
-        firstName: "",
-        lastName: "",
+        firstName: "a",
+        lastName: "c",
         gender: "",
-        email: "",
+        email: "222@qq.com",
         phone: "",
-        password: "",
+        password: "abc111111",
         productInterests: [],
         source: "",
         country: "",
@@ -375,11 +373,6 @@ export default {
       genderList: [
         { text: "Male", value: "Male" },
         { text: "Female", value: "Female" }
-      ],
-      phoneHeadList: [
-        { text: 254, value: "254" },
-        { text: 255, value: "255" },
-        { text: 256, value: "256" }
       ],
       productInterestList: [
         {
@@ -493,12 +486,18 @@ export default {
     }
   },
   mounted() {
-    let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    const areaCode = sessionStorage.getItem("areaCode");
+    if (areaCode) {
+      this.phoneHead = areaCode;
+    }
+
+    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
     this.formParams.country = distSponsor.country;
     this.formParams.city = distSponsor.city;
-    let uplineId = sessionStorage.getItem("uplineId");
+    const uplineId = sessionStorage.getItem("uplineId");
+
     this.formParams.upline = uplineId;
-    let distributorId = sessionStorage.getItem("distributorId");
+    const distributorId = sessionStorage.getItem("distributorId");
     this.formParams.sponsor = distributorId;
   },
   methods: {
@@ -587,6 +586,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import '../../../../static/stylus/common.styl'
+
 select, input
   padding-left 10px
 #personal-cont
@@ -617,6 +618,8 @@ select, input
         display flex
         @media (max-width: 980px)
           display block
+          &.section-two
+            margin-top 30px
         .form-wrap-box
           display flex
           flex 1
@@ -633,6 +636,11 @@ select, input
               margin 12px 0
               background-color #fff
               flex-direction column
+            &.margin-l
+              margin-left 16px
+              @media (max-width: 980px)
+                margin-left 0
+                padding-left 10px
             .form-item-top
               display flex
               background-color #E6F0F3

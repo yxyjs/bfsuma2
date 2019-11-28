@@ -23,7 +23,7 @@
               class="form-item"
             >
               <div class="form-item-top">
-                <label class="item-lable">Country</label>
+                <label class="item-lable">*Country</label>
                 <div class="item-main">
                   <select
                     class="item-main-inner"
@@ -32,10 +32,10 @@
                   >
                     <option disabled value style="display:none;">Select Country</option>
                     <option
-                      :value="country.value"
+                      :value="country.name"
                       v-for="(country, index) in countryList"
                       :key="index"
-                    >{{ country.value }}</option>
+                    >{{ country.name }}</option>
                   </select>
                 </div>
               </div>
@@ -53,23 +53,17 @@
               class="form-item"
             >
               <div class="form-item-top">
-                <label class="item-lable">Phone</label>
+                <label class="item-lable">*Phone</label>
                 <div class="item-main">
                   <select
                     class="item-main-inner"
                     name="phoneHead"
                     id="phoneHead"
                     v-model="formParams.phoneHead"
+                    disabled
                   >
                     <option disabled value style="display: none;">Aera Cod</option>
-                    <option value="254">254</option>
-                    <option value="234">234</option>
-                    <option value="255">255</option>
-                    <option value="256">256</option>
-                    <option value="264">264</option>
-                    <option value="233">233</option>
-                    <option value="237">237</option>
-                    <option value="229">229</option>
+                    <option :value="formParams.phoneHead">{{formParams.phoneHead}}</option>
                   </select>
                 </div>
               </div>
@@ -80,20 +74,20 @@
             <div class="form-item">
               <ValidationProvider
                 name="Phone"
-                rules="required|length:9"
+                rules="required"
                 v-slot="{ errors }"
                 tag="section"
-                class="form-item"
-                style="margin-left:16px"
+                class="form-item margin-l"
               >
                 <div class="form-item-top">
+                  <label class="item-lable hidden-lable">&nbsp;</label>
                   <div class="item-main">
                     <input
                       class="item-main-inner"
                       type="number"
                       placeholder="Phone Number"
                       v-model="formParams.phoneBody"
-                      oninput="if(value.length>9)value=value.slice(0,9)"
+                      @input="oninput"
                       @focus="phoneBodyFocus"
                     />
                   </div>
@@ -116,7 +110,7 @@
               class="form-item"
             >
               <div class="form-item-top">
-                <label class="item-lable">Code</label>
+                <label class="item-lable">*Code</label>
                 <div class="item-main">
                   <input
                     class="item-main-inner"
@@ -158,7 +152,7 @@
               class="form-item"
             >
               <div class="form-item-top">
-                <label class="item-lable">Password</label>
+                <label class="item-lable">*Password</label>
                 <div class="item-main">
                   <input
                     class="item-main-inner"
@@ -207,7 +201,7 @@
               class="form-item"
             >
               <div class="form-item-top">
-                <label class="item-lable">Confirm</label>
+                <label class="item-lable">*Confirm</label>
                 <div class="item-main">
                   <input
                     class="item-main-inner"
@@ -255,7 +249,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { getTelCode, distributorResetpwd } from "@/api/index";
+import {
+  getTelCode,
+  distributorResetpwd,
+  getAllCountry,
+  getAllCity
+} from "@/api/index";
 import myToast from "@/components/my-toast";
 export default {
   data() {
@@ -275,18 +274,8 @@ export default {
         phoneHead: "",
         phoneBody: ""
       },
-      countryList: [
-        { value: "Kenya" },
-        { value: "Cameroon" },
-        // { value: "China" },
-        { value: "Ghana" },
-        { value: "Benin" },
-        { value: "Nigeria" },
-        { value: "Tanzania" },
-        { value: "Uganda" },
-        { value: "Zambia" },
-        { value: "Albania" }
-      ]
+      countryList: [],
+      cityList: []
     };
   },
   computed: {
@@ -308,22 +297,32 @@ export default {
     isSeeConfirm() {
       const { password } = this.formParams;
       return password.trim();
-    },
-    shouldCodeDisable() {
-      const { computedPhone } = this;
-      return computedPhone && computedPhone.length === 12;
     }
   },
   watch: {
     formParams: {
       handler(val) {
-        const { code, password } = val;
+        let { code, password, country, phoneBody } = val;
         const { prePassword } = this;
-        if (this.computedPhone && this.computedPhone.length === 12) {
-          this.codeBtnDisabled = false;
+        let value = "";
+        if (country === "China") {
+          if (phoneBody.length >= 11) {
+            this.codeBtnDisabled = false;
+            value = phoneBody.slice(0, 11);
+            this.formParams.phoneBody = value;
+          } else {
+            this.codeBtnDisabled = true;
+          }
         } else {
-          this.codeBtnDisabled = true;
+          if (phoneBody.length >= 9) {
+            this.codeBtnDisabled = false;
+            value = phoneBody.slice(0, 9);
+            this.formParams.phoneBody = value;
+          } else {
+            this.codeBtnDisabled = true;
+          }
         }
+
         // password
         if (prePassword === password) {
           this.$refs.confirmErr.style.display = "none";
@@ -370,7 +369,29 @@ export default {
       }
     }
   },
+  mounted() {
+    let countryList = JSON.parse(localStorage.getItem("countryList"));
+    if (countryList) {
+      this.countryList = countryList;
+    } else {
+      this.getAllCountry();
+    }
+  },
   methods: {
+    oninput(event) {
+      // let value = event.target.value;
+      // let currentCountry = this.formParams.country;
+      // if (value.length > 9) {
+      //   if (currentCountry === "China") {
+      //     value = value.slice(0, 11);
+      //     this.codeBtnDisabled = false;
+      //   } else {
+      //     value = value.slice(0, 9);
+      //     this.codeBtnDisabled = false;
+      //   }
+      // }
+      // this.formParams.phoneBody = value;
+    },
     phoneBodyFocus() {
       if ((this.$refs.notRegistered.style.display = "block")) {
         this.$refs.notRegistered.style.display = "none";
@@ -381,40 +402,28 @@ export default {
       this.showToast = false;
     },
     countryChange(event) {
-      let val = event.target.value;
-      console.log(val);
+      let value = event.target.value;
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        const element = countryList[i];
+        if (element.name === value) {
+          this.formParams.phoneHead = element.areaCode;
+          sessionStorage.setItem("areaCode", element.areaCode);
+        }
+      }
 
       let { phoneHead } = this.formParams;
-      console.log("111");
-
-      switch (val) {
-        case "Kenya":
-          phoneHead = "254";
-          break;
-        case "Nigeria":
-          phoneHead = "234";
-          break;
-        case "Tanzania":
-          phoneHead = "255";
-          break;
-        case "Uganda":
-          phoneHead = "256";
-          break;
-        case "Zambia":
-          phoneHead = "264";
-          break;
-        case "Ghana":
-          phoneHead = "233";
-          break;
-        case "Cameroon":
-          phoneHead = "237";
-          break;
-        case "Albania":
-          phoneHead = "229";
-          break;
-        default:
-          break;
+    },
+    async getAllCountry() {
+      let res = await getAllCountry();
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.countryList = resdata;
       }
+    },
+    async getAllCity() {
+      let res = await getAllCity();
     },
     async getCode() {
       let sendBy = "BFSUMA_PWD";
@@ -489,7 +498,7 @@ export default {
     font-size 36px
     margin 20px
     @media (max-width: 980px)
-      font-size 26px
+      display none
   .find-main
     display flex
     padding-bottom 60px
@@ -508,7 +517,7 @@ export default {
       @media (max-width: 980px)
         flex 1
         margin-left 0
-        border-top 1px solid #529ECB
+        border-top none
       .form
         padding 40px
         background-color #fff
@@ -527,12 +536,12 @@ export default {
           .form-item
             flex 1
             &.margin-l
-              margin-left 20px
+              margin-left 16px
               @media (max-width: 980px)
                 margin-left 0
+                padding-left 10px
             @media (max-width: 980px)
-              margin 12px 0
-              background-color #fff
+              margin 0 0 12px 0
               flex-direction column
             .form-item-top
               display flex
@@ -554,6 +563,11 @@ export default {
                 @media (max-width: 980px)
                   margin-left 0
                   border-right none
+                &.hidden-lable
+                  display none
+                  @media (max-width: 980px)
+                    display block
+                    margin 3px
               .item-p
                 line-height 40px
                 padding-right 10px
@@ -565,14 +579,16 @@ export default {
                 color rgb(87, 87, 87)
                 @media (max-width: 980px)
                   line-height 36px
-                  background-color #E6F0F3
+                  // background-color #E6F0F3
                 .btn-getcode
                   padding 0 26px
                   height 100%
                   border-radius 4px
-                  // border-left 40px solid
                   color #fff
                   background-color #5ba1cd
+                  @media (max-width: 980px)
+                    background pink
+                    padding 0 12px
                   &:disabled
                     cursor not-allowed
                     background-color #959494
@@ -585,13 +601,10 @@ export default {
                   padding-left 10px
                   border-radius 4px
                   @media (max-width: 980px)
-                    padding 10px 0
+                    padding 10px 0 10px 10px
+                    background #e6f0f3
                   &::placeholder
                     color #b7b7b7
-                  &.show-help
-                    box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                    &::placeholder
-                      color #fff
                   option
                     color #575757
                 .item-searchbtn
@@ -603,6 +616,8 @@ export default {
             .form-item-bottom
               height 20px
               line-height 20px
+              @media (max-width: 980px)
+                margin-top 18px
               .help-block
                 font-size 12px
                 color #a94442
@@ -636,6 +651,8 @@ export default {
             height 50px
             line-height 50px
             margin-top 12px
+            @media (max-width: 980px)
+              margin-top 32px
           .btn-cancel
             color #fff
             background-color #959494

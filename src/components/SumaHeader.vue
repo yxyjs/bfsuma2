@@ -6,29 +6,35 @@
           <img src="http://www.bfsuma.com/BFWebsite_E/img/logo.png" alt />
         </a>
       </div>
-
       <div class="link">
-        <div class="link-box" v-show="$route.path.indexOf('personal')!=-1">
-          <span>Welcome to BF Suma，{{name}}</span>
-          <a href="javascript:;" class="guide" @click="handleExit">
-            <span><img class="exit-img" src="../../static/img/exit.png" alt /></span>
-            <span>&nbsp;Exit</span>
-          </a>
-        </div>
-
         <a
-          v-show="$route.path.indexOf('personal')==-1 && $route.path.indexOf('register')!=-1 || $route.path.indexOf('findPassword')!=-1"
+          v-if="path==='register' || path==='personalInformation' || path==='countrySponsor' || path==='findPassword'"
           href="javascript:;"
           class="guide"
-          @click="$router.push('/login')"
+          @click="$router.replace('/login')"
         >Login</a>
-        <span v-show="$route.path.indexOf('findPassword')!=-1">|</span>
+        <span v-show="path==='findPassword'">|</span>
         <a
-          v-show="$route.path.indexOf('login')!=-1 || $route.path.indexOf('findPassword')!=-1"
+          v-show="path==='login' || path==='findPassword'"
           href="javascript:;"
           class="guide"
-          @click="$router.push('/register')"
+          @click="$router.replace('/register')"
         >Register</a>
+        <a
+          v-show="path==='payment' || path==='business'"
+          href="javascript:;"
+          class="guide"
+          @click="$router.replace('/register/distributor/personal')"
+        >{{username}}</a>
+      </div>
+      <div class="link-exit" v-show="path==='personal'">
+        <span class="exit-username">Welcome to BF Suma，{{username}}</span>
+        <a href="javascript:;" class="guide" @click="handleExit">
+          <span>
+            <img class="exit-img" src="../../static/img/exit.png" alt />
+          </span>
+          <span class="exit-click">&nbsp;Exit</span>
+        </a>
       </div>
     </div>
   </div>
@@ -37,16 +43,26 @@
 <script type="text/ecmascript-6">
 export default {
   props: {
-    name: {
+    username: {
       type: String
     }
   },
   data() {
-    return {};
+    return {
+      path: ""
+    };
   },
-  methods:{
-    handleExit(){
-      this.$emit('handleExit')
+  methods: {
+    handleExit() {
+      this.$emit("handleExit");
+    }
+  },
+  watch: {
+    $route: function(to, from) {
+      this.path = this.$route.path.split("/")[
+        this.$route.path.split("/").length - 1
+      ];
+      console.log(this.path);
     }
   },
   components: {}
@@ -58,7 +74,8 @@ export default {
   background-color #fff
   padding 10px 0 20px 0
   @media (max-width: 980px)
-    display none
+    padding 10px
+    background #E6F0F3
   .header-main
     display flex
     justify-content space-between
@@ -70,17 +87,27 @@ export default {
         display block
         >img
           max-width 100%
+          @media (max-width: 980px)
+            max-width 50%
     .link
-      .link-box
-        display flex
-        align-items center
-        .exit-img
-          width 14px
+      display flex
       .guide
-        display flex
-        align-items center
-        text-align right
-        margin 10px
+        margin 0 10px
         &:hover
           color #22adde
+    .link-exit
+      display flex
+      .exit-username
+        @media (max-width: 980px)
+          display none
+      .guide
+        display flex
+        margin-left 10px
+        .exit-click
+          font-weight bold
+        .exit-img
+          width 14px
+          transform translateY(4px)
+          @media (max-width: 980px)
+            display none
 </style>

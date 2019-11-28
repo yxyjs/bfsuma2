@@ -1,7 +1,7 @@
 <template>
   <div id="payment-cont">
     <my-header>
-      <a :href="BASE_URL">Register</a>
+      <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
     </my-header>
     <my-step>
@@ -138,7 +138,7 @@
                 </div>
               </ValidationProvider>
             </section>
-            <section class="form-item" style="margin-left:16px">
+            <section class="form-item margin-l">
               <ValidationProvider rules="required" v-slot="{ errors }">
                 <div class="form-item-top">
                   <div class="item-main">
@@ -186,7 +186,7 @@
                 </div>
               </ValidationProvider>
             </section>
-            <section class="form-item" style="margin-left:16px">
+            <section class="form-item margin-l">
               <ValidationProvider rules="required" v-slot="{ errors }">
                 <div class="form-item-top">
                   <div class="item-main">
@@ -207,76 +207,83 @@
           </div>
           <!-- address -->
           <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top" style="height:60px;">
-                  <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
-                  <div class="item-main">
-                    <textarea
-                      class="item-main-inner"
-                      style="padding-top:15px"
-                      type="text"
-                      placeholder="Street Name/Building/Apartment No./Floor"
-                      v-model="dialogParams.address"
-                      autofocus
-                    ></textarea>
-                  </div>
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              class="form-item"
+              tag="section"
+            >
+              <div class="form-item-top" style="height:60px;">
+                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
+                <div class="item-main">
+                  <textarea
+                    class="item-main-inner"
+                    style="padding-top:15px"
+                    type="text"
+                    placeholder="Street Name/Building/Apartment No./Floor"
+                    v-model="dialogParams.address"
+                    autofocus
+                  ></textarea>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
           </div>
           <div class="form-wrap-box">
             <!-- country -->
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">*Country</label>
-                  <div class="item-main">
-                    <select class="item-main-inner" v-model="dialogParams.country">
-                      <option disabled value style="display:none;">Choose Country</option>
-                      <option
-                        :value="country.value"
-                        v-for="(country,index) in countryList"
-                        :key="index"
-                      >{{country.text}}</option>
-                    </select>
-                  </div>
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              class="form-item"
+              tag="section"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Country</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="dialogParams.country"
+                    @change="countryChange"
+                  >
+                    <option disabled value style="display:none;">Choose Country</option>
+                    <option
+                      :value="country.name"
+                      v-for="(country,index) in countryList"
+                      :key="index"
+                    >{{country.name}}</option>
+                  </select>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
             <!-- city -->
-            <section class="form-item" style="margin-left:16px">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">*City</label>
-                  <div class="item-main">
-                    <select class="item-main-inner" v-model="dialogParams.city">
-                      <option disabled value style="display:none;">Choose City</option>
-                      <option value="NAIROBI">NAIROBI</option>
-                      <option value="BUNGOMA">BUNGOMA</option>
-                      <option value="KISUMU">KISUMU</option>
-                      <option value="KISII">KISII</option>
-                      <option value="ELDORET">ELDORET</option>
-                      <option value="KITALE">KITALE</option>
-                      <option value="NAKURU">NAKURU</option>
-                      <option value="EMBU">EMBU</option>
-                      <option value="KIRIAINI">KIRIAINI</option>
-                      <option value="MOMBASA">MOMBASA</option>
-                      <option value="KAKAMEGA">KAKAMEGA</option>
-                    </select>
-                  </div>
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              class="form-item margin-l"
+              tag="section"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*City</label>
+                <div class="item-main">
+                  <select class="item-main-inner" v-model="dialogParams.city">
+                    <option disabled value style="display:none;">Choose City</option>
+                    <option
+                      :value="city.name"
+                      v-for="(city,index) in cityList"
+                      :key="index"
+                    >{{city.name || dialogParams.city}}</option>
+                  </select>
                 </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
           </div>
         </ValidationObserver>
       </div>
@@ -294,7 +301,8 @@ import {
   payStatus,
   distributorCustomer,
   distributorUpgrade,
-  distributorAddress
+  distributorAddress,
+  getAllCity
 } from "@/api/index";
 import { toThousands } from "@/util/tool.js";
 import myDialog from "@/components/my-dialog";
@@ -314,17 +322,8 @@ export default {
       account: "",
       paybill: "",
       rightAmount: "",
-      countryList: [
-        { text: "Kenya", value: "Kenya" },
-        { text: "Cameroon", value: "Cameroon" },
-        { text: "China", value: "China" },
-        { text: "Ghana", value: "Ghana" },
-        { text: "Benin", value: "Benin" },
-        { text: "Nigeria", value: "Nigeria" },
-        { text: "Tanzania", value: "Tanzania" },
-        { text: "Uganda", value: "Uganda" },
-        { text: "Zambia", value: "Zambia" }
-      ],
+      countryList: [],
+      cityList: [],
       // 页面参数
       formParams: {
         amount: "",
@@ -351,73 +350,76 @@ export default {
     }
   },
   mounted() {
+    let countryList = JSON.parse(localStorage.getItem("countryList"));
+    if (countryList) {
+      this.countryList = countryList;
+    }
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    if (cityList) {
+      this.cityList = cityList;
+    }
+
+    const distInformation = JSON.parse(localStorage.getItem("distInformation"));
+    if (distInformation) {
+    }
+
     let user = JSON.parse(sessionStorage.getItem("user"));
     let customerInfo = sessionStorage.getItem("customerInfo");
     let id = customerInfo || user.id;
     this.distributorCustomer(id);
     this.payBill(id);
-
-    // let userLogin = JSON.parse(sessionStorage.getItem("userLogin"));
-    // if (userLogin) {
-    //   //直接登录后进来的
-    //   this.account = userLogin.account;
-    //   let user = JSON.parse(sessionStorage.getItem("user"));
-    //   this.distributorCustomer(user.id);
-    //   this.payBill(user.id);
-    // } else {
-    //   //注册后进来的
-    //   let distributorId = sessionStorage.getItem("distributorId");
-    //   let distInformation = JSON.parse(
-    //     sessionStorage.getItem("distInformation")
-    //   );
-    //   distInformation.distributorId = distributorId;
-    //   this.payBill(distInformation);
-
-    //   let id = sessionStorage.getItem("customerInfo");
-    //   this.distributorCustomer(id);
-    // }
-
-    // let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
   },
   methods: {
-    // 获取基本信息
-    async distributorCustomer(id) {
-      let res = await distributorCustomer(id);
-      if (!res) {
-      } else {
-        let rescode = res.code;
-        let data = res.data;
-        if (rescode === 0) {
-          this.formParams.payPhone = data.phone;
-          this.account = data.email;
-          const { phone, firstName, lastName, country, city } = data;
-          let phoneHead = phone.slice(0, 3);
-          let phoneBody = phone.slice(3);
-          this.dialogParams.firstName = firstName;
-          this.dialogParams.lastName = lastName;
-          this.dialogParams.phoneHead = phoneHead;
-          this.dialogParams.phoneBody = phoneBody;
-          this.dialogParams.country = country;
-          this.dialogParams.city = city;
+    countryChange(event) {
+      const value = event.target.value;
+      this.dialogParams.country = value;
+
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        if (countryList[i].name === this.dialogParams.country) {
+          const areaCode = countryList[i].areaCode;
+          this.getAllCity(areaCode);
+          sessionStorage.setItem("areaCode", areaCode);
         }
       }
     },
-    // 获取基本信息
+    async getAllCity(areaCode) {
+      let res = await getAllCity(areaCode);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.cityList = resdata;
+        localStorage.setItem("cityList", JSON.stringify(resdata));
+      }
+    },
+    async distributorCustomer(id) {
+      let res = await distributorCustomer(id);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const data = res.data;
+        this.formParams.payPhone = data.phone;
+        this.account = data.email;
+        const { phone, firstName, lastName, country, city } = data;
+        let phoneHead = phone.slice(0, 3);
+        let phoneBody = phone.slice(3);
+        this.dialogParams.firstName = firstName;
+        this.dialogParams.lastName = lastName;
+        this.dialogParams.phoneHead = phoneHead;
+        this.dialogParams.phoneBody = phoneBody;
+        this.dialogParams.country = country;
+        this.dialogParams.city = city;
+      }
+    },
     async payBill(id) {
       let res = await payBill(id);
-      if (!res) {
-        console.error(res.fullMessage);
-      } else {
-        let rescode = res.code;
-        let data = res.data;
-        if (rescode === 0) {
-          this.paybill = data.paybill;
-          this.formParams.orderNo = data.orderNo;
-          this.formParams.amount = toThousands(data.payAmount);
-          this.rightAmount = data.payAmount;
-          // 存到session
-          sessionStorage.setItem("mySponsor", JSON.stringify(data));
-        }
+      const rescode = res.code;
+      const data = res.data;
+      if (rescode === 0) {
+        this.paybill = data.paybill;
+        this.formParams.orderNo = data.orderNo;
+        this.formParams.amount = toThousands(data.payAmount);
+        this.rightAmount = data.payAmount;
+        sessionStorage.setItem("mySponsor", JSON.stringify(data));
       }
     },
     // 发起支付请求
@@ -425,58 +427,45 @@ export default {
       this.showLoading = true;
       this.$refs.payUl.style.display = "none";
       let res = await payRequest(this.formParams);
-      if (!res) {
-        console.log("失败了");
-      } else {
-        this.showLoading = false;
-        this.$refs.payUl.style.display = "block";
-        let rescode = res.code;
-        if (rescode === 0) {
-          // 按钮倒计时
-          let time = 60;
-          this.interval = setInterval(() => {
-            this.payBtnDisabled = true;
-            time = time < 10 ? "0" + time : time;
-            this.$refs.payBtn.innerHTML = time + "s";
-            time--;
-            if (time === 0) {
-              clearInterval(this.interval);
-              this.payBtnDisabled = false;
-              this.$refs.payBtn.innerHTML = "Pay";
-            }
-          }, 1000);
-          this.payStatus();
-        }
-        if (rescode === 101) {
-          // 支付失败
-          this.$refs.notOpened.style.display = "block";
-          this.$refs.payAccount.style.display = "none";
-          this.$refs.payFailBox.style.display = "block";
-        }
+      this.showLoading = false;
+      this.$refs.payUl.style.display = "block";
+      const rescode = res.code;
+      if (rescode === 0) {
+        let time = 60;
+        this.interval = setInterval(() => {
+          this.payBtnDisabled = true;
+          time = time < 10 ? "0" + time : time;
+          this.$refs.payBtn.innerHTML = time + "s";
+          time--;
+          if (time === 0) {
+            clearInterval(this.interval);
+            this.payBtnDisabled = false;
+            this.$refs.payBtn.innerHTML = "Pay";
+          }
+        }, 1000);
+        this.payStatus();
+      }
+      if (rescode === 101) {
+        this.$refs.notOpened.style.display = "block";
+        this.$refs.payAccount.style.display = "none";
+        this.$refs.payFailBox.style.display = "block";
       }
     },
     // 获取支付状态
     async payStatus() {
       let res = await payStatus(this.formParams.orderNo);
-      if (!res) {
-        console.log("失败啦");
-      } else {
-        const rescode = res.code;
-        if (rescode === 0) {
-          this.distributorUpgrade();
-          this.showDialog = true;
-          // 表单默认赋值
-        }
-        if ([201].includes(rescode)) {
-          //失败处理
-          console.log("支付状态失败啦");
-          this.$refs.notOpened.style.display = "block";
-          this.$refs.payAccount.style.display = "none";
-          this.$refs.payFailBox.style.display = "block";
-        }
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.distributorUpgrade();
+        this.showDialog = true;
+      }
+      if ([201].includes(rescode)) {
+        console.error("支付状态失败啦");
+        this.$refs.notOpened.style.display = "block";
+        this.$refs.payAccount.style.display = "none";
+        this.$refs.payFailBox.style.display = "block";
       }
     },
-    // 顾客升级为经销商
     async distributorUpgrade() {
       let distInformation = JSON.parse(
         sessionStorage.getItem("distInformation")
@@ -489,42 +478,38 @@ export default {
           id: customerInfo
         });
         let res = await distributorUpgrade(reqData);
-        if (!res) {
-          console.log("失败啦");
-          return;
-        } else {
-          let rescode = res.code;
-          if (rescode === 0) {
-            const resdata = res.data;
-            sessionStorage.setItem("myDistributorId", resdata);
-            this.showDialog = true;
-          }
-          if ([101, 102, 103, 104].includes(rescode)) {
-            this.showToast = true;
-            this.toastText = "Payment failure";
-            clearInterval(this.interval);
-          }
+        const rescode = res.code;
+        if (rescode === 0) {
+          const resdata = res.data;
+          sessionStorage.setItem("myDistributorId", resdata);
+          this.showDialog = true;
+        }
+        if ([101, 102, 103, 104].includes(rescode)) {
+          this.showToast = true;
+          this.toastText = "Payment failure";
+          clearInterval(this.interval);
         }
       }
     },
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
       reqData.phone = reqData.phoneHead + reqData.phoneBody;
-      let distributorNo = sessionStorage.getItem("myDistributorId");
-      reqData.distributorNo = distributorNo || "";
-      sessionStorage.setItem('addressInformation',JSON.stringify(reqData))
+      // const distributorNo = sessionStorage.getItem("myDistributorId");
+      // if (distributorNo) {
+      //   reqData.distributorNo = distributorNo;
+      // }
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (user) {
+        reqData.distributorNo = user.id;
+      }
+      sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
       let res = await distributorAddress(reqData);
-      if (!res) {
-        console.log("提交地址信息失败啦");
-      } else {
-        const rescode = res.code;
-        if (rescode === 0) {
-          this.$router.replace("/register/distributor/business");
-        }
-        if (rescode === 101) {
-          console.error(res.fullMessage);
-          this.$router.replace("/register/distributor/business");
-        }
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.$router.replace("/register/distributor/business");
+      }
+      if (rescode === 101) {
+        console.error(res.fullMessage);
       }
     },
     dialogHandle(flag) {
@@ -557,6 +542,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import '../../../../static/stylus/common.styl'
+
 #payment-cont
   .pay-mid
     padding 20px
@@ -564,6 +551,7 @@ export default {
     margin-bottom 38px
     margin-top 20px
     @media (max-width: 980px)
+      padding 8px
       margin 0
     .top-tips
       font-size 14px
@@ -585,6 +573,8 @@ export default {
         flex 0.47
         .img-wrap
           margin-right 30px
+          @media (max-width: 980px)
+            margin-right 0
           img
             display block
             max-width 100%
@@ -594,7 +584,7 @@ export default {
         border-left 1px solid #B7B7B7
         @media (max-width: 980px)
           border-left none
-          border-top 1px solid #B7B7B7
+          border-1px-t(#ccc)
           padding-left 0
           padding-top 30px
           margin-top 20px
@@ -603,7 +593,7 @@ export default {
           padding 30px 20px
           background-color #fafafa
           @media (max-width: 980px)
-            padding 10px 0
+            padding 10px
           .pay-error
             display none
             position absolute
@@ -618,12 +608,10 @@ export default {
             .form-input
               display flex
               align-items center
-              border 1px solid #C1C3C3
               .form-input-label
                 font-weight bold
                 padding 8px 20px
                 color #4AA3D7
-                border-right 1px solid #BABABA
                 @media (max-width: 980px)
                   padding 0
               .form-input-inner
@@ -677,6 +665,10 @@ export default {
       @media (max-width: 980px)
         background-color #fff
         flex-direction column
+      &.margin-l
+        margin-left 16px
+        @media (max-width: 980px)
+          margin-left 0
       .form-item-top
         display flex
         background-color #E6F0F3
@@ -697,8 +689,14 @@ export default {
           @media (max-width: 980px)
             margin-left 0
             border-right none
-            height: 30px;
-            line-height: 6px;
+            height 30px
+            line-height 6px
+          &.hidden-lable
+            display none
+            @media (max-width: 980px)
+              display block
+              opacity 0
+              margin 3px
         .item-p
           line-height 40px
           padding-right 10px

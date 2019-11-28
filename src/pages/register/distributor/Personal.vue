@@ -150,15 +150,15 @@ export default {
     min-height 100vh
   .personal-mid
     padding 20px
+    @media (max-width: 980px)
+      padding 8px
     .top-tips
       font-size 14px
       font-weight bold
       color #575757
       line-height 30px
       @media (max-width: 980px)
-        font-size 13px
         line-height 1.5
-        font-weight normal
         padding 10px
     .personal-main
       display flex

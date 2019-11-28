@@ -198,6 +198,7 @@ export default {
     margin 20px
     @media (max-width 980px)
       font-size 26px
+      margin 8px
   .login-main
     display flex
     .login-banner
@@ -221,9 +222,9 @@ export default {
         box-shadow 0px 4px 40px 0px rgba(204, 204, 204, 0.1)
         @media (max-width: 980px)
           display block
-          padding 20px
+          padding 0 10px
           margin 0
-          border-top 1px solid #529ECB
+          border-top none
         .form-item
           flex 1
           margin-bottom 15px
@@ -252,6 +253,7 @@ export default {
             @media (max-width: 980px)
               display flex
               flex-direction column
+              margin-top 16px
             .item-p
               line-height 40px
               padding-right 10px
@@ -262,7 +264,6 @@ export default {
               align-items center
               color rgb(87, 87, 87)
               @media (max-width: 980px)
-                padding-top 4px
                 line-height 36px
                 background-color #E6F0F3
               span
@@ -273,12 +274,6 @@ export default {
                 color rgb(87, 87, 87)
                 padding-left 10px
                 border-radius 4px
-                &::placeholder
-                  color #5BA2CC
-                &.show-help
-                  box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                  &::placeholder
-                    color #fff
               .item-searchbtn
                 height 100%
                 color #fff
