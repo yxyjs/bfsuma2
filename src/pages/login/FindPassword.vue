@@ -62,7 +62,7 @@
                     v-model="formParams.phoneHead"
                     disabled
                   >
-                    <option disabled value style="display: none;">Aera Cod</option>
+                    <option disabled value style="display: none;">Aera Code</option>
                     <option :value="formParams.phoneHead">{{formParams.phoneHead}}</option>
                   </select>
                 </div>
@@ -114,7 +114,6 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    style="border-right:40px solid #fff"
                     type="number"
                     placeholder="Short Message Verification Code"
                     v-model="formParams.code"
@@ -123,7 +122,7 @@
                   <button
                     ref="getCodeBtn"
                     type="button"
-                    class="btn btn-getcode"
+                    class="btn-getcode"
                     :disabled="codeBtnDisabled"
                     @click="getCode"
                   >Get Code</button>
@@ -370,7 +369,7 @@ export default {
     }
   },
   mounted() {
-    let countryList = JSON.parse(localStorage.getItem("countryList"));
+    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
     if (countryList) {
       this.countryList = countryList;
     } else {
@@ -541,7 +540,7 @@ export default {
                 margin-left 0
                 padding-left 10px
             @media (max-width: 980px)
-              margin 0 0 12px 0
+              // margin 0 0 12px 0
               flex-direction column
             .form-item-top
               display flex
@@ -567,7 +566,6 @@ export default {
                   display none
                   @media (max-width: 980px)
                     display block
-                    margin 3px
               .item-p
                 line-height 40px
                 padding-right 10px
@@ -579,7 +577,7 @@ export default {
                 color rgb(87, 87, 87)
                 @media (max-width: 980px)
                   line-height 36px
-                  // background-color #E6F0F3
+                  margin-top 10px
                 .btn-getcode
                   padding 0 26px
                   height 100%
@@ -587,16 +585,16 @@ export default {
                   color #fff
                   background-color #5ba1cd
                   @media (max-width: 980px)
-                    background pink
-                    padding 0 12px
+                    height 36px
+                    line-height 36px
                   &:disabled
                     cursor not-allowed
+                    opacity 0.5
                     background-color #959494
                 span
                   margin-left 15px
                 .item-main-inner
                   flex 1
-                  height 100%
                   color #575757
                   padding-left 10px
                   border-radius 4px
@@ -617,7 +615,7 @@ export default {
               height 20px
               line-height 20px
               @media (max-width: 980px)
-                margin-top 18px
+                margin-top 24px
               .help-block
                 font-size 12px
                 color #a94442
@@ -662,6 +660,8 @@ export default {
             color #fff
             &:hover
               background #286090
+              @media (max-width: 980px)
+                background #5ba2cc
             &:disabled
               filter grayscale(1)
 </style>

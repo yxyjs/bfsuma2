@@ -10,7 +10,7 @@
           <div class="item-list-box" style="border-left:none">
             <img class="item-img" src="../../../../static/img/payment_banner.png" alt />
             <p class="item-text">Distributor Register Fee</p>
-            <p class="item-text">KES {{payAmount || '1,800'}}</p>
+            <p class="item-text">KES {{payAmount}}</p>
           </div>
         </section>
         <section class="main-item">

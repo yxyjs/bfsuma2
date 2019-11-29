@@ -76,11 +76,8 @@
                       v-model="formParams.gender"
                     >
                       <option disabled value style="display:none;">Select gender</option>
-                      <option
-                        :value="gender.text"
-                        v-for="(gender, index) in genderList"
-                        :key="index"
-                      >{{ gender.value }}</option>
+                      <option value="1">Male</option>
+                      <option value="2">Female</option>
                     </select>
                   </div>
                 </div>
@@ -133,7 +130,7 @@
                       id="phoneHead"
                       v-model="phoneHead"
                     >
-                      <option disabled value style="display: none;">Aera Cod</option>
+                      <option disabled value style="display: none;">Aera Code</option>
                       <option value="86">86</option>
                       <option value="254">254</option>
                       <option value="234">234</option>
@@ -312,7 +309,8 @@
           By submitting your information, you agree to
           <a
             class="link"
-            href="http://www.bfsuma.com/dt/register/agreement.html"
+            href="javascript:;"
+            @click="$router.push('/register/agreement')"
           >the BF Suma Privacy Policy</a>
         </div>
         <!-- btn -->
@@ -335,11 +333,19 @@
         class="dialog-text"
       >Account created, you can now log in with your mobile number or E-mail.</div>
     </my-dialog>
+    <!-- <div class="radio">
+      <input type="radio" name="gender" id="man" />
+      <label for="man">男</label>
+    </div>
+    <div class="radio">
+      <input type="radio" name="gender" id="women" />
+      <label for="women">女</label>
+    </div>-->
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { registerCheck, registerCustomer } from "@/api/index";
+import { BASE_URL, registerCheck, registerCustomer } from "@/api/index";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -347,21 +353,22 @@ import myDialog from "@/components/my-dialog";
 export default {
   data() {
     return {
+      BASE_URL: BASE_URL,
       showPrePassword: false,
       showPassword: false,
       showToast: false,
       showDialog: false,
       toastText: "",
-      prePassword: "abc111111",
+      prePassword: "",
       phoneHead: "",
       phoneBody: "",
       formParams: {
-        firstName: "a",
-        lastName: "c",
+        firstName: "",
+        lastName: "",
         gender: "",
-        email: "222@qq.com",
+        email: "",
         phone: "",
-        password: "abc111111",
+        password: "",
         productInterests: [],
         source: "",
         country: "",
@@ -370,10 +377,6 @@ export default {
         upline: ""
       },
       passwordErrorList: [],
-      genderList: [
-        { text: "Male", value: "Male" },
-        { text: "Female", value: "Female" }
-      ],
       productInterestList: [
         {
           id: 0,
@@ -743,6 +746,7 @@ select, input
         .interest-label-box
           position absolute
           top 14px
+          cursor pointer
           @media (max-width: 980px)
             top 50%
             left -14px

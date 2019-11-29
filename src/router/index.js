@@ -26,21 +26,21 @@ let router = new Router({
       path: '/register',
       component: RegisterIndex,
       meta: {
-        title: 'register/index'
+        title: 'Register Home'
       }
     },
     {
       path: '/register/agreement',
       component: RegisterAgreement,
       meta: {
-        title: 'register/agreement'
+        title: 'Register Agreement'
       }
     },
     {
       path: '/register/distributor/countrySponsor',
       component: DistributorCountrySponsor,
       meta: {
-        title: 'Country Upline'
+        title: 'Country & Upline'
       }
     },
     {
@@ -61,7 +61,7 @@ let router = new Router({
       path: '/register/distributor/personal',
       component: DistributorPersonal,
       meta: {
-        title: 'register/personal'
+        title: 'Register Personal'
       }
     },
     {

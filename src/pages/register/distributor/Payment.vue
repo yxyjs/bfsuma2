@@ -169,7 +169,7 @@
                       id="phoneHead"
                       v-model="dialogParams.phoneHead"
                     >
-                      <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                      <option style="display: none;" value="Aera Code">Aera Code</option>
                       <option value="254">254</option>
                       <option value="234">234</option>
                       <option value="255">255</option>
@@ -350,16 +350,13 @@ export default {
     }
   },
   mounted() {
-    let countryList = JSON.parse(localStorage.getItem("countryList"));
+    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
     if (countryList) {
       this.countryList = countryList;
     }
-    let cityList = JSON.parse(localStorage.getItem("cityList"));
-    if (cityList) {
-      this.cityList = cityList;
-    }
-
-    const distInformation = JSON.parse(localStorage.getItem("distInformation"));
+    const distInformation = JSON.parse(
+      sessionStorage.getItem("distInformation")
+    );
     if (distInformation) {
     }
 
@@ -371,6 +368,8 @@ export default {
   },
   methods: {
     countryChange(event) {
+      this.formParams.city = "";
+      this.cityList = [];
       const value = event.target.value;
       this.dialogParams.country = value;
 
@@ -389,7 +388,6 @@ export default {
       if (rescode === 0) {
         const resdata = res.data;
         this.cityList = resdata;
-        localStorage.setItem("cityList", JSON.stringify(resdata));
       }
     },
     async distributorCustomer(id) {
@@ -494,10 +492,10 @@ export default {
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
       reqData.phone = reqData.phoneHead + reqData.phoneBody;
-      // const distributorNo = sessionStorage.getItem("myDistributorId");
-      // if (distributorNo) {
-      //   reqData.distributorNo = distributorNo;
-      // }
+      const distributorNo = sessionStorage.getItem("myDistributorId");
+      if (distributorNo) {
+        reqData.distributorNo = distributorNo;
+      }
       const user = JSON.parse(sessionStorage.getItem("user"));
       if (user) {
         reqData.distributorNo = user.id;
@@ -509,7 +507,11 @@ export default {
         this.$router.replace("/register/distributor/business");
       }
       if (rescode === 101) {
-        console.error(res.fullMessage);
+        if (this.BASE_URL === "http://172.18.1.240:73") {
+          this.$router.replace("/register/distributor/business");
+        } else {
+          console.error(res.fullMessage);
+        }
       }
     },
     dialogHandle(flag) {

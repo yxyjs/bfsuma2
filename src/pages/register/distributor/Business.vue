@@ -200,7 +200,7 @@
                     id="phoneHead"
                     v-model="formParams.phone.slice(0,3)"
                   >
-                    <option style="display: none;" value="Aera Cod">Aera Cod</option>
+                    <option style="display: none;" value="Aera Code">Aera Code</option>
                     <option value="254">254</option>
                     <option value="234">234</option>
                     <option value="255">255</option>
@@ -326,6 +326,7 @@
 
 <script type="text/ecmascript-6">
 import {
+  BASE_URL,
   distributorCustomer,
   distributorAddress,
   getAllCity,
@@ -338,6 +339,7 @@ import myDialog from "@/components/my-dialog";
 export default {
   data() {
     return {
+      BASE_URL: BASE_URL,
       showDialog: false,
       showEditAddress: true,
       countryList: [],
@@ -390,18 +392,11 @@ export default {
     } else {
       this.showEditAddress = false;
     }
-    const countryList = JSON.parse(localStorage.getItem("countryList"));
+    const countryList = JSON.parse(sessionStorage.getItem("countryList"));
     if (countryList) {
       this.countryList = countryList;
     } else {
       this.getAllCountry();
-    }
-    const cityList = JSON.parse(localStorage.getItem("cityList"));
-    if (cityList) {
-      this.cityList = cityList;
-    } else {
-      const areaCode = sessionStorage.getItem("areaCode");
-      this.getAllCity(areaCode);
     }
     const distInformation = JSON.parse(
       sessionStorage.getItem("distInformation")
@@ -415,6 +410,8 @@ export default {
   },
   methods: {
     countryChange(event) {
+      this.formParams.city = "";
+      this.cityList = [];
       const value = event.target.value;
       this.formParams.country = value;
 
@@ -460,6 +457,10 @@ export default {
     },
     async submitAddress() {
       const reqData = Object.assign({}, this.formParams);
+      const distributorNo = sessionStorage.getItem("myDistributorId");
+      if (distributorNo) {
+        reqData.distributorNo = distributorNo;
+      }
       const user = JSON.parse(sessionStorage.getItem("user"));
       if (user) {
         reqData.distributorNo = user.distributorId;
@@ -471,7 +472,11 @@ export default {
         sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
       }
       if (rescode === 101) {
-        console.error(res.fullMessage);
+        if (this.BASE_URL === "http://172.18.1.240:73") {
+          this.showDialog = false;
+        } else {
+          console.error(res.fullMessage);
+        }
       }
     },
     dialogHandle(flag) {
@@ -566,7 +571,6 @@ export default {
             margin-top 4px
             border-left 1px solid #c2c2c2
             @media (max-width: 980px)
-              // padding-left 0
               border-left none
             .item-list
               .item-list-right

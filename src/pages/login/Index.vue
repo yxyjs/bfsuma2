@@ -93,11 +93,7 @@
             <!-- btn -->
             <section class="form-btns">
               <button type="submit" class="btn btn-login" :disabled="disabled">Login</button>
-              <button
-                type="button"
-                class="btn btn-cancel"
-                @click="$router.replace('/register')"
-              >Cancel</button>
+              <button type="button" class="btn btn-cancel" @click="cancelLogin">Cancel</button>
             </section>
           </form>
         </ValidationObserver>
@@ -107,10 +103,11 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { distributorLogin } from "@/api/index";
+import { BASE_URL, distributorLogin } from "@/api/index";
 export default {
   data() {
     return {
+      BASE_URL:BASE_URL,
       disabled: false,
       showPassword: false,
       rememberPwd: false,
@@ -139,6 +136,9 @@ export default {
     passwordFocus() {
       if (this.$refs.passwordError.style.display === "block")
         this.$refs.passwordError.style.display = "none";
+    },
+    cancelLogin(){
+      location.href = this.BASE_URL
     },
     async distributorLogin() {
       const { account, password, rememberPwd } = this;
@@ -196,7 +196,7 @@ export default {
     color #5BA2CC
     font-size 36px
     margin 20px
-    @media (max-width 980px)
+    @media (max-width: 980px)
       font-size 26px
       margin 8px
   .login-main
@@ -332,6 +332,8 @@ export default {
             color #fff
             &:hover
               background #286090
+              @media (max-width: 980px)
+                background #5ba2cc
             &:disabled
               filter grayscale(1)
           .btn-cancel

@@ -2,13 +2,13 @@
   <div id="header-cont">
     <div class="header-main">
       <div class="logo">
-        <a href="http://www.bfsuma.com">
+        <a :href="BASE_URL">
           <img src="http://www.bfsuma.com/BFWebsite_E/img/logo.png" alt />
         </a>
       </div>
       <div class="link">
         <a
-          v-if="path==='register' || path==='personalInformation' || path==='countrySponsor' || path==='findPassword'"
+          v-if="path==='register' || path==='personalInformation' || path==='countrySponsor' || path==='findPassword' || path==='agreement'"
           href="javascript:;"
           class="guide"
           @click="$router.replace('/login')"
@@ -41,16 +41,25 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { BASE_URL } from "@/api/index";
 export default {
-  props: {
-    username: {
-      type: String
-    }
-  },
   data() {
     return {
-      path: ""
+      path: "",
+      BASE_URL: BASE_URL,
+      username: ""
     };
+  },
+  mounted() {
+    let user = JSON.parse(sessionStorage.getItem("user"));
+    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
+    if (user) {
+      this.username = user.name;
+    } else if (distInformation) {
+      this.username = distInformation.firstName + distInformation.lastName;
+    } else {
+      this.username = "";
+    }
   },
   methods: {
     handleExit() {
@@ -62,7 +71,6 @@ export default {
       this.path = this.$route.path.split("/")[
         this.$route.path.split("/").length - 1
       ];
-      console.log(this.path);
     }
   },
   components: {}
@@ -75,7 +83,7 @@ export default {
   padding 10px 0 20px 0
   @media (max-width: 980px)
     padding 10px
-    background #E6F0F3
+    background #5ba2cc
   .header-main
     display flex
     justify-content space-between
@@ -93,6 +101,8 @@ export default {
       display flex
       .guide
         margin 0 10px
+        @media (max-width: 980px)
+          color #fff
         &:hover
           color #22adde
     .link-exit
@@ -105,6 +115,8 @@ export default {
         margin-left 10px
         .exit-click
           font-weight bold
+          @media (max-width: 980px)
+            color #fff
         .exit-img
           width 14px
           transform translateY(4px)

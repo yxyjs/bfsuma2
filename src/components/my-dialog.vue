@@ -154,8 +154,12 @@ export default {
           background-color #ddd
           &:hover
             background-color #bbb
+            @media (max-width: 980px)
+              background #ddd
         .btn-confirm
           background-color #56a7d8
           &:hover
             background-color #286090
+            @media (max-width: 980px)
+              background #56a7d8
 </style>

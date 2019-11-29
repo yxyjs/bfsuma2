@@ -73,10 +73,13 @@
                 <div class="form-item-top">
                   <label class="item-lable">*City</label>
                   <div class="item-main">
-                    <select class="item-main-inner" v-model="formParams.city" @change="cityChange">
+                    <select
+                      class="item-main-inner"
+                      v-model="formParams.city"
+                      @change="cityChange"
+                      ref="citySelect"
+                    >
                       <option disabled value style="display:none;">Select City</option>
-                      <option value="KENYAX1">KENYAX1</option>
-                      <option value="BUNGOMA">BUNGOMA</option>
                       <option
                         :value="city.name"
                         v-for="(city,index) in cityList"
@@ -292,7 +295,7 @@ import myLoading from "@/components/my-loading";
 export default {
   data() {
     return {
-      BASE_URL: "",
+      BASE_URL: BASE_URL,
       checked: true,
       showDialog: false,
       showNoData: false,
@@ -301,24 +304,12 @@ export default {
       currentStep: 0,
       currentSponsor: {},
       formParams: {
-        // country: "Kenya",
         country: "",
-        // city: "KENYAX1"
         city: ""
       },
-      // sponsor: "KE220228",
       sponsor: "",
-      countryList: [
-        { value: "Kenya" },
-        { value: "Cameroon" },
-        { value: "China" },
-        { value: "Ghana" },
-        { value: "Benin" },
-        { value: "Nigeria" },
-        { value: "Tanzania" },
-        { value: "Uganda" },
-        { value: "Zambia" }
-      ],
+      submitClickTime: 0,
+      countryList: [],
       cityList: [],
       recommendList: []
     };
@@ -336,30 +327,18 @@ export default {
       } else {
         this.$refs.searchEmpty.style.display = "none";
       }
-    },
-    formParams: {
-      handler(val) {
-        const { country, city } = val;
-      },
-      deep: true
     }
   },
   mounted() {
-    const countryList = JSON.parse(localStorage.getItem("countryList"));
-    if (!countryList) {
-      this.getAllCountry();
-    } else {
-      this.countryList = countryList;
-    }
-    const cityList = JSON.parse(localStorage.getItem("cityList"));
-    const areaCode = localStorage.getItem("areaCode");
-    if (!cityList) {
-      this.getAllCity(areaCode);
-    } else {
-      this.cityList = cityList;
-    }
-    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
-    if (distSponsor) this.formParams = distSponsor;
+    /*
+     *返回时是否记住之前的选择
+     */
+    // const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    // if (distSponsor) {
+    //   this.formParams.country = distSponsor.country;
+    //   this.formParams.city = distSponsor.city;
+    // }
+    this.getAllCountry();
   },
   methods: {
     dialogHandle(flag) {
@@ -375,6 +354,8 @@ export default {
       this.$refs.input.checked = true;
     },
     countryChange(event) {
+      this.formParams.city = "";
+      this.cityList = [];
       // 赋值
       let value = event.target.value;
       this.formParams.country = value;
@@ -404,12 +385,15 @@ export default {
     },
     async onSearch() {
       const { country, city } = this.formParams;
-      if (!country) {
-        this.$refs.countryEmpty.style.display = "block";
+      if (!this.submitClickTime) {
+        if (!country) {
+          this.$refs.countryEmpty.style.display = "block";
+        }
+        if (!city) {
+          this.$refs.cityEmpty.style.display = "block";
+        }
       }
-      if (!city) {
-        this.$refs.cityEmpty.style.display = "block";
-      }
+
       if (!this.sponsor.trim()) {
         this.$refs.searchEmpty.style.display = "block";
       } else {
@@ -446,12 +430,15 @@ export default {
     },
     async getRecommend() {
       const { country, city } = this.formParams;
-      if (!country) {
-        this.$refs.countryEmpty.style.display = "block";
+      if (!this.submitClickTime) {
+        if (!country) {
+          this.$refs.countryEmpty.style.display = "block";
+        }
+        if (!city) {
+          this.$refs.cityEmpty.style.display = "block";
+        }
       }
-      if (!city) {
-        this.$refs.cityEmpty.style.display = "block";
-      }
+
       if (this.emptyVerify) {
         this.$refs.systemRecommend.style.display = "none";
         this.showLoading = true;
@@ -474,7 +461,7 @@ export default {
       const rescode = res.code;
       if (rescode === 0) {
         this.countryList = res.data;
-        localStorage.setItem("countryList", JSON.stringify(res.data));
+        sessionStorage.setItem("countryList", JSON.stringify(res.data));
       } else {
         console.error(res.fullMessage);
       }
@@ -485,8 +472,6 @@ export default {
       if (rescode === 0) {
         const resdata = res.data;
         this.cityList = resdata;
-        this.formParams.city = resdata[0].name;
-        localStorage.setItem("cityList", JSON.stringify(res.data));
       } else {
         console.error(res.fullMessage);
       }
@@ -514,6 +499,8 @@ export default {
         this.$refs.countryEmpty.style.display = "none";
       if (this.$refs.cityEmpty.style.display === "block")
         this.$refs.cityEmpty.style.display = "none";
+      // 点击了一次
+      this.submitClickTime = 1;
       // 是否连接赞助商
       let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {};
       if (!Object.keys(distSponsor).length) {

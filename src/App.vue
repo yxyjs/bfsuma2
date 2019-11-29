@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <SumaHeader :username="username" @handleExit="handleExit"></SumaHeader>
+    <SumaHeader @handleExit="handleExit"></SumaHeader>
     <div class="app-md">
       <router-view />
     </div>
@@ -28,20 +28,8 @@ export default {
   name: "App",
   data() {
     return {
-      showDialog: false,
-      username: ""
+      showDialog: false
     };
-  },
-  mounted() {
-    let user = JSON.parse(sessionStorage.getItem("user"));
-    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
-    if (user) {
-      this.username = user.name;
-    } else if (distInformation) {
-      this.username = distInformation.firstName + distInformation.lastName;
-    } else {
-      this.username = "";
-    }
   },
   methods: {
     handleExit() {
@@ -49,7 +37,8 @@ export default {
     },
     dialogHandle(flag) {
       if (flag) {
-        window.location.href = BASE_URL;
+        location.href = BASE_URL;
+        sessionStorage.clear();
       } else {
         this.showDialog = false;
       }
