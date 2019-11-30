@@ -288,6 +288,7 @@
         </ValidationObserver>
       </div>
     </my-dialog>
+    <mobile-loading :showMobileLoading="showMobileLoading" />
     <!-- 错误提示框 -->
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
@@ -302,6 +303,7 @@ import {
   distributorCustomer,
   distributorUpgrade,
   distributorAddress,
+  getAllCountry,
   getAllCity
 } from "@/api/index";
 import { toThousands } from "@/util/tool.js";
@@ -309,6 +311,7 @@ import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myLoading from "@/components/my-loading";
+import mobileLoading from "@/components/mobile-loading";
 import myToast from "@/components/my-toast";
 export default {
   data() {
@@ -316,6 +319,7 @@ export default {
       BASE_URL: BASE_URL,
       showDialog: false,
       showLoading: false,
+      showMobileLoading: false,
       payBtnDisabled: false,
       showToast: false,
       toastText: "",
@@ -350,21 +354,46 @@ export default {
     }
   },
   mounted() {
-    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
-    if (countryList) {
-      this.countryList = countryList;
+    this.getAllCountry();
+    let user = JSON.parse(sessionStorage.getItem("user"));
+    let customerInfo = sessionStorage.getItem("customerInfo");
+    let id = customerInfo || user.id;
+    const mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+    if (!mySponsor) {
+      this.payBill(id);
+    } else {
+      this.paybill = mySponsor.paybill;
+      this.formParams.orderNo = mySponsor.orderNo;
+      this.formParams.amount = toThousands(mySponsor.payAmount);
+      this.rightAmount = mySponsor.payAmount;
     }
     const distInformation = JSON.parse(
       sessionStorage.getItem("distInformation")
     );
-    if (distInformation) {
+    if (!distInformation) {
+      this.distributorCustomer(id);
+    } else {
+      const {
+        email,
+        phone,
+        firstName,
+        lastName,
+        country,
+        city
+      } = distInformation;
+      this.account = email;
+      this.formParams.payPhone = phone;
+      this.dialogParams.firstName = firstName;
+      this.dialogParams.lastName = lastName;
+      this.dialogParams.phone = phone;
+      this.dialogParams.phoneHead = phone.slice(0, 3);
+      this.dialogParams.phoneBody = phone.slice(3);
+      this.dialogParams.country = country;
+      this.dialogParams.city = city;
     }
-
-    let user = JSON.parse(sessionStorage.getItem("user"));
-    let customerInfo = sessionStorage.getItem("customerInfo");
-    let id = customerInfo || user.id;
-    this.distributorCustomer(id);
-    this.payBill(id);
+  },
+  beforeDestroy() {
+    if (this.interval) clearInterval(this.interval);
   },
   methods: {
     countryChange(event) {
@@ -382,6 +411,15 @@ export default {
         }
       }
     },
+    async getAllCountry() {
+      let res = await getAllCountry();
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.countryList = res.data;
+      } else {
+        console.error(res.fullMessage);
+      }
+    },
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
       const rescode = res.code;
@@ -394,16 +432,15 @@ export default {
       let res = await distributorCustomer(id);
       const rescode = res.code;
       if (rescode === 0) {
-        const data = res.data;
-        this.formParams.payPhone = data.phone;
-        this.account = data.email;
-        const { phone, firstName, lastName, country, city } = data;
-        let phoneHead = phone.slice(0, 3);
-        let phoneBody = phone.slice(3);
+        const resdata = res.resdata;
+        const { email, phone, firstName, lastName, country, city } = resdata;
+        this.formParams.payPhone = phone;
+        this.account = email;
         this.dialogParams.firstName = firstName;
         this.dialogParams.lastName = lastName;
-        this.dialogParams.phoneHead = phoneHead;
-        this.dialogParams.phoneBody = phoneBody;
+        this.dialogParams.phone = phone;
+        this.dialogParams.phoneHead = phone.slice(0, 3);
+        this.dialogParams.phoneBody = phone.slice(3);
         this.dialogParams.country = country;
         this.dialogParams.city = city;
       }
@@ -411,13 +448,13 @@ export default {
     async payBill(id) {
       let res = await payBill(id);
       const rescode = res.code;
-      const data = res.data;
       if (rescode === 0) {
-        this.paybill = data.paybill;
-        this.formParams.orderNo = data.orderNo;
-        this.formParams.amount = toThousands(data.payAmount);
-        this.rightAmount = data.payAmount;
-        sessionStorage.setItem("mySponsor", JSON.stringify(data));
+        const resdata = res.data;
+        this.paybill = resdata.paybill;
+        this.formParams.orderNo = resdata.orderNo;
+        this.formParams.amount = toThousands(resdata.payAmount);
+        this.rightAmount = resdata.payAmount;
+        sessionStorage.setItem("mySponsor", JSON.stringify(resdata));
       }
     },
     // 发起支付请求
@@ -484,14 +521,14 @@ export default {
         }
         if ([101, 102, 103, 104].includes(rescode)) {
           this.showToast = true;
-          this.toastText = "Payment failure";
+          // this.toastText = "Payment failure";
+          this.toastText = res.fullMessage;
           clearInterval(this.interval);
         }
       }
     },
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
-      reqData.phone = reqData.phoneHead + reqData.phoneBody;
       const distributorNo = sessionStorage.getItem("myDistributorId");
       if (distributorNo) {
         reqData.distributorNo = distributorNo;
@@ -500,14 +537,19 @@ export default {
       if (user) {
         reqData.distributorNo = user.id;
       }
-      sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+
       let res = await distributorAddress(reqData);
+      this.showMobileLoading = false;
       const rescode = res.code;
       if (rescode === 0) {
+        reqData.phone = reqData.phoneHead + reqData.phoneBody;
+        sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
         this.$router.replace("/register/distributor/business");
       }
       if (rescode === 101) {
         if (this.BASE_URL === "http://172.18.1.240:73") {
+          reqData.phone = reqData.phoneHead + reqData.phoneBody;
+          sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
           this.$router.replace("/register/distributor/business");
         } else {
           console.error(res.fullMessage);
@@ -525,7 +567,12 @@ export default {
     },
     async onSubmit() {
       const isValid = await this.$refs.observer.validate();
-      if (!isValid) return;
+      if (!isValid) {
+        this.showToast = true;
+        this.toastText = "Please check required";
+        return;
+      }
+      this.showMobileLoading = true;
       this.distributorAddress();
     },
     repayHandle() {
@@ -538,6 +585,7 @@ export default {
     "my-header": myHeader,
     "my-step": myStep,
     "my-loading": myLoading,
+    "mobile-loading": mobileLoading,
     "my-toast": myToast
   }
 };

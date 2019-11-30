@@ -27,8 +27,8 @@
           >Add Shipping Address</button>
         </p>
         <div class="item-content">
-          <p>{{formParams.firstName}} {{formParams.lastName}} {{formParams.phone}}</p>
-          <p>{{formParams.address}} {{formParams.city}} {{formParams.country}}</p>
+          <p>{{addressData.firstName}} {{addressData.lastName}} {{addressData.phone}}</p>
+          <p>{{addressData.address}} {{addressData.city}} {{addressData.country}}</p>
         </div>
       </section>
       <section class="md-item">
@@ -57,11 +57,11 @@
                 <p>Name：</p>
                 <p
                   class="item-list-right"
-                >{{formParams.firstName}}&nbsp;&nbsp;{{formParams.lastName}}</p>
+                >{{distributorCard.firstName}}&nbsp;&nbsp;{{distributorCard.lastName}}</p>
               </div>
               <div class="item-list">
                 <p>Phone:</p>
-                <p class="item-list-right">{{formParams.phone}}</p>
+                <p class="item-list-right">{{distributorCard.phone}}</p>
               </div>
             </div>
           </section>
@@ -154,7 +154,7 @@
                     type="text"
                     class="item-main-inner"
                     placeholder="First Name"
-                    v-model="formParams.firstName"
+                    v-model="dialogParams.firstName"
                   />
                 </div>
               </div>
@@ -174,7 +174,7 @@
                     class="item-main-inner"
                     type="text"
                     placeholder="Last Name"
-                    v-model="formParams.lastName"
+                    v-model="dialogParams.lastName"
                   />
                 </div>
               </div>
@@ -198,7 +198,7 @@
                     class="item-main-inner"
                     name="phoneHead"
                     id="phoneHead"
-                    v-model="formParams.phone.slice(0,3)"
+                    v-model="dialogParams.phoneHead"
                   >
                     <option style="display: none;" value="Aera Code">Aera Code</option>
                     <option value="254">254</option>
@@ -228,7 +228,7 @@
                     class="item-main-inner"
                     type="number"
                     placeholder="Phone Number"
-                    v-model="formParams.phone.slice(3)"
+                    v-model="dialogParams.phoneBody"
                     oninput="if(value.length>9)value=value.slice(0,9)"
                   />
                 </div>
@@ -254,7 +254,7 @@
                     style="padding-top:15px"
                     type="text"
                     placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model="formParams.address"
+                    v-model="dialogParams.address"
                     autofocus
                   ></textarea>
                 </div>
@@ -277,7 +277,7 @@
                 <div class="item-main">
                   <select
                     class="item-main-inner"
-                    v-model="formParams.country"
+                    v-model="dialogParams.country"
                     @change="countryChange"
                   >
                     <option disabled value style="display:none;">Choose Country</option>
@@ -303,7 +303,7 @@
               <div class="form-item-top">
                 <label class="item-lable">*City</label>
                 <div class="item-main">
-                  <select class="item-main-inner" v-model="formParams.city">
+                  <select class="item-main-inner" v-model="dialogParams.city">
                     <option disabled value style="display:none;">Choose City</option>
                     <option
                       :value="city.name"
@@ -321,6 +321,8 @@
         </ValidationObserver>
       </div>
     </my-dialog>
+    <mobile-loading :showMobileLoading="showMobileLoading" />
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
 </template>
 
@@ -336,17 +338,21 @@ import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
 import myDialog from "@/components/my-dialog";
+import mobileLoading from "@/components/mobile-loading";
 export default {
   data() {
     return {
       BASE_URL: BASE_URL,
       showDialog: false,
       showEditAddress: true,
+      showMobileLoading: false,
+      showToast: false,
+      toastText: "",
       countryList: [],
       cityList: [],
       sponsorData: {},
       uplineData: {},
-      formParams: {
+      addressData: {
         firstName: "",
         lastName: "",
         phone: "",
@@ -354,10 +360,13 @@ export default {
         city: "",
         address: ""
       },
+      dialogParams: {},
+      distributorCard: {},
       myDistributorId: ""
     };
   },
   mounted() {
+    this.getAllCountry();
     const sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
     const uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
     if (sponsorData) {
@@ -374,57 +383,53 @@ export default {
       sessionStorage.getItem("addressInformation")
     );
     if (addressInformation) {
-      this.showEditAddress = true;
       const {
         firstName,
         lastName,
         phone,
+        phoneHead,
+        phoneBody,
         country,
         city,
         address
       } = addressInformation;
-      this.formParams.firstName = firstName;
-      this.formParams.lastName = lastName;
-      this.formParams.phone = phone;
-      this.formParams.country = country;
-      this.formParams.city = city;
-      this.formParams.address = address;
-    } else {
-      this.showEditAddress = false;
-    }
-    const countryList = JSON.parse(sessionStorage.getItem("countryList"));
-    if (countryList) {
-      this.countryList = countryList;
-    } else {
-      this.getAllCountry();
+      this.addressData.firstName = firstName;
+      this.addressData.lastName = lastName;
+      this.addressData.phone = phone;
+      this.addressData.phoneHead = phoneHead;
+      this.addressData.phoneBody = phoneBody;
+      this.addressData.country = country;
+      this.addressData.city = city;
+      this.addressData.address = address;
+      this.dialogParams = JSON.parse(JSON.stringify(this.addressData));
     }
     const distInformation = JSON.parse(
       sessionStorage.getItem("distInformation")
     );
     if (distInformation) {
-      this.formParams.firstName = distInformation.firstName;
-      this.formParams.lastName = distInformation.lastName;
-      this.formParams.phone = distInformation.phone;
+      const { firstName, lastName, phone } = distInformation;
+      this.distributorCard.firstName = firstName;
+      this.distributorCard.lastName = lastName;
+      this.distributorCard.phone = phone;
     }
-    // this.distributorCustomer();
   },
   methods: {
     countryChange(event) {
-      this.formParams.city = "";
+      this.dialogParams.city = "";
       this.cityList = [];
       const value = event.target.value;
-      this.formParams.country = value;
+      this.dialogParams.country = value;
 
       const countryList = this.countryList;
       for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name === this.formParams.country) {
+        if (countryList[i].name === this.dialogParams.country) {
           const areaCode = countryList[i].areaCode;
           this.getAllCity(areaCode);
           sessionStorage.setItem("areaCode", areaCode);
         }
       }
     },
-    async getAllCountry(areaCode) {
+    async getAllCountry() {
       let res = await getAllCountry();
       const rescode = res.code;
       if (rescode === 0) {
@@ -448,15 +453,25 @@ export default {
         const resData = res.data;
         this.sponsorData = resData.sponsor;
         this.uplineData = resData.upline;
-        this.formParams.firstName = resData.firstName;
-        this.formParams.lastName = resData.lastName;
-        this.formParams.phone = resData.phone;
-        this.formParams.country = resData.country;
-        this.formParams.address = resData.city;
+        this.dialogParams.firstName = resData.firstName;
+        this.dialogParams.lastName = resData.lastName;
+        this.dialogParams.phone = resData.phone;
+        this.dialogParams.country = resData.country;
+        this.dialogParams.address = resData.city;
       }
     },
+    async onSubmit() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) {
+        this.showToast = true;
+        this.toastText = "Please check required";
+        return
+      };
+      this.showMobileLoading = true;
+      this.submitAddress();
+    },
     async submitAddress() {
-      const reqData = Object.assign({}, this.formParams);
+      const reqData = Object.assign({}, this.dialogParams);
       const distributorNo = sessionStorage.getItem("myDistributorId");
       if (distributorNo) {
         reqData.distributorNo = distributorNo;
@@ -466,6 +481,7 @@ export default {
         reqData.distributorNo = user.distributorId;
       }
       let res = await distributorAddress(reqData);
+      this.showMobileLoading = false;
       const rescode = res.code;
       if (rescode === 0) {
         this.showDialog = false;
@@ -473,6 +489,8 @@ export default {
       }
       if (rescode === 101) {
         if (this.BASE_URL === "http://172.18.1.240:73") {
+          this.showToast = true;
+          this.toastText = res.fullMessage;
           this.showDialog = false;
         } else {
           console.error(res.fullMessage);
@@ -480,10 +498,10 @@ export default {
       }
     },
     dialogHandle(flag) {
-      if (!flag) {
-        this.showDialog = false;
+      if (flag) {
+        this.onSubmit();
       } else {
-        this.submitAddress();
+        this.showDialog = false;
       }
     }
   },
@@ -491,6 +509,7 @@ export default {
     "my-header": myHeader,
     "my-step": myStep,
     "my-toast": myToast,
+    "mobile-loading": mobileLoading,
     "my-dialog": myDialog
   }
 };

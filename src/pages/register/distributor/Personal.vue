@@ -78,7 +78,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { distributorCustomer } from "@/api/index";
+import { distributorCustomer, payBill } from "@/api/index";
 import { toThousands } from "@/util/tool.js";
 export default {
   data() {
@@ -94,8 +94,12 @@ export default {
   mounted() {
     let user = JSON.parse(sessionStorage.getItem("user"));
     if (user) {
-      this.distributorCustomer(user.id);
+      //登录进来的
+      const id = user.id;
+      this.distributorCustomer(id);
+      this.payBill(id);
     } else {
+      //注册进来的
       let sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
       if (sponsorData) {
         this.sponsorData = sponsorData;
@@ -128,12 +132,22 @@ export default {
         const rescode = res.code;
         if (rescode === 0) {
           const resdata = res.data;
+          sessionStorage.setItem("distInformation", JSON.stringify(resdata));
           this.firstName = resdata.firstName;
           this.lastName = resdata.lastName;
           this.sponsorData = resdata.sponsor;
           this.uplineData = resdata.upline;
           this.payAmount = resdata.payAmount;
         }
+      }
+    },
+    async payBill(id) {
+      let res = await payBill(id);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.payAmount = resdata.payAmount;
+        sessionStorage.setItem("mySponsor", JSON.stringify(resdata));
       }
     }
   },

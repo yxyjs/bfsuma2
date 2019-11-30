@@ -1,5 +1,5 @@
 <template>
-  <div id="loading-cont" v-show="show">
+  <div id="loading-cont" v-show="showMobileLoading">
     <div class="spinner">
       <div class="rect1"></div>
       <div class="rect2"></div>
@@ -7,14 +7,13 @@
       <div class="rect4"></div>
       <div class="rect5"></div>
     </div>
-    <p class="loading-text">loading...</p>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 export default {
   props: {
-    show: {
+    showMobileLoading: {
       type: Boolean,
       default: false
     }
@@ -24,16 +23,21 @@ export default {
 
 <style scoped lang="stylus">
 #loading-cont
-  text-align center
-  margin-top 50px
   .spinner
-    margin 0 auto
-    width 50px
-    height 60px
+    position fixed
+    top 0
+    right 0
+    bottom 0
+    left 0
+    margin auto
+    background-color rgba(0, 0, 0, 0.5)
+    width 100px
+    height 70px
     text-align center
     font-size 10px
+    z-index 3
     &>div
-      background-color #5BA2CC
+      background-color #fff
       height 100%
       width 6px
       display inline-block
@@ -54,7 +58,4 @@ export default {
       20%
         transform scaleY(1)
         -webkit-transform scaleY(1)
-  .loading-text
-    color #5BA2CC
-    margin-top 10px
 </style>

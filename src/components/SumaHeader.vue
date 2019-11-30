@@ -25,10 +25,10 @@
           href="javascript:;"
           class="guide"
           @click="$router.replace('/register/distributor/personal')"
-        >{{username}}</a>
+        >{{firstName}}&nbsp;{{lastName}}</a>
       </div>
       <div class="link-exit" v-show="path==='personal'">
-        <span class="exit-username">Welcome to BF Suma，{{username}}</span>
+        <span class="exit-username">Welcome to BF Suma，{{firstName}}&nbsp;{{lastName}}</span>
         <a href="javascript:;" class="guide" @click="handleExit">
           <span>
             <img class="exit-img" src="../../static/img/exit.png" alt />
@@ -45,21 +45,30 @@ import { BASE_URL } from "@/api/index";
 export default {
   data() {
     return {
-      path: "",
       BASE_URL: BASE_URL,
-      username: ""
+      path: "",
+      firstName: "",
+      lastName: ""
     };
   },
   mounted() {
-    let user = JSON.parse(sessionStorage.getItem("user"));
-    let distInformation = JSON.parse(sessionStorage.getItem("distInformation"));
-    if (user) {
-      this.username = user.name;
-    } else if (distInformation) {
-      this.username = distInformation.firstName + distInformation.lastName;
-    } else {
-      this.username = "";
+    const distInformation = JSON.parse(
+      sessionStorage.getItem("distInformation")
+    );
+    if (distInformation) {
+      this.firstName = distInformation.firstName;
+      this.lastName = distInformation.lastName;
     }
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (user) {
+      const name = user.name.split(" ");
+      this.firstName = name[0];
+      this.lastName = name[1];
+    }
+
+    this.path = this.$route.path.split("/")[
+      this.$route.path.split("/").length - 1
+    ];
   },
   methods: {
     handleExit() {

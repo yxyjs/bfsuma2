@@ -10,7 +10,7 @@
         <slot name="dialog-table"></slot>
         <slot name="dialog-img"></slot>
       </main>
-      <i class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
+      <i v-show="showClose" class="dialog-icon iconfont icon-del-" @click.prevent="closeDialog"></i>
       <footer class="dialog-buttons">
         <div class="buttons-item" v-show="showCancel">
           <button class="btn btn-cancel" type="button" @click="dialogHandle(false)">Cancel</button>
@@ -35,6 +35,11 @@ export default {
       default: false
     },
     showCancel: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    showClose: {
       type: Boolean,
       required: false,
       default: false

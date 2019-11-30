@@ -6,113 +6,124 @@
         <img src="../../../static/img/login_banner.png" />
       </div>
       <div class="login-form">
-        <ValidationObserver v-slot="{ handleSubmit }" tag="div">
-          <form action="#" @submit.prevent="handleSubmit(onSubmit)" class="form-wrap-box">
-            <!-- *account -->
-            <ValidationProvider
-              name="Account"
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item"
-            >
-              <label class="item-lable">Account</label>
-              <div class="form-item-top">
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    type="text"
-                    placeholder="*Your E-mail /Phone number / Distributor ID"
-                    v-model="account"
-                    autofocus
-                    @focus="accountFocus"
-                  />
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-                <span
-                  ref="accountError"
-                  class="other-help"
-                >User ID / Distributor ID does not exist, please re-enter</span>
-              </div>
-            </ValidationProvider>
-            <!-- Password -->
-            <ValidationProvider
-              name="Password"
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item"
-            >
-              <label class="item-lable">Password</label>
-              <div class="form-item-top">
-                <div class="item-main">
-                  <input
-                    class="item-main-inner"
-                    :type="!showPassword ? 'password' : 'text'"
-                    placeholder="*Fill in"
-                    v-model="password"
-                    oninput="if(value.length>15)value=value.slice(0,15)"
-                    @focus="passwordFocus"
-                  />
-                  <i
-                    class="item-icon iconfont icon-yanjing"
-                    v-show="isSeePwd"
-                    @click="showPassword = !showPassword"
-                  ></i>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-                <span ref="passwordError" class="other-help">Password error, please re-enter</span>
-              </div>
-            </ValidationProvider>
-            <section class="form-rem-for">
-              <div class="remember">
+        <ValidationObserver
+          ref="observer"
+          @submit.prevent="onSubmit"
+          v-slot="{ invalid }"
+          tag="form"
+          class="form-wrap-box"
+        >
+          <!-- *account -->
+          <ValidationProvider
+            name="Account"
+            rules="required"
+            v-slot="{ errors }"
+            tag="section"
+            class="form-item"
+          >
+            <label class="item-lable">Account</label>
+            <div class="form-item-top">
+              <div class="item-main">
                 <input
-                  class="checkbox"
-                  type="checkbox"
-                  name="remember"
-                  id="remember"
-                  value="Remember Password"
-                  v-model="rememberPwd"
+                  class="item-main-inner"
+                  type="text"
+                  placeholder="*Your E-mail /Phone number / Distributor ID"
+                  v-model="account"
+                  autofocus
+                  @focus="accountFocus"
                 />
-                <img class="checked-img" src="../../../static/img/checked.png" alt />
-                <label for="remember" class="remember-label-box">
-                  <img class="check-box-img" src="../../../static/img/check_box.png" alt />
-                </label>
-                <label class="remember-label" for="remember">Remember Password</label>
               </div>
-              <a
-                href="javascript:;"
-                class="forgot"
-                @click="$router.push('/findPassword')"
-              >Forgot Password？</a>
-            </section>
-            <!-- btn -->
-            <section class="form-btns">
-              <button type="submit" class="btn btn-login" :disabled="disabled">Login</button>
-              <button type="button" class="btn btn-cancel" @click="cancelLogin">Cancel</button>
-            </section>
-          </form>
+            </div>
+            <div class="form-item-bottom">
+              <span class="help-block">{{ errors[0] }}</span>
+              <span
+                ref="accountError"
+                class="other-help"
+              >User ID / Distributor ID does not exist, please re-enter</span>
+            </div>
+          </ValidationProvider>
+          <!-- Password -->
+          <ValidationProvider
+            name="Password"
+            rules="required"
+            v-slot="{ errors }"
+            tag="section"
+            class="form-item"
+          >
+            <label class="item-lable">Password</label>
+            <div class="form-item-top">
+              <div class="item-main">
+                <input
+                  class="item-main-inner"
+                  :type="!showPassword ? 'password' : 'text'"
+                  placeholder="*Fill in"
+                  v-model="password"
+                  oninput="if(value.length>15)value=value.slice(0,15)"
+                  @focus="passwordFocus"
+                />
+                <i
+                  class="item-icon iconfont icon-yanjing"
+                  v-show="isSeePwd"
+                  @click="showPassword = !showPassword"
+                ></i>
+              </div>
+            </div>
+            <div class="form-item-bottom">
+              <span class="help-block">{{ errors[0] }}</span>
+              <span ref="passwordError" class="other-help">Password error, please re-enter</span>
+            </div>
+          </ValidationProvider>
+          <section class="form-rem-for">
+            <div class="remember">
+              <input
+                class="checkbox"
+                type="checkbox"
+                name="remember"
+                id="remember"
+                value="Remember Password"
+                v-model="rememberPwd"
+              />
+              <img class="checked-img" src="../../../static/img/checked.png" alt />
+              <label for="remember" class="remember-label-box">
+                <img class="check-box-img" src="../../../static/img/check_box.png" alt />
+              </label>
+              <label class="remember-label" for="remember">Remember Password</label>
+            </div>
+            <a
+              href="javascript:;"
+              class="forgot"
+              @click="$router.push('/findPassword')"
+            >Forgot Password？</a>
+          </section>
+          <!-- btn -->
+          <section class="form-btns">
+            <button type="submit" class="btn btn-login" :disabled="disabled">Login</button>
+            <button type="button" class="btn btn-cancel" @click="cancelLogin">Cancel</button>
+          </section>
         </ValidationObserver>
       </div>
     </div>
+    <mobile-loading :showMobileLoading="showMobileLoading" />
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { BASE_URL, distributorLogin } from "@/api/index";
+import myToast from "@/components/my-toast";
+import mobileLoading from "@/components/mobile-loading";
 export default {
   data() {
     return {
-      BASE_URL:BASE_URL,
+      BASE_URL: BASE_URL,
       disabled: false,
       showPassword: false,
       rememberPwd: false,
+      showMobileLoading: false,
+      showToast: false,
       account: "",
-      password: ""
+      password: "",
+      toastText: ""
     };
   },
   computed: {
@@ -137,56 +148,66 @@ export default {
       if (this.$refs.passwordError.style.display === "block")
         this.$refs.passwordError.style.display = "none";
     },
-    cancelLogin(){
-      location.href = this.BASE_URL
+    cancelLogin() {
+      location.href = this.BASE_URL;
     },
     async distributorLogin() {
+      this.showMobileLoading = true;
       const { account, password, rememberPwd } = this;
       let res = await distributorLogin({ account, password, rememberPwd });
-      if (res) {
-        let rescode = res.code;
-        // this.disabled = true;
-        if (rescode === 0) {
-          let userInfo = {
-            account: account,
-            password: password
-          };
-          if (this.rememberPwd) {
-            sessionStorage.setItem("userLogin", JSON.stringify(userInfo));
-          }
-
-          const resdata = res.data;
-          // 成功
-          sessionStorage.setItem("user", JSON.stringify(resdata));
-          // 判断是顾客还是经销商
-          if (res.data.userType == "customer") {
-            this.$router.push("/register/distributor/personal");
-          } else {
-            let backstageUrl = "http://report.bfsuma.com";
-            let user = {
-              distributorNo: resdata.distributorNo,
-              password: this.password
-            };
-            window.location.href =
-              backstageUrl +
-              "/login.jsp?account=" +
-              user.distributorNo +
-              "&password=" +
-              user.password;
-          }
+      this.showMobileLoading = false;
+      const rescode = res.code;
+      // this.disabled = true;
+      if (rescode === 0) {
+        let userInfo = {
+          account: account,
+          password: password
+        };
+        if (this.rememberPwd) {
+          sessionStorage.setItem("userLogin", JSON.stringify(userInfo));
         }
-        if (rescode === 101) {
-          this.$refs.accountError.style.display = "block";
-          this.$refs.passwordError.style.display = "block";
+        const resdata = res.data;
+        // 成功
+        sessionStorage.setItem("user", JSON.stringify(resdata));
+        // 判断是顾客还是经销商
+        if (res.data.userType == "customer") {
+          this.$router.push("/register/distributor/personal");
+        } else {
+          let backstageUrl = "http://report.bfsuma.com";
+          let user = {
+            distributorNo: resdata.distributorNo,
+            password: this.password
+          };
+          window.location.href =
+            backstageUrl +
+            "/login.jsp?account=" +
+            user.distributorNo +
+            "&password=" +
+            user.password;
         }
       }
+      if (rescode === 101) {
+        this.showToast = true;
+        this.toastText = "Account or password is wrong";
+        this.$refs.accountError.style.display = "block";
+        this.$refs.passwordError.style.display = "block";
+      }
     },
-    onSubmit() {
+    async onSubmit() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) {
+        this.showToast = true;
+        this.toastText = "Please check required";
+        return;
+      }
       // 登录
       this.distributorLogin();
     }
   },
-  components: {}
+  components: {
+    "my-toast": myToast,
+    "mobile-loading": mobileLoading
+  }
 };
 </script>
 

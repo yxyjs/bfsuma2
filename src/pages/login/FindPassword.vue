@@ -243,7 +243,7 @@
       </div>
     </div>
     <!-- toast -->
-    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
 </template>
 
@@ -397,9 +397,6 @@ export default {
       }
     },
     confirmPasswordFocus() {},
-    closeToast() {
-      this.showToast = false;
-    },
     countryChange(event) {
       let value = event.target.value;
       const countryList = this.countryList;
@@ -454,7 +451,11 @@ export default {
     },
     async onSubmit() {
       const isValid = await this.$refs.observer.validate();
-      if (!isValid) return false;
+      if (!isValid) {
+        this.showToast = true;
+        this.toastText = "Please check required";
+        return;
+      }
       const { phone, password, code } = this.formParams;
       const reqData = {
         phone: phone,

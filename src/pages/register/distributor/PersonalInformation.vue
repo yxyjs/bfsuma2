@@ -7,320 +7,325 @@
     <my-step>
       <img src="../../../../static/img/personal_information.png" alt />
     </my-step>
-    <ValidationObserver v-slot="{ handleSubmit }" tag="div">
-      <form action="/" method="POST" class="form" @submit.prevent="handleSubmit(onSubmit)">
-        <p class="top-tips">Step two, please fill in your personal information：</p>
-        <p class="required">*Required</p>
-        <!-- form -->
-        <div class="form-wrap">
-          <section>
-            <!-- Name -->
-            <div class="form-wrap-box">
-              <ValidationProvider
-                name="First Name"
-                rules="required|alpha_spaces"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable">*Name</label>
-                  <div class="item-main">
-                    <input
-                      type="text"
-                      class="item-main-inner"
-                      placeholder="First Name"
-                      v-model="formParams.firstName"
-                      autofocus
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-
-              <ValidationProvider
-                name="Last Name"
-                rules="required|alpha_spaces"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item margin-l"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable hidden-lable">&nbsp;</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="text"
-                      placeholder="Last Name"
-                      v-model="formParams.lastName"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </div>
-            <!-- Gender -->
-            <div class="form-wrap-box">
-              <section class="form-item">
-                <div class="form-item-top">
-                  <label class="item-lable">Gender</label>
-                  <div class="item-main">
-                    <select
-                      class="item-main-inner"
-                      name="gender"
-                      id="gender"
-                      v-model="formParams.gender"
-                    >
-                      <option disabled value style="display:none;">Select gender</option>
-                      <option value="1">Male</option>
-                      <option value="2">Female</option>
-                    </select>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </section>
-          <section class="section-two">
-            <!-- Email -->
-            <div class="form-wrap-box">
-              <ValidationProvider
-                name="Email"
-                rules="required|email"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable">*Email</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="email"
-                      placeholder="Email Address"
-                      v-model.lazy="formParams.email"
-                      @focus="emailFocus"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <span ref="emailBound" class="already-bound">Already bound, please replace one</span>
-                </div>
-              </ValidationProvider>
-            </div>
-            <!-- Phone -->
-            <div class="form-wrap-box">
-              <ValidationProvider
-                name="Phone"
-                rules="required"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable">*Phone</label>
-                  <div class="item-main">
-                    <select
-                      class="item-main-inner"
-                      name="phoneHead"
-                      id="phoneHead"
-                      v-model="phoneHead"
-                    >
-                      <option disabled value style="display: none;">Aera Code</option>
-                      <option value="86">86</option>
-                      <option value="254">254</option>
-                      <option value="234">234</option>
-                      <option value="255">255</option>
-                      <option value="256">256</option>
-                      <option value="264">264</option>
-                      <option value="233">233</option>
-                      <option value="237">237</option>
-                      <option value="229">229</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-              <ValidationProvider
-                name="Phone Number"
-                rules="required|length:9"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item margin-l"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable hidden-lable">&nbsp;</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="number"
-                      placeholder="Phone Number"
-                      v-model="phoneBody"
-                      oninput="if(value.length>9)value=value.slice(0,9)"
-                      @focus="phoneBodyFocus"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <span ref="phoneBound" class="already-bound">Already bound, please replace one</span>
-                </div>
-              </ValidationProvider>
-            </div>
-          </section>
-          <section>
-            <!-- prePassword -->
-            <div class="form-wrap-box">
-              <ValidationProvider
-                name="Password"
-                rules="required"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable">*Input Password</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      :type="!showPrePassword ? 'password' : 'text'"
-                      placeholder="8~15 character,at least one letter and one number"
-                      v-model="prePassword"
-                      oninput="if(value.length>15)value=value.slice(0,15)"
-                    />
-                    <i
-                      class="item-icon iconfont icon-yanjing"
-                      v-show="isSeePre"
-                      @click="showPrePassword = !showPrePassword"
-                    ></i>
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </div>
-            <!-- password -->
-            <div class="form-wrap-box">
-              <ValidationProvider
-                name="Confirm Password"
-                rules="required"
-                v-slot="{ errors }"
-                tag="section"
-                class="form-item"
-              >
-                <div class="form-item-top">
-                  <label class="item-lable">*Confirm Password</label>
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      :type="!showPassword ? 'password' : 'text'"
-                      placeholder="Reenter Password"
-                      v-model="formParams.password"
-                      oninput="if(value.length>15)value=value.slice(0,15)"
-                    />
-                    <i
-                      class="item-icon iconfont icon-yanjing"
-                      v-show="isSeeConfirm"
-                      @click="showPassword = !showPassword"
-                    ></i>
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </div>
-          </section>
-        </div>
-        <!-- 密码验证提示 -->
-        <div class="error-wrap">
-          <div class="error-item" v-show="prePassword">
-            <div v-for="(error, index) in passwordErrorList" :key="index">
-              <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
-              <span>{{ error }}</span>
-            </div>
-          </div>
-          <div class="error-item" ref>
-            <div
-              class="error-item-wrap"
-              v-show="prePassword && formParams.password && !isPasswordEqual"
+    <ValidationObserver
+      ref="observer"
+      @submit.prevent="onSubmit"
+      v-slot="{ invalid }"
+      tag="form"
+      class="form"
+    >
+      <p class="top-tips">Step two, please fill in your personal information：</p>
+      <p class="required">*Required</p>
+      <!-- form -->
+      <div class="form-wrap">
+        <section>
+          <!-- Name -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              name="First Name"
+              rules="required|alpha_spaces"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
             >
-              <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
-              <span>Passwords must match</span>
-            </div>
-            <div class="error-item-wrap" v-show="isPasswordEqual">
-              <i class="iconfont icon-duigou" style="color:#95C884;font-weight:bold"></i>
-              <span>Passwords must match</span>
-            </div>
+              <div class="form-item-top">
+                <label class="item-lable">*Name</label>
+                <div class="item-main">
+                  <input
+                    type="text"
+                    class="item-main-inner"
+                    placeholder="First Name"
+                    v-model="formParams.firstName"
+                    autofocus
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+
+            <ValidationProvider
+              name="Last Name"
+              rules="required|alpha_spaces"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item margin-l"
+            >
+              <div class="form-item-top">
+                <label class="item-lable hidden-lable">&nbsp;</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="Last Name"
+                    v-model="formParams.lastName"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
+          <!-- Gender -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <div class="form-item-top">
+                <label class="item-lable">Gender</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    name="gender"
+                    id="gender"
+                    v-model="formParams.gender"
+                  >
+                    <option disabled value style="display:none;">Select gender</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section class="section-two">
+          <!-- Email -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              name="Email"
+              rules="required|email"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Email</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="email"
+                    placeholder="Email Address"
+                    v-model.lazy="formParams.email"
+                    @focus="emailFocus"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="emailBound" class="already-bound">Already bound, please replace one</span>
+              </div>
+            </ValidationProvider>
+          </div>
+          <!-- Phone -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              name="Phone"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Phone</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    name="phoneHead"
+                    id="phoneHead"
+                    v-model="phoneHead"
+                  >
+                    <option disabled value style="display: none;">Aera Code</option>
+                    <option value="86">86</option>
+                    <option value="254">254</option>
+                    <option value="234">234</option>
+                    <option value="255">255</option>
+                    <option value="256">256</option>
+                    <option value="264">264</option>
+                    <option value="233">233</option>
+                    <option value="237">237</option>
+                    <option value="229">229</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+            <ValidationProvider
+              name="Phone Number"
+              rules="required|length:9"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item margin-l"
+            >
+              <div class="form-item-top">
+                <label class="item-lable hidden-lable">&nbsp;</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    type="number"
+                    placeholder="Phone Number"
+                    v-model="phoneBody"
+                    oninput="if(value.length>9)value=value.slice(0,9)"
+                    @focus="phoneBodyFocus"
+                  />
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="phoneBound" class="already-bound">Already bound, please replace one</span>
+              </div>
+            </ValidationProvider>
+          </div>
+        </section>
+        <section>
+          <!-- prePassword -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              name="Password"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Input Password</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPrePassword ? 'password' : 'text'"
+                    placeholder="8~15 character,at least one letter and one number"
+                    v-model="prePassword"
+                    oninput="if(value.length>15)value=value.slice(0,15)"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeePre"
+                    @click="showPrePassword = !showPrePassword"
+                  ></i>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
+          <!-- password -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              name="Confirm Password"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Confirm Password</label>
+                <div class="item-main">
+                  <input
+                    class="item-main-inner"
+                    :type="!showPassword ? 'password' : 'text'"
+                    placeholder="Reenter Password"
+                    v-model="formParams.password"
+                    oninput="if(value.length>15)value=value.slice(0,15)"
+                  />
+                  <i
+                    class="item-icon iconfont icon-yanjing"
+                    v-show="isSeeConfirm"
+                    @click="showPassword = !showPassword"
+                  ></i>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
+        </section>
+      </div>
+      <!-- 密码验证提示 -->
+      <div class="error-wrap">
+        <div class="error-item" v-show="prePassword">
+          <div v-for="(error, index) in passwordErrorList" :key="index">
+            <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
+            <span>{{ error }}</span>
           </div>
         </div>
-        <p class="country-tips">Which products are you interested in？</p>
-        <div class="product-interest">
-          <div class="checkbox-wrap" v-for="(interest, index) in productInterestList" :key="index">
-            <input
-              class="check-input"
-              type="checkbox"
-              name="product-interest"
-              :id="interest.value"
-              :value="interest.value"
-              v-model="formParams.productInterests"
-            />
-            <img class="check-img" src="../../../../static/img/checked.png" alt />
-            <label :for="interest.value" class="interest-label-box">
-              <img class="check-box-img" src="../../../../static/img/check_box.png" alt />
-            </label>
-            <label class="check-label" :for="interest.value">
-              {{
-              interest.value
-              }}
-            </label>
+        <div class="error-item" ref>
+          <div
+            class="error-item-wrap"
+            v-show="prePassword && formParams.password && !isPasswordEqual"
+          >
+            <i class="iconfont icon-del-" style="color:red;font-weight:bold"></i>
+            <span>Passwords must match</span>
+          </div>
+          <div class="error-item-wrap" v-show="isPasswordEqual">
+            <i class="iconfont icon-duigou" style="color:#95C884;font-weight:bold"></i>
+            <span>Passwords must match</span>
           </div>
         </div>
-        <p class="country-tips">Where did you learn about BF Suma？</p>
-        <div class="product-interest">
-          <div class="checkbox-wrap" v-for="(learn, index) in learnBfList" :key="index">
-            <input
-              class="check-input"
-              type="radio"
-              name="product-learn"
-              :id="learn.value"
-              :value="learn.value"
-              v-model="formParams.source"
-            />
-            <!-- <label :for="learn.value" class="interest-label-box">
+      </div>
+      <p class="country-tips">Which products are you interested in？</p>
+      <div class="product-interest">
+        <div class="checkbox-wrap" v-for="(interest, index) in productInterestList" :key="index">
+          <input
+            class="check-input"
+            type="checkbox"
+            name="product-interest"
+            :id="interest.value"
+            :value="interest.value"
+            v-model="formParams.productInterests"
+          />
+          <img class="check-img" src="../../../../static/img/checked.png" alt />
+          <label :for="interest.value" class="interest-label-box">
+            <img class="check-box-img" src="../../../../static/img/check_box.png" alt />
+          </label>
+          <label class="check-label" :for="interest.value">
+            {{
+            interest.value
+            }}
+          </label>
+        </div>
+      </div>
+      <p class="country-tips">Where did you learn about BF Suma？</p>
+      <div class="product-interest">
+        <div class="checkbox-wrap" v-for="(learn, index) in learnBfList" :key="index">
+          <input
+            class="check-input"
+            type="radio"
+            name="product-learn"
+            :id="learn.value"
+            :value="learn.value"
+            v-model="formParams.source"
+          />
+          <!-- <label :for="learn.value" class="interest-label-box">
               <img class="check-img" src="../../../../static/img/checked.png" alt />
-            </label>-->
-            <img class="check-img" src="../../../../static/img/checked.png" alt />
-            <label class="check-label before" :for="learn.value">
-              {{
-              learn.value
-              }}
-            </label>
-          </div>
+          </label>-->
+          <img class="check-img" src="../../../../static/img/checked.png" alt />
+          <label class="check-label before" :for="learn.value">
+            {{
+            learn.value
+            }}
+          </label>
         </div>
-        <div class="country-tips">
-          By submitting your information, you agree to
-          <a
-            class="link"
-            href="javascript:;"
-            @click="$router.push('/register/agreement')"
-          >the BF Suma Privacy Policy</a>
-        </div>
-        <!-- btn -->
-        <div class="btn-wrap">
-          <button class="btn btn-back" type="button" @click="$router.go(-1)">Back</button>
-          <button class="btn btn-submit" type="submit">Submit</button>
-        </div>
-      </form>
+      </div>
+      <div class="country-tips">
+        By submitting your information, you agree to
+        <a
+          class="link"
+          href="javascript:;"
+          @click="$router.push('/register/agreement')"
+        >the BF Suma Privacy Policy</a>
+      </div>
+      <!-- btn -->
+      <div class="btn-wrap">
+        <button class="btn btn-back" type="button" @click="$router.go(-1)">Back</button>
+        <button class="btn btn-submit" type="submit">Submit</button>
+      </div>
     </ValidationObserver>
-    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="closeToast"></my-toast>
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
+    <mobile-loading :showMobileLoading="showMobileLoading" />
     <!-- dialog -->
     <my-dialog
       title="Create account"
@@ -333,14 +338,6 @@
         class="dialog-text"
       >Account created, you can now log in with your mobile number or E-mail.</div>
     </my-dialog>
-    <!-- <div class="radio">
-      <input type="radio" name="gender" id="man" />
-      <label for="man">男</label>
-    </div>
-    <div class="radio">
-      <input type="radio" name="gender" id="women" />
-      <label for="women">女</label>
-    </div>-->
   </div>
 </template>
 
@@ -350,6 +347,7 @@ import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
 import myDialog from "@/components/my-dialog";
+import mobileLoading from "@/components/mobile-loading";
 export default {
   data() {
     return {
@@ -358,6 +356,7 @@ export default {
       showPassword: false,
       showToast: false,
       showDialog: false,
+      showMobileLoading: false,
       toastText: "",
       prePassword: "",
       phoneHead: "",
@@ -513,6 +512,12 @@ export default {
         this.$refs.phoneBound.style.display = "none ";
     },
     async onSubmit() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) {
+        this.showToast = true;
+        this.toastText = "Please check required";
+        return;
+      }
       // 验证密码是否匹配
       if (!this.isPasswordEqual) {
         this.showToast = true;
@@ -546,36 +551,29 @@ export default {
       }
     },
     async registerCustomer() {
+      this.showMobileLoading = true;
       let { country, city, sponsor, upline } = this.formParams;
       const reqData = Object.assign({}, this.formParams);
       reqData.phone = this.computedPhone;
       reqData.productInterests = JSON.stringify(reqData.productInterests);
       sessionStorage.setItem("distInformation", JSON.stringify(reqData));
       const res = await registerCustomer(reqData);
-      if (!res) {
-        this.showToast = true;
-        this.toastText("Password setting failed");
-        return;
-      } else {
-        const rescode = res.code;
-        switch (rescode) {
-          case 0:
-            this.showDialog = true;
-            sessionStorage.setItem("customerInfo", res.data);
-            break;
-          case 101:
-            break;
-          default:
-            break;
-        }
+      this.showMobileLoading = false;
+      const rescode = res.code;
+      switch (rescode) {
+        case 0:
+          this.showDialog = true;
+          sessionStorage.setItem("customerInfo", res.data);
+          break;
+        case 101:
+          break;
+        default:
+          break;
       }
-    },
-    closeToast() {
-      this.showToast = false;
     },
     dialogHandle(flag) {
       if (flag) {
-        this.$router.push("/register/distributor/payment");
+        this.$router.replace("/register/distributor/payment");
       }
     }
   },
@@ -583,7 +581,8 @@ export default {
     "my-header": myHeader,
     "my-step": myStep,
     "my-toast": myToast,
-    "my-dialog": myDialog
+    "my-dialog": myDialog,
+    "mobile-loading": mobileLoading
   }
 };
 </script>

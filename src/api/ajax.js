@@ -4,6 +4,7 @@ ajax请求函数模块
  */
 import axios from 'axios'
 import qs from "qs"
+
 export default function ajax(url, data = {}, type = 'GET') {
 
   return new Promise(function (resolve, reject) {
@@ -34,6 +35,8 @@ export default function ajax(url, data = {}, type = 'GET') {
     })
   })
 }
+
+
 
 /*
 const response = await ajax()

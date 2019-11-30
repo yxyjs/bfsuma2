@@ -39,21 +39,32 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@keyframes slidein
+  from
+    transform translateY(-20px)
+  to
+    transform translateY(0)
 #toast-cont
   display flex
   align-items center
-  position absolute
-  top 30px
-  left 50%
-  transform translate(-50%)
+  position fixed
+  top 0
+  left 0
+  right 0
+  padding 20px 0
   background-color #f2dede
-  border 1px solid #ebccd1
-  border-radius 4px
+  animation slidein 0.25s ease-in-out
+  @media (max-width: 980px)
+    padding 10px 0
+  z-index 3
   .toast-text
-    font-size 13px
+    flex 1
+    text-align center
+    font-size 14px
     color #a94442
-    padding 16px 100px
   .toast-icon
+    position absolute
+    right 0
     font-size 20px
     cursor pointer
     padding 0 10px
