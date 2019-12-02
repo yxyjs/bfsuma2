@@ -51,24 +51,45 @@ export default {
       lastName: ""
     };
   },
-  mounted() {
-    const distInformation = JSON.parse(
-      sessionStorage.getItem("distInformation")
-    );
-    if (distInformation) {
-      this.firstName = distInformation.firstName;
-      this.lastName = distInformation.lastName;
-    }
+  updated(){
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user) {
       const name = user.name.split(" ");
       this.firstName = name[0];
       this.lastName = name[1];
+    } else {
+      const distInformation = JSON.parse(
+        sessionStorage.getItem("distInformation")
+      );
+      if (distInformation) {
+        this.firstName = distInformation.firstName;
+        this.lastName = distInformation.lastName;
+      }
     }
 
     this.path = this.$route.path.split("/")[
       this.$route.path.split("/").length - 1
     ];
+  },
+  mounted() {
+    // const user = JSON.parse(sessionStorage.getItem("user"));
+    // if (user) {
+    //   const name = user.name.split(" ");
+    //   this.firstName = name[0];
+    //   this.lastName = name[1];
+    // } else {
+    //   const distInformation = JSON.parse(
+    //     sessionStorage.getItem("distInformation")
+    //   );
+    //   if (distInformation) {
+    //     this.firstName = distInformation.firstName;
+    //     this.lastName = distInformation.lastName;
+    //   }
+    // }
+
+    // this.path = this.$route.path.split("/")[
+    //   this.$route.path.split("/").length - 1
+    // ];
   },
   methods: {
     handleExit() {

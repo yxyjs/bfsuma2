@@ -126,6 +126,7 @@ export default {
     }
   },
   methods: {
+    // 获取顾客信息
     async distributorCustomer(id) {
       let res = await distributorCustomer(id);
       if (res) {
@@ -141,6 +142,7 @@ export default {
         }
       }
     },
+    // 获取支付信息
     async payBill(id) {
       let res = await payBill(id);
       const rescode = res.code;
@@ -156,6 +158,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import '../../../../static/stylus/common.styl'
+
 #personal-cont
   margin 38px 0
   background-color #fff
@@ -173,13 +177,12 @@ export default {
       line-height 30px
       @media (max-width: 980px)
         line-height 1.5
-        padding 10px
     .personal-main
       display flex
       margin-top 50px
       @media (max-width: 980px)
         display block
-        margin-top 20px
+        margin 8px 10px 0 8px
       .main-item
         flex 1
         &:not(:first-child)
@@ -230,7 +233,7 @@ export default {
       @media (max-width: 980px)
         width 100%
         margin-left 0
-        margin-top 20px
+        margin 20px 0 16px 0
       &:hover
         background-color #286090
 </style>

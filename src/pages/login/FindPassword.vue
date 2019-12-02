@@ -502,6 +502,8 @@ export default {
   .find-main
     display flex
     padding-bottom 60px
+    @media (max-width: 980px) 
+      padding-bottom 20px
     .find-banner
       flex 0.4
       max-width 50%
@@ -552,6 +554,7 @@ export default {
                 display flex
                 flex-direction column
                 background-color #fff
+                height 22px
               .item-lable
                 color #4295C5
                 font-weight bold
@@ -562,7 +565,9 @@ export default {
                 border-right 1px solid #BABABA
                 @media (max-width: 980px)
                   margin-left 0
+                  font-size 12px
                   border-right none
+                  line-height 0
                 &.hidden-lable
                   display none
                   @media (max-width: 980px)
@@ -578,7 +583,6 @@ export default {
                 color rgb(87, 87, 87)
                 @media (max-width: 980px)
                   line-height 36px
-                  margin-top 10px
                 .btn-getcode
                   padding 0 26px
                   height 100%
@@ -616,7 +620,7 @@ export default {
               height 20px
               line-height 20px
               @media (max-width: 980px)
-                margin-top 24px
+                margin-top 30px
               .help-block
                 font-size 12px
                 color #a94442

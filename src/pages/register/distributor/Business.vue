@@ -353,6 +353,7 @@ export default {
       sponsorData: {},
       uplineData: {},
       addressData: {
+        //页面地址对象
         firstName: "",
         lastName: "",
         phone: "",
@@ -360,9 +361,9 @@ export default {
         city: "",
         address: ""
       },
-      dialogParams: {},
-      distributorCard: {},
-      myDistributorId: ""
+      dialogParams: {}, //弹窗地址对象
+      distributorCard: {}, //页面经销商卡
+      myDistributorId: "" //支付成功后生成的经销商id
     };
   },
   mounted() {
@@ -412,23 +413,14 @@ export default {
       this.distributorCard.lastName = lastName;
       this.distributorCard.phone = phone;
     }
+
+    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
+    if (cityList) {
+      this.cityList = cityList;
+    }
   },
   methods: {
-    countryChange(event) {
-      this.dialogParams.city = "";
-      this.cityList = [];
-      const value = event.target.value;
-      this.dialogParams.country = value;
-
-      const countryList = this.countryList;
-      for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name === this.dialogParams.country) {
-          const areaCode = countryList[i].areaCode;
-          this.getAllCity(areaCode);
-          sessionStorage.setItem("areaCode", areaCode);
-        }
-      }
-    },
+    // 获取所有国家
     async getAllCountry() {
       let res = await getAllCountry();
       const rescode = res.code;
@@ -437,6 +429,7 @@ export default {
         this.countryList = resdata;
       }
     },
+    // 获取选中国家下面所有的城市
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
       const rescode = res.code;
@@ -445,6 +438,7 @@ export default {
         this.cityList = resdata;
       }
     },
+    // 获取顾客信息
     async distributorCustomer() {
       const id = sessionStorage.getItem("customerInfo");
       let res = await distributorCustomer({ id });
@@ -465,20 +459,17 @@ export default {
       if (!isValid) {
         this.showToast = true;
         this.toastText = "Please check required";
-        return
-      };
+        return;
+      }
       this.showMobileLoading = true;
       this.submitAddress();
     },
+    // 提交地址信息
     async submitAddress() {
       const reqData = Object.assign({}, this.dialogParams);
       const distributorNo = sessionStorage.getItem("myDistributorId");
       if (distributorNo) {
         reqData.distributorNo = distributorNo;
-      }
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      if (user) {
-        reqData.distributorNo = user.distributorId;
       }
       let res = await distributorAddress(reqData);
       this.showMobileLoading = false;
@@ -486,6 +477,7 @@ export default {
       if (rescode === 0) {
         this.showDialog = false;
         sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+        location.reload();
       }
       if (rescode === 101) {
         if (this.BASE_URL === "http://172.18.1.240:73") {
@@ -502,6 +494,21 @@ export default {
         this.onSubmit();
       } else {
         this.showDialog = false;
+      }
+    },
+    countryChange(event) {
+      this.dialogParams.city = "";
+      this.cityList = [];
+      const value = event.target.value;
+      this.dialogParams.country = value;
+
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        if (countryList[i].name === this.dialogParams.country) {
+          const areaCode = countryList[i].areaCode;
+          this.getAllCity(areaCode);
+          sessionStorage.setItem("areaCode", areaCode);
+        }
       }
     }
   },

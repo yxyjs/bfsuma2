@@ -69,6 +69,36 @@
               </div>
             </ValidationProvider>
             <ValidationProvider
+              name="Province"
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item margin-l"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Province</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="formParams.province"
+                    @change="provinceChange"
+                    ref="provinceSelect"
+                  >
+                    <option disabled value style="display:none;">Select Province</option>
+                    <option
+                      :value="province.name"
+                      v-for="(province,index) in provinceList"
+                      :key="index"
+                    >{{province.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="provinceEmpty" class="show-required">Required</span>
+              </div>
+            </ValidationProvider>
+            <ValidationProvider
               name="City"
               rules="required"
               v-slot="{ errors }"
@@ -309,14 +339,17 @@ export default {
       showToast: false,
       tableTips: false,
       toastText: "",
-      currentSponsor: {},
+      currentSponsor: {}, //连接的推荐人
       formParams: {
+        //表单对象
         country: "",
+        province: "",
         city: ""
       },
       sponsor: "",
-      submitClickTime: 0,
+      submitClickTime: 0, //点击提交按钮
       countryList: [],
+      provinceList: [],
       cityList: [],
       recommendList: []
     };
@@ -337,15 +370,17 @@ export default {
     }
   },
   mounted() {
-    /*
-     *返回时是否记住之前的选择
-     */
-    // const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
-    // if (distSponsor) {
-    //   this.formParams.country = distSponsor.country;
-    //   this.formParams.city = distSponsor.city;
-    // }
+    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    if (distSponsor) {
+      this.formParams.country = distSponsor.country;
+      this.formParams.city = distSponsor.city;
+    }
     this.getAllCountry();
+
+    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
+    if (cityList) {
+      this.cityList = cityList;
+    }
   },
   methods: {
     dialogHandle(flag) {
@@ -361,6 +396,8 @@ export default {
       this.$refs.input.checked = true;
     },
     countryChange(event) {
+      this.formParams.province = "";
+      this.provinceList = [];
       this.formParams.city = "";
       this.cityList = [];
       // 赋值
@@ -375,9 +412,28 @@ export default {
       for (let i = 0; i < countryList.length; i++) {
         if (countryList[i].name === this.formParams.country) {
           const areaCode = countryList[i].areaCode;
-          console.log(areaCode);
-          this.getAllCity(areaCode);
+          this.getAllProvince(areaCode);
           sessionStorage.setItem("areaCode", areaCode);
+        }
+      }
+    },
+    provinceChange(event) {
+      this.formParams.city = "";
+      this.cityList = [];
+      // 赋值
+      let value = event.target.value;
+      this.formParams.province = value;
+      // 切换显示
+      this.$refs.tableWrap.style.display = "none";
+      this.$refs.recommendMatches.style.display = "none";
+      this.$refs.systemRecommend.style.display = "block";
+
+      const provinceList = this.provinceList;
+      for (let i = 0; i < provinceList.length; i++) {
+        if (provinceList[i].name === this.formParams.province) {
+          const getCityId = provinceList[i].id;
+          this.getAllCity(getCityId);
+          sessionStorage.setItem("getCityId", getCityId);
         }
       }
     },
@@ -390,11 +446,48 @@ export default {
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
     },
+    // 获取所有国家
+    async getAllCountry() {
+      let res = await getAllCountry();
+      const rescode = res.code;
+      if (rescode === 0) {
+        this.countryList = res.data;
+      } else {
+        console.error(res.fullMessage);
+      }
+    },
+    // 获取选中国家下面所有的省
+    async getAllProvince(areaCode) {
+      let res = await getAllCity(areaCode);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.provinceList = resdata;
+        sessionStorage.setItem("provinceList", JSON.stringify(resdata));
+      } else {
+        console.error(res.fullMessage);
+      }
+    },
+    async getAllCity(areaCode) {
+      let res = await getAllCity(areaCode);
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.cityList = resdata;
+        sessionStorage.setItem("cityList", JSON.stringify(resdata));
+      } else {
+        console.error(res.fullMessage);
+      }
+    },
+    // 搜索经销商
     async onSearch() {
-      const { country, city } = this.formParams;
+      const { country, province, city } = this.formParams;
       if (!this.submitClickTime) {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
+        }
+        if (!province) {
+          this.$refs.provinceEmpty.style.display = "block";
         }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
@@ -435,11 +528,15 @@ export default {
         }
       }
     },
+    // 获取6个推荐人
     async getRecommend() {
-      const { country, city } = this.formParams;
+      const { country, province, city } = this.formParams;
       if (!this.submitClickTime) {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
+        }
+        if (!province) {
+          this.$refs.provinceEmpty.style.display = "block";
         }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
@@ -470,32 +567,12 @@ export default {
         }
       }
     },
-    async getAllCountry() {
-      let res = await getAllCountry();
-      const rescode = res.code;
-      if (rescode === 0) {
-        this.countryList = res.data;
-      } else {
-        console.error(res.fullMessage);
-      }
-    },
-    async getAllCity(areaCode) {
-      let res = await getAllCity(areaCode);
-      const rescode = res.code;
-      if (rescode === 0) {
-        const resdata = res.data;
-        this.cityList = resdata;
-      } else {
-        console.error(res.fullMessage);
-      }
-    },
     connectHandle(item) {
       this.$refs.noConnect.style.display = "none";
       this.$refs.searchEmpty.style.display = "none";
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
-      // 存储到session
       let distSponsor = JSON.stringify(this.formParams);
       sessionStorage.setItem("distSponsor", distSponsor);
       sessionStorage.setItem("distributorId", item.distributorId);
@@ -507,7 +584,6 @@ export default {
       this.recommendList = [];
       this.sponsor = "";
     },
-
     async onSubmit() {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
@@ -517,6 +593,8 @@ export default {
           this.$refs.countryEmpty.style.display = "none";
         if (this.$refs.cityEmpty.style.display === "block")
           this.$refs.cityEmpty.style.display = "none";
+        if (this.$refs.provinceEmpty.style.display === "block")
+          this.$refs.provinceEmpty.style.display = "none";
         // 点击了一次
         this.submitClickTime = 1;
         return;
@@ -526,7 +604,7 @@ export default {
       if (!Object.keys(distSponsor).length) {
         this.$refs.noConnect.style.display = "block";
       } else {
-        this.$router.replace("/register/distributor/personalInformation");
+        this.$router.push("/register/distributor/personalInformation");
       }
     }
   },
@@ -553,9 +631,8 @@ select, input
     padding 20px
     background-color #fff
     @media (max-width: 980px)
-      margin-top 0
+      margin 0 0 20px 0
       padding 8px
-      min-height 100vh
     .top-tips
       font-size 14px
       font-weight bold
@@ -564,16 +641,17 @@ select, input
       @media (max-width: 980px)
         line-height 1.5
         font-weight normal
-        padding 10px
     .required
       margin 12px 0 0 0
       color #5BA2CC
+      @media (max-width: 980px)
+        margin 0
     .checkbox
       display flex
       margin-left 20px
       margin-top 30px
       @media (max-width: 980px)
-        margin 10px 0 0 5px
+        margin 0 0 0 5px
       .checkbox-label
         color #4295C5
         font-weight bold
@@ -619,6 +697,8 @@ select, input
               border 1px solid #666
     .form-wrap
       margin-top 20px
+      @media (max-width: 980px)
+        margin-top 10px
       >section
         display flex
         .form-wrap-box
@@ -656,8 +736,11 @@ select, input
                 line-height 20px
                 white-space nowrap
                 @media (max-width: 980px)
-                  margin-left 0
+                  font-size 12px
+                  margin 4px
                   border-right none
+                  height 10px
+                  line-height 10px
               .item-p
                 line-height 40px
                 padding-right 10px
@@ -694,6 +777,8 @@ select, input
             .form-item-bottom
               height 20px
               line-height 20px
+              @media (max-width: 980px)
+                height 16px
               .help-block
                 color #a94442
                 font-size 12px

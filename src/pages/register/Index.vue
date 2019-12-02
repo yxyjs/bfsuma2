@@ -57,7 +57,8 @@ export default {
     padding 20px
     background-color #fff
     @media (max-width: 980px)
-      padding 18px
+      margin 10px 0 20px 0
+      padding 8px
     .md-text
       margin 20px 0 20px 20px
       @media (max-width: 980px)
@@ -80,8 +81,10 @@ export default {
       text-align right
       @media (max-width: 980px)
         margin-top 20px
+        padding-right 10px
       .link-login
         color #5BA2CC
+        font-weight bold
         &:hover
           color #23527c
 </style>

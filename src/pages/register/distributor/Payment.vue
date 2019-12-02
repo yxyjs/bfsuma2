@@ -16,16 +16,16 @@
           <div class="img-wrap">
             <img src="../../../../static/img/payment_banner.png" alt />
           </div>
-          <ul>
-            <li>
+          <ul class="info-ul">
+            <li class="info-li">
               <span class="info-title">User:</span>
               <span class="info-content">{{account}}</span>
             </li>
-            <li>
+            <li class="info-li">
               <span class="info-title">Order:</span>
               <span class="info-content">{{formParams.orderNo}}</span>
             </li>
-            <li>
+            <li class="info-li">
               <span class="info-title">Amount:</span>
               <span class="info-content">KES {{formParams.amount}}</span>
             </li>
@@ -39,47 +39,67 @@
               class="pay-error"
             >Sorry,your phone hasn't been opened for M-pesa payment.</p>
             <form class="form">
-              <div class="form-box">
-                <div class="form-input">
-                  <label class="form-input-label" for="payPhone">Your Phone</label>
-                  <input
-                    id="payPhone"
-                    class="form-input-inner"
-                    type="number"
-                    placeholder="Phone Number"
-                    v-model="formParams.payPhone"
-                    maxlength="12"
-                    oninput="if(value.length>12)value=value.slice(0,12)"
-                  />
-                </div>
-                <button
-                  ref="payBtn"
-                  class="form-button"
-                  type="button"
-                  @click="payRequest"
-                  :disabled="payBtnDisabled"
-                >Pay</button>
-              </div>
-              <div class="form-bottom">
-                <small ref="phoneEmpty" class="help-block">Format Error</small>
+              <!-- 支付方式 -->
+              <div class="pay-methods">
+                <ul class="pay-ul">
+                  <li
+                    v-for="(method,index) in payMethods"
+                    :key="index"
+                    @click="choosePayMethods(index)"
+                    class="pay-li"
+                    :class="{'current':index === currentPayIndex}"
+                  >
+                    <div class="methods-box" :class="{'current':index === currentPayIndex}">
+                      <img
+                        class="methods-box-logo"
+                        :src="'http://touchdev.bfsuma.com/' + method.logo"
+                        alt
+                      />
+                      <span class="methods-box-name">{{method.name}}</span>
+                    </div>
+                    <div v-show="index === currentPayIndex" class="methods-bottom">
+                      <div class="form-box">
+                        <div class="form-input">
+                          <label class="form-input-label" for="payPhone">Your Phone</label>
+                          <input
+                            id="payPhone"
+                            class="form-input-inner"
+                            type="number"
+                            placeholder="Phone Number"
+                            v-model="formParams.payPhone"
+                            oninput="if(value.length>12)value=value.slice(0,12)"
+                          />
+                        </div>
+                        <button
+                          ref="payBtn"
+                          class="form-button"
+                          type="button"
+                          @click="payRequest"
+                          :disabled="payBtnDisabled"
+                        >Pay</button>
+                      </div>
+                      <div class="form-bottom">
+                        <small ref="phoneEmpty" class="help-block">Format Error</small>
+                      </div>
+                    </div>
+                    <div ref="payUl" class="account-box">
+                      <p class="account-p">
+                        <span class="info-title">Mpesa Paybill:</span>
+                        <span class="info-content">{{paybill}}</span>
+                      </p>
+                      <p class="account-p">
+                        <span class="info-title">Account:</span>
+                        <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
+                      </p>
+                      <p class="account-p">
+                        <span class="info-title">Amount:</span>
+                        <span class="info-content">KES{{rightAmount}}.00</span>
+                      </p>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </form>
-            <!-- loading -->
-            <my-loading :show="showLoading"></my-loading>
-            <ul ref="payUl">
-              <li>
-                <span class="info-title">Mpesa Paybill:</span>
-                <span class="info-content">{{paybill}}</span>
-              </li>
-              <li>
-                <span class="info-title">Account:</span>
-                <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
-              </li>
-              <li>
-                <span class="info-title">Amount:</span>
-                <span class="info-content">KES{{rightAmount}}.00</span>
-              </li>
-            </ul>
           </div>
           <button
             class="form-button"
@@ -243,6 +263,7 @@
                 <label class="item-lable">*Country</label>
                 <div class="item-main">
                   <select
+                    ref="selectCountry"
                     class="item-main-inner"
                     v-model="dialogParams.country"
                     @change="countryChange"
@@ -270,13 +291,18 @@
               <div class="form-item-top">
                 <label class="item-lable">*City</label>
                 <div class="item-main">
-                  <select class="item-main-inner" v-model="dialogParams.city">
+                  <select
+                    id="city"
+                    ref="selectCity"
+                    class="item-main-inner"
+                    v-model="dialogParams.city"
+                  >
                     <option disabled value style="display:none;">Choose City</option>
                     <option
                       :value="city.name"
                       v-for="(city,index) in cityList"
                       :key="index"
-                    >{{city.name || dialogParams.city}}</option>
+                    >{{city.name}}</option>
                   </select>
                 </div>
               </div>
@@ -304,7 +330,8 @@ import {
   distributorUpgrade,
   distributorAddress,
   getAllCountry,
-  getAllCity
+  getAllCity,
+  getAllpayMethods
 } from "@/api/index";
 import { toThousands } from "@/util/tool.js";
 import myDialog from "@/components/my-dialog";
@@ -328,14 +355,15 @@ export default {
       rightAmount: "",
       countryList: [],
       cityList: [],
-      // 页面参数
       formParams: {
+        // 页面参数对象
         amount: "",
         payPhone: "",
         orderNo: ""
       },
-      // 弹窗参数
-      dialogParams: {}
+      dialogParams: {}, // 弹窗参数对象
+      payMethods: [], //支付方式
+      currentPayIndex: 0 //当前支付方式
     };
   },
   watch: {
@@ -346,8 +374,9 @@ export default {
           this.$refs.phoneEmpty.style.display = "block";
           this.payBtnDisabled = true;
         } else {
-          this.$refs.phoneEmpty.style.display = "none";
-          this.payBtnDisabled = false;
+          // console.log(this.$refs.phoneEmpty.style)
+          // this.$refs.phoneEmpty.style.display = "none";
+          // this.payBtnDisabled = false;
         }
       },
       deep: true
@@ -355,6 +384,13 @@ export default {
   },
   mounted() {
     this.getAllCountry();
+    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
+    if (cityList) {
+      this.cityList = cityList;
+    }
+
+    this.getAllpayMethods();
+
     let user = JSON.parse(sessionStorage.getItem("user"));
     let customerInfo = sessionStorage.getItem("customerInfo");
     let id = customerInfo || user.id;
@@ -367,67 +403,51 @@ export default {
       this.formParams.amount = toThousands(mySponsor.payAmount);
       this.rightAmount = mySponsor.payAmount;
     }
+
     const distInformation = JSON.parse(
       sessionStorage.getItem("distInformation")
     );
-    if (!distInformation) {
-      this.distributorCustomer(id);
-    } else {
-      const {
-        email,
-        phone,
-        firstName,
-        lastName,
-        country,
-        city
-      } = distInformation;
+    if (distInformation) {
+      const { email, phone } = distInformation;
       this.account = email;
       this.formParams.payPhone = phone;
-      this.dialogParams.firstName = firstName;
-      this.dialogParams.lastName = lastName;
-      this.dialogParams.phone = phone;
-      this.dialogParams.phoneHead = phone.slice(0, 3);
-      this.dialogParams.phoneBody = phone.slice(3);
-      this.dialogParams.country = country;
-      this.dialogParams.city = city;
     }
   },
-  beforeDestroy() {
-    if (this.interval) clearInterval(this.interval);
-  },
   methods: {
-    countryChange(event) {
-      this.formParams.city = "";
-      this.cityList = [];
-      const value = event.target.value;
-      this.dialogParams.country = value;
-
-      const countryList = this.countryList;
-      for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name === this.dialogParams.country) {
-          const areaCode = countryList[i].areaCode;
-          this.getAllCity(areaCode);
-          sessionStorage.setItem("areaCode", areaCode);
-        }
-      }
-    },
+    // 获取所有国家
     async getAllCountry() {
       let res = await getAllCountry();
       const rescode = res.code;
       if (rescode === 0) {
-        this.countryList = res.data;
+        const resdata = res.data;
+        this.countryList = resdata;
       } else {
         console.error(res.fullMessage);
       }
     },
+    // 获取选中国家下面所有的城市
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
       const rescode = res.code;
       if (rescode === 0) {
         const resdata = res.data;
         this.cityList = resdata;
+        sessionStorage.setItem("cityList", JSON.stringify(resdata));
+      } else {
+        console.error(res.fullMessage);
       }
     },
+    async getAllpayMethods() {
+      let res = await getAllpayMethods();
+      const rescode = res.code;
+      if (rescode === 0) {
+        const resdata = res.data;
+        this.payMethods = resdata;
+      } else {
+        console.error(res.fullMessage);
+      }
+    },
+    // 获取顾客信息
     async distributorCustomer(id) {
       let res = await distributorCustomer(id);
       const rescode = res.code;
@@ -445,6 +465,7 @@ export default {
         this.dialogParams.city = city;
       }
     },
+    // 获取支付信息
     async payBill(id) {
       let res = await payBill(id);
       const rescode = res.code;
@@ -459,11 +480,11 @@ export default {
     },
     // 发起支付请求
     async payRequest() {
-      this.showLoading = true;
-      this.$refs.payUl.style.display = "none";
+      this.showMobileLoading = true;
+      // this.$refs.payUl.style.display = "none";
       let res = await payRequest(this.formParams);
-      this.showLoading = false;
-      this.$refs.payUl.style.display = "block";
+      this.showMobileLoading = false;
+      // this.$refs.payUl.style.display = "block";
       const rescode = res.code;
       if (rescode === 0) {
         let time = 60;
@@ -492,7 +513,6 @@ export default {
       const rescode = res.code;
       if (rescode === 0) {
         this.distributorUpgrade();
-        this.showDialog = true;
       }
       if ([201].includes(rescode)) {
         console.error("支付状态失败啦");
@@ -501,32 +521,59 @@ export default {
         this.$refs.payFailBox.style.display = "block";
       }
     },
+    // 经销商升级
     async distributorUpgrade() {
-      let distInformation = JSON.parse(
+      this.showDialog = true;
+      // 给dialog赋值
+      const distInformation = JSON.parse(
         sessionStorage.getItem("distInformation")
       );
-      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
-      let customerInfo = sessionStorage.getItem("customerInfo");
-      let distributorId = sessionStorage.getItem("distributorId");
+      const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+      const customerInfo = sessionStorage.getItem("customerInfo");
+      const distributorId = sessionStorage.getItem("distributorId");
+      if (!distInformation) {
+        this.distributorCustomer(customerInfo);
+      } else {
+        const {
+          email,
+          phone,
+          firstName,
+          lastName,
+          country,
+          city
+        } = distInformation;
+        this.dialogParams.firstName = firstName;
+        this.dialogParams.lastName = lastName;
+        this.dialogParams.phone = phone;
+        this.dialogParams.phoneHead = phone.slice(0, 3);
+        this.dialogParams.phoneBody = phone.slice(3);
+        this.dialogParams.country = country;
+        this.dialogParams.city = city;
+      }
+
       if (distInformation && distSponsor && distributorId) {
-        let reqData = Object.assign(distInformation, distSponsor, {
-          id: customerInfo
-        });
+        let reqData = Object.assign(
+          distInformation,
+          distSponsor,
+          this.formParams,
+          {
+            id: customerInfo
+          }
+        );
         let res = await distributorUpgrade(reqData);
         const rescode = res.code;
         if (rescode === 0) {
           const resdata = res.data;
           sessionStorage.setItem("myDistributorId", resdata);
-          this.showDialog = true;
         }
         if ([101, 102, 103, 104].includes(rescode)) {
           this.showToast = true;
-          // this.toastText = "Payment failure";
-          this.toastText = res.fullMessage;
+          this.toastText = "Payment failure";
           clearInterval(this.interval);
         }
       }
     },
+    // 成功后提交地址信息
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
       const distributorNo = sessionStorage.getItem("myDistributorId");
@@ -556,15 +603,7 @@ export default {
         }
       }
     },
-    dialogHandle(flag) {
-      if (flag) {
-        // 确定
-        this.onSubmit();
-      } else {
-        // 取消
-        this.$router.replace("/register/distributor/business");
-      }
-    },
+    // 提交表单
     async onSubmit() {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
@@ -575,9 +614,39 @@ export default {
       this.showMobileLoading = true;
       this.distributorAddress();
     },
+    dialogHandle(flag) {
+      if (flag) {
+        // 确定
+        this.onSubmit();
+      } else {
+        // 取消
+        this.$router.replace("/register/distributor/business");
+      }
+    },
+    countryChange(event) {
+      this.dialogParams.city = "";
+      this.cityList = [];
+      const value = event.target.value;
+      this.dialogParams.country = value;
+
+      const countryList = this.countryList;
+      for (let i = 0; i < countryList.length; i++) {
+        if (countryList[i].name === this.dialogParams.country) {
+          const areaCode = countryList[i].areaCode;
+          this.getAllCity(areaCode);
+          sessionStorage.setItem("areaCode", areaCode);
+        }
+      }
+    },
+    choosePayMethods(index) {
+      this.currentPayIndex = index;
+    },
     repayHandle() {
       this.$refs.payFailBox.style.display = "none";
       this.$refs.payAccount.style.display = "block";
+    },
+    beforeDestroy() {
+      clearInterval(this.interval);
     }
   },
   components: {
@@ -612,13 +681,12 @@ export default {
         font-size 13px
         line-height 1.5
         font-weight normal
-        padding 10px
     .pay-main
       display flex
       margin 50px 0
       @media (max-width: 980px)
         display block
-        margin-top 10px
+        margin 10px 0
       .pay-info
         flex 0.47
         .img-wrap
@@ -628,6 +696,19 @@ export default {
           img
             display block
             max-width 100%
+        .info-ul
+          margin 30px 0 0 10px
+          @media (max-width: 980px)
+            margin 10px 0 0 0
+          .info-li
+            line-height 40px
+            @media (max-width: 980px)
+              line-height 26px
+            .info-title
+              color #5BA2CC
+              margin-right 10px
+            .info-content
+              color #575757
       .pay-account
         flex 0.53
         padding-left 30px
@@ -636,8 +717,8 @@ export default {
           border-left none
           border-1px-t(#ccc)
           padding-left 0
-          padding-top 30px
-          margin-top 20px
+          padding-top 10px
+          margin-top 10px
         .pay-account-main
           margin 28px 0 20px 0
           padding 30px 20px
@@ -652,31 +733,58 @@ export default {
             display block
             margin auto
             width 193px
-          .form-box
-            display flex
-            margin-top 40px
-            .form-input
-              display flex
-              align-items center
-              .form-input-label
-                font-weight bold
-                padding 8px 20px
-                color #4AA3D7
-                @media (max-width: 980px)
-                  padding 0
-              .form-input-inner
-                color #575757
-                padding 11px 20px
-                box-shadow rgb(230, 240, 243) 0px 0px 0px 100px inset
-                @media (max-width: 980px)
-                  padding 8px 0 8px 8px
-                &.show-help
-                  box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                  &::placeholder
-                    color #fff
-          .form-bottom
-            .help-block
-              color #a94442
+          .form
+            height 400px
+            overflow auto
+            .pay-methods
+              overflow auto
+              .pay-ul
+                .pay-li
+                  margin 8px 0
+                  border 1px solid #CFD3D2
+                  border-radius 10px
+                  &.current
+                    border 1px solid #56A7D8
+                    overflow hidden
+                  .methods-box
+                    display flex
+                    padding 6px 10px
+                    &.current
+                      background-color #5ba2cc
+                      color #fff
+                    .methods-box-logo
+                      max-width 30px
+                      max-height 30px
+                    .methods-box-name
+                      padding-left 10px
+                      line-height 30px
+                  .methods-bottom
+                    padding 16px 10px
+                    .form-box
+                      display flex
+                      .form-input
+                        display flex
+                        align-items center
+                        .form-input-label
+                          font-weight bold
+                          padding 8px 20px
+                          color #4AA3D7
+                          @media (max-width: 980px)
+                            padding 0
+                        .form-input-inner
+                          color #575757
+                          padding 11px 20px
+                          box-shadow rgb(230, 240, 243) 0px 0px 0px 100px inset
+                          @media (max-width: 980px)
+                            padding 8px 0 8px 8px
+                          &.show-help
+                            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
+                            &::placeholder
+                              color #fff
+                    .form-bottom
+                      .help-block
+                        display none
+                        color #a94442
       .form-button
         color #fff
         background-color #5BA2CC
@@ -693,12 +801,14 @@ export default {
           color #fff
           opacity 0.5
           background-color #5BA2CC
-      ul
-        margin 30px 0 0 10px
+      .account-box
+        margin 0 0 0 10px
         @media (max-width: 980px)
-          margin 10px 0 0 0
-        li
-          line-height 40px
+          margin 0 0 0 8px
+        .account-p
+          line-height 30px
+          @media (max-width: 980px)
+            line-height 24px
           .info-title
             color #5BA2CC
             margin-right 10px

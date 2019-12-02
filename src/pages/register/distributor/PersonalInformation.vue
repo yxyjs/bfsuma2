@@ -358,10 +358,11 @@ export default {
       showDialog: false,
       showMobileLoading: false,
       toastText: "",
-      prePassword: "",
+      prePassword: "", //初始密码
       phoneHead: "",
       phoneBody: "",
       formParams: {
+        //表单对象
         firstName: "",
         lastName: "",
         gender: "",
@@ -375,7 +376,7 @@ export default {
         sponsor: "",
         upline: ""
       },
-      passwordErrorList: [],
+      passwordErrorList: [], //密码错误提示
       productInterestList: [
         {
           id: 0,
@@ -443,6 +444,7 @@ export default {
     };
   },
   computed: {
+    // 密码是否相等
     isPasswordEqual() {
       if (this.prePassword.trim()) {
         return this.prePassword.trim() === this.formParams.password.trim();
@@ -518,22 +520,20 @@ export default {
         this.toastText = "Please check required";
         return;
       }
-      // 验证密码是否匹配
       if (!this.isPasswordEqual) {
         this.showToast = true;
         this.toastText = "Passwords must match";
         return;
       } else {
-        // 验证邮箱或手机是否被注册过
         this.registerCheck();
       }
     },
+    // 验证邮箱或手机是否被注册过
     async registerCheck() {
       let res = await registerCheck(this.formParams.email, this.computedPhone);
       const errcode = res.code;
       switch (errcode) {
         case 0:
-          // 调用注册接口
           this.registerCustomer();
           break;
         case 101: //邮箱和手机被使用了
@@ -550,6 +550,7 @@ export default {
           break;
       }
     },
+    // 注册顾客
     async registerCustomer() {
       this.showMobileLoading = true;
       let { country, city, sponsor, upline } = this.formParams;
