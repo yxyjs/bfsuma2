@@ -299,10 +299,10 @@
             :value="learn.value"
             v-model="formParams.source"
           />
-          <!-- <label :for="learn.value" class="interest-label-box">
-              <img class="check-img" src="../../../../static/img/checked.png" alt />
-          </label>-->
           <img class="check-img" src="../../../../static/img/checked.png" alt />
+          <label :for="learn.value" class="interest-label-box">
+            <img class="check-img" src="../../../../static/img/check_box.png" alt />
+          </label>
           <label class="check-label before" :for="learn.value">
             {{
             learn.value
@@ -615,8 +615,13 @@ select, input
     .required
       margin 12px 0 0 0
       color #5BA2CC
+      @media (max-width: 980px)
+        margin 0
     .form-wrap
       margin-top 20px
+      overflow hidden
+      @media (max-width: 980px)
+        margin-top 0px
       >section
         display flex
         @media (max-width: 980px)
@@ -636,7 +641,6 @@ select, input
           .form-item
             flex 1
             @media (max-width: 980px)
-              margin 12px 0
               background-color #fff
               flex-direction column
             &.margin-l
@@ -666,6 +670,8 @@ select, input
                 @media (max-width: 980px)
                   margin-left 0
                   border-right none
+                  font-size 12px
+                  font-weight normal
               .item-main
                 flex 1
                 display flex
@@ -710,7 +716,8 @@ select, input
       margin-top 0
       @media (max-width: 980px)
         position static
-        padding-bottom 50px
+        padding-bottom 40px
+        font-size 12px
       .error-item
         position absolute
         left 50%
@@ -719,9 +726,15 @@ select, input
           left 56%
         &:last-child
           left 100%
+        >div
+          font-size 12px
+          >i
+            font-size 12px
     .country-tips
       margin-top 20px
       font-weight bold
+      @media (max-width: 980px)
+        margin-top 6px
       .link
         color #5BA2CC
         &:hover
@@ -729,16 +742,16 @@ select, input
     .product-interest
       margin 20px 30px
       @media (max-width: 980px)
-        margin 10px 0 10px 20px
+        margin 6px 0 6px 20px
         line-height 2.6
-        font-size 13px
+        font-size 12px
       .checkbox-wrap
         position relative
         display inline-block
         width 33.33%
         @media (max-width: 980px)
           margin-right 40px
-          line-height 24px
+          line-height 18px
         .check-input
           display none
           &:checked+img.check-img
@@ -764,7 +777,7 @@ select, input
           border-right none
           @media (max-width: 980px)
             white-space nowrap
-            margin 10px 0 10px 6px
+            margin 4px 0 4px 4px
         .before
           &::before
             content ''

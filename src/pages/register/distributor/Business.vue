@@ -547,6 +547,8 @@ export default {
         justify-content space-between
         line-height 30px
         font-weight bold
+        @media (max-width: 980px)
+          line-height 1.5
         .btn
           font-weight bold
           font-size 15px
@@ -584,6 +586,8 @@ export default {
           .item-title
             line-height 30px
             padding-left 26px
+            @media (max-width: 980px)
+              padding-left 16px
             &.head
               line-height 20px
               margin-top 6px

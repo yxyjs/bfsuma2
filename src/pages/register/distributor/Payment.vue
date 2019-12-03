@@ -699,10 +699,12 @@ export default {
         .info-ul
           margin 30px 0 0 10px
           @media (max-width: 980px)
-            margin 10px 0 0 0
+            margin 10px 10px 0 10px
           .info-li
             line-height 40px
             @media (max-width: 980px)
+              display flex
+              justify-content space-between
               line-height 26px
             .info-title
               color #5BA2CC
@@ -847,10 +849,11 @@ export default {
           margin 10px 0 10px 20px
           padding-right 10px
           @media (max-width: 980px)
-            margin-left 0
+            margin 0
             border-right none
             height 30px
-            line-height 6px
+            line-height 30px
+            font-weight normal
           &.hidden-lable
             display none
             @media (max-width: 980px)
@@ -867,7 +870,6 @@ export default {
           align-items center
           color rgb(87, 87, 87)
           @media (max-width: 980px)
-            padding-top 4px
             line-height 36px
             background-color #E6F0F3
           &.nth-child(2)

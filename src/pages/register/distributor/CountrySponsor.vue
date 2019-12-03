@@ -68,7 +68,7 @@
                 <span ref="countryEmpty" class="show-required">Required</span>
               </div>
             </ValidationProvider>
-            <ValidationProvider
+            <!-- <ValidationProvider
               name="Province"
               rules="required"
               v-slot="{ errors }"
@@ -97,7 +97,7 @@
                 <span class="help-block">{{ errors[0] }}</span>
                 <span ref="provinceEmpty" class="show-required">Required</span>
               </div>
-            </ValidationProvider>
+            </ValidationProvider>-->
             <ValidationProvider
               name="City"
               rules="required"
@@ -349,7 +349,7 @@ export default {
       sponsor: "",
       submitClickTime: 0, //点击提交按钮
       countryList: [],
-      provinceList: [],
+      // provinceList: [],
       cityList: [],
       recommendList: []
     };
@@ -396,8 +396,8 @@ export default {
       this.$refs.input.checked = true;
     },
     countryChange(event) {
-      this.formParams.province = "";
-      this.provinceList = [];
+      // this.formParams.province = "";
+      // this.provinceList = [];
       this.formParams.city = "";
       this.cityList = [];
       // 赋值
@@ -412,31 +412,31 @@ export default {
       for (let i = 0; i < countryList.length; i++) {
         if (countryList[i].name === this.formParams.country) {
           const areaCode = countryList[i].areaCode;
-          this.getAllProvince(areaCode);
+          this.getAllCity(areaCode);
           sessionStorage.setItem("areaCode", areaCode);
         }
       }
     },
-    provinceChange(event) {
-      this.formParams.city = "";
-      this.cityList = [];
-      // 赋值
-      let value = event.target.value;
-      this.formParams.province = value;
-      // 切换显示
-      this.$refs.tableWrap.style.display = "none";
-      this.$refs.recommendMatches.style.display = "none";
-      this.$refs.systemRecommend.style.display = "block";
+    // provinceChange(event) {
+    //   this.formParams.city = "";
+    //   this.cityList = [];
+    //   // 赋值
+    //   let value = event.target.value;
+    //   this.formParams.province = value;
+    //   // 切换显示
+    //   this.$refs.tableWrap.style.display = "none";
+    //   this.$refs.recommendMatches.style.display = "none";
+    //   this.$refs.systemRecommend.style.display = "block";
 
-      const provinceList = this.provinceList;
-      for (let i = 0; i < provinceList.length; i++) {
-        if (provinceList[i].name === this.formParams.province) {
-          const getCityId = provinceList[i].id;
-          this.getAllCity(getCityId);
-          sessionStorage.setItem("getCityId", getCityId);
-        }
-      }
-    },
+    //   const provinceList = this.provinceList;
+    //   for (let i = 0; i < provinceList.length; i++) {
+    //     if (provinceList[i].name === this.formParams.province) {
+    //       const getCityId = provinceList[i].id;
+    //       this.getAllCity(getCityId);
+    //       sessionStorage.setItem("getCityId", getCityId);
+    //     }
+    //   }
+    // },
     cityChange(event) {
       // 赋值
       let value = event.target.value;
@@ -457,17 +457,17 @@ export default {
       }
     },
     // 获取选中国家下面所有的省
-    async getAllProvince(areaCode) {
-      let res = await getAllCity(areaCode);
-      const rescode = res.code;
-      if (rescode === 0) {
-        const resdata = res.data;
-        this.provinceList = resdata;
-        sessionStorage.setItem("provinceList", JSON.stringify(resdata));
-      } else {
-        console.error(res.fullMessage);
-      }
-    },
+    // async getAllProvince(areaCode) {
+    //   let res = await getAllCity(areaCode);
+    //   const rescode = res.code;
+    //   if (rescode === 0) {
+    //     const resdata = res.data;
+    //     this.provinceList = resdata;
+    //     sessionStorage.setItem("provinceList", JSON.stringify(resdata));
+    //   } else {
+    //     console.error(res.fullMessage);
+    //   }
+    // },
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
       const rescode = res.code;
@@ -486,9 +486,9 @@ export default {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
         }
-        if (!province) {
-          this.$refs.provinceEmpty.style.display = "block";
-        }
+        // if (!province) {
+        //   this.$refs.provinceEmpty.style.display = "block";
+        // }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
         }
@@ -535,9 +535,9 @@ export default {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
         }
-        if (!province) {
-          this.$refs.provinceEmpty.style.display = "block";
-        }
+        // if (!province) {
+        //   this.$refs.provinceEmpty.style.display = "block";
+        // }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
         }
@@ -593,8 +593,8 @@ export default {
           this.$refs.countryEmpty.style.display = "none";
         if (this.$refs.cityEmpty.style.display === "block")
           this.$refs.cityEmpty.style.display = "none";
-        if (this.$refs.provinceEmpty.style.display === "block")
-          this.$refs.provinceEmpty.style.display = "none";
+        // if (this.$refs.provinceEmpty.style.display === "block")
+        //   this.$refs.provinceEmpty.style.display = "none";
         // 点击了一次
         this.submitClickTime = 1;
         return;
