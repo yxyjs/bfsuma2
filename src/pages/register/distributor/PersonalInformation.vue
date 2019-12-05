@@ -35,7 +35,7 @@
                     type="text"
                     class="item-main-inner"
                     placeholder="First Name"
-                    v-model="formParams.firstName"
+                    v-model.trim="formParams.firstName"
                     autofocus
                   />
                 </div>
@@ -59,7 +59,7 @@
                     class="item-main-inner"
                     type="text"
                     placeholder="Last Name"
-                    v-model="formParams.lastName"
+                    v-model.trim="formParams.lastName"
                   />
                 </div>
               </div>
@@ -166,8 +166,9 @@
                     class="item-main-inner"
                     type="number"
                     placeholder="Phone Number"
-                    v-model="phoneBody"
+                    v-model.trim="phoneBody"
                     oninput="if(value.length>9)value=value.slice(0,9)"
+                    onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                     @focus="phoneBodyFocus"
                   />
                 </div>
@@ -196,7 +197,7 @@
                     class="item-main-inner"
                     :type="!showPrePassword ? 'password' : 'text'"
                     placeholder="8~15 character,at least one letter and one number"
-                    v-model="prePassword"
+                    v-model.trim="prePassword"
                     oninput="if(value.length>15)value=value.slice(0,15)"
                   />
                   <i
@@ -227,7 +228,7 @@
                     class="item-main-inner"
                     :type="!showPassword ? 'password' : 'text'"
                     placeholder="Reenter Password"
-                    v-model="formParams.password"
+                    v-model.trim="formParams.password"
                     oninput="if(value.length>15)value=value.slice(0,15)"
                   />
                   <i
@@ -449,15 +450,15 @@ export default {
   computed: {
     // 密码是否相等
     isPasswordEqual() {
-      if (this.prePassword.trim()) {
-        return this.prePassword.trim() === this.formParams.password.trim();
+      if (this.prePassword) {
+        return this.prePassword === this.formParams.password;
       }
     },
     isSeePre() {
-      return this.prePassword.trim();
+      return this.prePassword;
     },
     isSeeConfirm() {
-      return this.formParams.password.trim();
+      return this.formParams.password;
     },
     computedPhone() {
       return this.phoneHead + this.phoneBody;
@@ -820,8 +821,12 @@ select, input
         font-size 16px
     .btn-back
       color #4295c5
-      border 1px solid #c8c8c8
+      border 1px solid #4295c5
+      &:hover
+        background #eee
     .btn-submit
       margin-left 15px
       background-color #5BA2CC
+      &:hover
+        background #286090
 </style>

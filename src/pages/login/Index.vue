@@ -28,7 +28,7 @@
                   class="item-main-inner"
                   type="text"
                   placeholder="*Your E-mail /Phone number / Distributor ID"
-                  v-model="account"
+                  v-model.trim="account"
                   autofocus
                   @focus="accountFocus"
                 />
@@ -57,7 +57,7 @@
                   class="item-main-inner"
                   :type="!showPassword ? 'password' : 'text'"
                   placeholder="*Fill in"
-                  v-model="password"
+                  v-model.trim="password"
                   oninput="if(value.length>15)value=value.slice(0,15)"
                   @focus="passwordFocus"
                 />
@@ -129,7 +129,7 @@ export default {
   },
   computed: {
     isSeePwd() {
-      return this.password.trim();
+      return this.password;
     }
   },
   mounted() {

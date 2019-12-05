@@ -62,8 +62,9 @@
                             class="form-input-inner"
                             type="number"
                             placeholder="Phone Number"
-                            v-model="formParams.payPhone"
+                            v-model.trim="formParams.payPhone"
                             oninput="if(value.length>12)value=value.slice(0,12)"
+                            onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" 
                           />
                         </div>
                         <button
@@ -149,7 +150,7 @@
                       type="text"
                       class="item-main-inner"
                       placeholder="First Name"
-                      v-model="dialogParams.firstName"
+                      v-model.trim="dialogParams.firstName"
                     />
                   </div>
                 </div>
@@ -166,7 +167,7 @@
                       class="item-main-inner"
                       type="text"
                       placeholder="Last Name"
-                      v-model="dialogParams.lastName"
+                      v-model.trim="dialogParams.lastName"
                     />
                   </div>
                 </div>
@@ -214,8 +215,9 @@
                       class="item-main-inner"
                       type="number"
                       placeholder="Phone Number"
-                      v-model="dialogParams.phoneBody"
+                      v-model.trim="dialogParams.phoneBody"
                       oninput="if(value.length>9)value=value.slice(0,9)"
+                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" 
                     />
                   </div>
                 </div>
@@ -241,7 +243,7 @@
                     style="padding-top:15px"
                     type="text"
                     placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model="dialogParams.address"
+                    v-model.trim="dialogParams.address"
                     autofocus
                   ></textarea>
                 </div>
@@ -370,7 +372,7 @@ export default {
     formParams: {
       handler() {
         // payPhone
-        if (this.formParams.payPhone.trim().length !== 12) {
+        if (this.formParams.payPhone.length !== 12) {
           this.$refs.phoneEmpty.style.display = "block";
           this.payBtnDisabled = true;
         } else {

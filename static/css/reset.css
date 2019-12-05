@@ -73,7 +73,7 @@ input, textarea, button, select, a {
 }
 
 input, textarea {
-  caret-color: skyblue;
+  caret-color: #000;
 }
 
 ::-moz-placeholder {

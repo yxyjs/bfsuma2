@@ -68,7 +68,7 @@ export default {
     opacity 1
 #dialog-cont
   &.fade-in
-    animation fadein .25s ease-in-out
+    animation fadein 0.25s ease-in-out
   .dialog-mask
     position fixed
     top 0
@@ -163,9 +163,10 @@ export default {
             padding 10px
             border-radius 0
         .btn-cancel
-          background-color #ddd
+          color #56a7d8
+          border 1px solid #56a7d8
           &:hover
-            background-color #bbb
+            background-color #eee
             @media (max-width: 980px)
               background #ddd
         .btn-confirm

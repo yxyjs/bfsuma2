@@ -174,7 +174,7 @@
                     class="item-main-inner"
                     type="text"
                     placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
-                    v-model="sponsor"
+                    v-model.trim="sponsor"
                   />
                   <button class="item-searchbtn" type="button" @click="onSearch">Search</button>
                 </div>
@@ -338,7 +338,7 @@ export default {
   },
   watch: {
     sponsor(val) {
-      if (!val.trim()) {
+      if (!val) {
         this.$refs.searchEmpty.style.display = "block";
       } else {
         this.$refs.searchEmpty.style.display = "none";
@@ -383,13 +383,13 @@ export default {
       this.$refs.systemRecommend.style.display = "block";
 
       const countryList = this.countryList;
-      for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name === this.formParams.country) {
-          const areaCode = countryList[i].areaCode;
+      countryList.forEach(element => {
+        if (element.name === value) {
+          const areaCode = element.areaCode;
           this.getAllCity(areaCode);
-          sessionStorage.setItem("areaCode", areaCode);
+          session.set("areaCode", areaCode);
         }
-      }
+      });
     },
     cityChange(event) {
       // 赋值
@@ -434,7 +434,7 @@ export default {
         }
       }
 
-      if (!this.sponsor.trim()) {
+      if (!this.sponsor) {
         this.$refs.searchEmpty.style.display = "block";
       } else {
         this.$refs.searchEmpty.style.display = "none";
@@ -846,6 +846,7 @@ select, input
                     background-color #55ABD9
                     @media (max-width: 980px)
                       font-size 12px
+                      font-weight bold
                       padding 4px
                       color #55ABD9
                       background-color #F3F3F3

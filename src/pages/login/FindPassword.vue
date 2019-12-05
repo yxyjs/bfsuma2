@@ -86,8 +86,9 @@
                       class="item-main-inner"
                       type="number"
                       placeholder="Phone Number"
-                      v-model="formParams.phoneBody"
+                      v-model.trim="formParams.phoneBody"
                       @input="oninput"
+                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                       @focus="phoneBodyFocus"
                     />
                   </div>
@@ -116,8 +117,9 @@
                     class="item-main-inner"
                     type="number"
                     placeholder="Short Message Verification Code"
-                    v-model="formParams.code"
+                    v-model.trim="formParams.code"
                     oninput="if(value.length>6)value=value.slice(0,6)"
+                    onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                   />
                   <button
                     ref="getCodeBtn"
@@ -157,7 +159,7 @@
                     class="item-main-inner"
                     :type="!showPrePassword ? 'password' : 'text'"
                     placeholder="8~15 character,at least one letter and one number"
-                    v-model="prePassword"
+                    v-model.trim="prePassword"
                     oninput="if(value.length>15)value=value.slice(0,15)"
                   />
                   <i
@@ -206,7 +208,7 @@
                     class="item-main-inner"
                     :type="!showPassword ? 'password' : 'text'"
                     placeholder="Reenter Password"
-                    v-model="formParams.password"
+                    v-model.trim="formParams.password"
                     oninput="if(value.length>15)value=value.slice(0,15)"
                     @focus="confirmPasswordFocus"
                   />
@@ -254,6 +256,7 @@ import {
   getAllCountry,
   getAllCity
 } from "@/api/index";
+import { session } from "@/util/tool";
 import myToast from "@/components/my-toast";
 export default {
   data() {
@@ -281,21 +284,21 @@ export default {
     isPasswordEqual() {
       const { password } = this.formParams;
       const { prePassword } = this;
-      if (prePassword.trim()) {
-        return prePassword.trim() === password.trim();
+      if (prePassword) {
+        return prePassword === password;
       }
     },
     computedPhone() {
       const { phoneHead, phoneBody } = this.formParams;
-      return phoneHead + phoneBody.trim();
+      return phoneHead + phoneBody;
     },
     isSeePre() {
       const { prePassword } = this;
-      return prePassword.trim();
+      return prePassword;
     },
     isSeeConfirm() {
       const { password } = this.formParams;
-      return password.trim();
+      return password;
     }
   },
   watch: {
@@ -661,7 +664,9 @@ export default {
               margin-top 32px
           .btn-cancel
             color #5ba2cc
-            border 1px solid #959494
+            border 1px solid #5ba2cc
+            &:hover
+              background #eee
           .btn-submit
             background #5ba2cc
             color #fff
