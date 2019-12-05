@@ -248,9 +248,6 @@
 <script type="text/ecmascript-6">
 import myHeader from "@/components/my-header";
 export default {
-  data() {
-    return {};
-  },
   components: {
     "my-header": myHeader
   }

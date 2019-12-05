@@ -81,7 +81,7 @@ export const getAllCountry = () => ajax(BASE_URL + '/country/all')
 export const getAllCity = (id) => ajax(BASE_URL + '/district/upper', { id })
 
 // 获取所有支付方式
-export const getAllpayMethods = () => ajax(BASE_URL + '/money/all')
+export const getAllpayMethods = (country) => ajax(BASE_URL + '/money/all', { country })
 
 
 

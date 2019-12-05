@@ -369,7 +369,7 @@ export default {
     }
   },
   mounted() {
-    let countryList = JSON.parse(sessionStorage.getItem("countryList"));
+    let countryList = session.get("countryList");
     if (countryList) {
       this.countryList = countryList;
     } else {
@@ -404,7 +404,7 @@ export default {
         const element = countryList[i];
         if (element.name === value) {
           this.formParams.phoneHead = element.areaCode;
-          sessionStorage.setItem("areaCode", element.areaCode);
+          session.set("areaCode", element.areaCode);
         }
       }
 
@@ -428,7 +428,6 @@ export default {
 
       if (res) {
         const rescode = res.code;
-        console.log(res);
         if (rescode === 0) {
           // 按钮倒计时
           let time = 60;
@@ -502,7 +501,7 @@ export default {
   .find-main
     display flex
     padding-bottom 60px
-    @media (max-width: 980px) 
+    @media (max-width: 980px)
       padding-bottom 20px
     .find-banner
       flex 0.4
@@ -568,6 +567,7 @@ export default {
                   font-size 12px
                   border-right none
                   line-height 0
+                  font-weight normal
                 &.hidden-lable
                   display none
                   @media (max-width: 980px)
@@ -602,7 +602,6 @@ export default {
                   flex 1
                   color #575757
                   padding-left 10px
-                  border-radius 4px
                   @media (max-width: 980px)
                     padding 10px 0 10px 10px
                     background #e6f0f3
@@ -632,11 +631,15 @@ export default {
                 font-size 12px
                 color #a94442
         .error-item
+          @media (max-width: 980px)
+            font-size 12px
           p
             display flex
             line-height 26px
             color #B7B7B7
             >i
+              @media (max-width: 980px)
+                font-size 14px
               font-weight bold
               display none
               &:first-child
@@ -657,9 +660,8 @@ export default {
             @media (max-width: 980px)
               margin-top 32px
           .btn-cancel
-            color #fff
-            background-color #959494
-            filter grayscale(1)
+            color #5ba2cc
+            border 1px solid #959494
           .btn-submit
             background #5ba2cc
             color #fff

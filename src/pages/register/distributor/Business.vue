@@ -334,6 +334,7 @@ import {
   getAllCity,
   getAllCountry
 } from "@/api/index";
+import { session } from "@/util/tool";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -367,22 +368,33 @@ export default {
     };
   },
   mounted() {
+    const cityList = session.get("cityList");
+    if (cityList) {
+      this.cityList = cityList;
+    }
+
     this.getAllCountry();
-    const sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
-    const uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
-    if (sponsorData) {
-      this.sponsorData = sponsorData;
+
+    const distInformation = session.get("distInformation");
+    if (distInformation) {
+      const {
+        firstName,
+        lastName,
+        phone,
+        sponsor,
+        upline,
+        country,
+        city
+      } = distInformation;
+      this.distributorCard.firstName = firstName;
+      this.distributorCard.lastName = lastName;
+      this.distributorCard.phone = phone;
+      this.sponsorData = sponsor;
+      this.uplineData = upline;
+      this.addressData.country = country;
+      this.addressData.city = city;
     }
-    if (uplineData) {
-      this.uplineData = uplineData;
-    }
-    const myDistributorId = sessionStorage.getItem("myDistributorId");
-    if (myDistributorId) {
-      this.myDistributorId = myDistributorId;
-    }
-    const addressInformation = JSON.parse(
-      sessionStorage.getItem("addressInformation")
-    );
+    const addressInformation = session.get("addressInformation");
     if (addressInformation) {
       const {
         firstName,
@@ -404,19 +416,10 @@ export default {
       this.addressData.address = address;
       this.dialogParams = JSON.parse(JSON.stringify(this.addressData));
     }
-    const distInformation = JSON.parse(
-      sessionStorage.getItem("distInformation")
-    );
-    if (distInformation) {
-      const { firstName, lastName, phone } = distInformation;
-      this.distributorCard.firstName = firstName;
-      this.distributorCard.lastName = lastName;
-      this.distributorCard.phone = phone;
-    }
 
-    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
-    if (cityList) {
-      this.cityList = cityList;
+    const myDistributorId = session.get("myDistributorId");
+    if (myDistributorId) {
+      this.myDistributorId = myDistributorId;
     }
   },
   methods: {
@@ -440,7 +443,7 @@ export default {
     },
     // 获取顾客信息
     async distributorCustomer() {
-      const id = sessionStorage.getItem("customerInfo");
+      const id = session.get("customerInfo");
       let res = await distributorCustomer({ id });
       const rescode = res.code;
       if (rescode === 0) {
@@ -467,16 +470,15 @@ export default {
     // 提交地址信息
     async submitAddress() {
       const reqData = Object.assign({}, this.dialogParams);
-      const distributorNo = sessionStorage.getItem("myDistributorId");
-      if (distributorNo) {
-        reqData.distributorNo = distributorNo;
+      if (this.myDistributorId) {
+        reqData.distributorNo = this.myDistributorId;
       }
       let res = await distributorAddress(reqData);
       this.showMobileLoading = false;
       const rescode = res.code;
       if (rescode === 0) {
         this.showDialog = false;
-        sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+        session.set("addressInformation", reqData);
         location.reload();
       }
       if (rescode === 101) {
@@ -507,7 +509,7 @@ export default {
         if (countryList[i].name === this.dialogParams.country) {
           const areaCode = countryList[i].areaCode;
           this.getAllCity(areaCode);
-          sessionStorage.setItem("areaCode", areaCode);
+          session.set("areaCode", areaCode);
         }
       }
     }
@@ -638,10 +640,11 @@ export default {
           margin 10px 0 10px 20px
           padding-right 10px
           @media (max-width: 980px)
-            margin-left 0
+            margin 0
             border-right none
             height 30px
-            line-height 6px
+            line-height 30px
+            font-weight normal
         .item-p
           line-height 40px
           padding-right 10px
@@ -652,7 +655,6 @@ export default {
           align-items center
           color rgb(87, 87, 87)
           @media (max-width: 980px)
-            padding-top 4px
             line-height 36px
             background-color #E6F0F3
           &.nth-child(2)

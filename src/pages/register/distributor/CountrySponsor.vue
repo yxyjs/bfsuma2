@@ -36,7 +36,6 @@
         </div>
       </div>
       <div class="form-wrap">
-        <!-- country -->
         <section>
           <div class="form-wrap-box">
             <ValidationProvider
@@ -68,36 +67,6 @@
                 <span ref="countryEmpty" class="show-required">Required</span>
               </div>
             </ValidationProvider>
-            <!-- <ValidationProvider
-              name="Province"
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item margin-l"
-            >
-              <div class="form-item-top">
-                <label class="item-lable">*Province</label>
-                <div class="item-main">
-                  <select
-                    class="item-main-inner"
-                    v-model="formParams.province"
-                    @change="provinceChange"
-                    ref="provinceSelect"
-                  >
-                    <option disabled value style="display:none;">Select Province</option>
-                    <option
-                      :value="province.name"
-                      v-for="(province,index) in provinceList"
-                      :key="index"
-                    >{{province.name}}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-                <span ref="provinceEmpty" class="show-required">Required</span>
-              </div>
-            </ValidationProvider>-->
             <ValidationProvider
               name="City"
               rules="required"
@@ -123,7 +92,6 @@
                   </select>
                 </div>
               </div>
-              <!-- spanhelp -->
               <div class="form-item-bottom">
                 <span class="help-block">{{ errors[0] }}</span>
                 <span ref="cityEmpty" class="show-required">Required</span>
@@ -133,9 +101,7 @@
         </section>
       </div>
       <hr class="hr" />
-      <!-- click connect -->
       <div class="form-wrap" v-show="Object.keys(currentSponsor).length !== 0">
-        <!-- Sponsor -->
         <section>
           <div class="form-wrap-box">
             <section class="form-item">
@@ -164,7 +130,6 @@
             </section>
           </div>
         </section>
-        <!-- Upline -->
         <section style="margin-top:10px">
           <div class="form-wrap-box">
             <section class="form-item">
@@ -195,7 +160,6 @@
         </section>
       </div>
       <div class="form-wrap" style="margin-top:10px">
-        <!-- *Sponsor -->
         <section>
           <div class="form-wrap-box">
             <section class="form-item">
@@ -241,48 +205,62 @@
           <span>{{ recommendList && recommendList.length }}</span> matches based on your search
         </p>
       </div>
-      <!-- system-recommend -->
       <div ref="systemRecommend" class="system-recommend">
         <div>
           <p class="not-find">Can't find who you're looking for or don't know any distributor?</p>
           <img @click="getRecommend" src="../../../../static/img/become.png" alt />
         </div>
       </div>
-      <!-- 赞助商列表 -->
       <div class="recommend-list">
-        <!-- loading -->
         <my-loading :show="showLoading"></my-loading>
         <div ref="tableWrap" class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Distributor Name</th>
-                <th>Distributor ID</th>
-                <th>Gender</th>
-                <th>City</th>
-                <th>Mobile Number</th>
-                <th>E-mail</th>
-                <th>Connect</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(recommend, index) in recommendList" :key="index">
-                <td>{{ recommend.distributorName }}</td>
-                <td style="backgroundColor:#DCDCDC">{{ recommend.distributorId }}</td>
-                <td>{{ recommend.gender }}</td>
-                <td>{{ recommend.city }}</td>
-                <td>{{ recommend.phone }}</td>
-                <td>{{ recommend.email }}</td>
-                <td>
-                  <button
-                    type="button"
-                    class="connect-btn"
-                    @click="connectHandle(recommend)"
-                  >Connect</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <section class="table-section">
+            <!-- 中间主体table -->
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Distributor Name</th>
+                  <th>Distributor ID</th>
+                  <th>Gender</th>
+                  <th>City</th>
+                  <th>Mobile Number</th>
+                  <th class="email-th">E-mail</th>
+                  <th style="width:86px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(recommend, index) in recommendList" :key="index">
+                  <td>{{ recommend.distributorName }}</td>
+                  <td style="backgroundColor:#DCDCDC">{{ recommend.distributorId }}</td>
+                  <td>{{ recommend.gender }}</td>
+                  <td>{{ recommend.city }}</td>
+                  <td>{{ recommend.phone }}</td>
+                  <td class="email-td">{{ recommend.email }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="table-section right-section">
+            <!-- 右边固定列table -->
+            <table class="table right">
+              <thead>
+                <tr style="background:#fff">
+                  <th>Connect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(recommend,index) in recommendList" :key="index">
+                  <td>
+                    <button
+                      type="button"
+                      class="connect-btn"
+                      @click="connectHandle(recommend)"
+                    >Connect</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
         </div>
       </div>
       <div class="next-btn-wrap">
@@ -310,7 +288,7 @@
         <a :href="BASE_URL + '/products/en'">Now，have a look at the product！</a>
       </div>
     </my-dialog>
-    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
+    <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast = false"></my-toast>
   </div>
 </template>
 
@@ -322,6 +300,7 @@ import {
   getAllCountry,
   getAllCity
 } from "@/api/index";
+import { session } from "@/util/tool";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -337,19 +316,16 @@ export default {
       showNoData: false,
       showLoading: false,
       showToast: false,
-      tableTips: false,
       toastText: "",
       currentSponsor: {}, //连接的推荐人
       formParams: {
         //表单对象
         country: "",
-        province: "",
         city: ""
       },
       sponsor: "",
       submitClickTime: 0, //点击提交按钮
       countryList: [],
-      // provinceList: [],
       cityList: [],
       recommendList: []
     };
@@ -370,14 +346,14 @@ export default {
     }
   },
   mounted() {
-    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    const distSponsor = session.get("distSponsor");
     if (distSponsor) {
       this.formParams.country = distSponsor.country;
       this.formParams.city = distSponsor.city;
     }
     this.getAllCountry();
 
-    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
+    const cityList = session.get("cityList");
     if (cityList) {
       this.cityList = cityList;
     }
@@ -396,8 +372,6 @@ export default {
       this.$refs.input.checked = true;
     },
     countryChange(event) {
-      // this.formParams.province = "";
-      // this.provinceList = [];
       this.formParams.city = "";
       this.cityList = [];
       // 赋值
@@ -417,26 +391,6 @@ export default {
         }
       }
     },
-    // provinceChange(event) {
-    //   this.formParams.city = "";
-    //   this.cityList = [];
-    //   // 赋值
-    //   let value = event.target.value;
-    //   this.formParams.province = value;
-    //   // 切换显示
-    //   this.$refs.tableWrap.style.display = "none";
-    //   this.$refs.recommendMatches.style.display = "none";
-    //   this.$refs.systemRecommend.style.display = "block";
-
-    //   const provinceList = this.provinceList;
-    //   for (let i = 0; i < provinceList.length; i++) {
-    //     if (provinceList[i].name === this.formParams.province) {
-    //       const getCityId = provinceList[i].id;
-    //       this.getAllCity(getCityId);
-    //       sessionStorage.setItem("getCityId", getCityId);
-    //     }
-    //   }
-    // },
     cityChange(event) {
       // 赋值
       let value = event.target.value;
@@ -456,39 +410,25 @@ export default {
         console.error(res.fullMessage);
       }
     },
-    // 获取选中国家下面所有的省
-    // async getAllProvince(areaCode) {
-    //   let res = await getAllCity(areaCode);
-    //   const rescode = res.code;
-    //   if (rescode === 0) {
-    //     const resdata = res.data;
-    //     this.provinceList = resdata;
-    //     sessionStorage.setItem("provinceList", JSON.stringify(resdata));
-    //   } else {
-    //     console.error(res.fullMessage);
-    //   }
-    // },
+    // 获取选中国家下面的城市
     async getAllCity(areaCode) {
       let res = await getAllCity(areaCode);
       const rescode = res.code;
       if (rescode === 0) {
         const resdata = res.data;
         this.cityList = resdata;
-        sessionStorage.setItem("cityList", JSON.stringify(resdata));
+        session.set("cityList", resdata);
       } else {
         console.error(res.fullMessage);
       }
     },
     // 搜索经销商
     async onSearch() {
-      const { country, province, city } = this.formParams;
+      const { country, city } = this.formParams;
       if (!this.submitClickTime) {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
         }
-        // if (!province) {
-        //   this.$refs.provinceEmpty.style.display = "block";
-        // }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
         }
@@ -530,14 +470,11 @@ export default {
     },
     // 获取6个推荐人
     async getRecommend() {
-      const { country, province, city } = this.formParams;
+      const { country, city } = this.formParams;
       if (!this.submitClickTime) {
         if (!country) {
           this.$refs.countryEmpty.style.display = "block";
         }
-        // if (!province) {
-        //   this.$refs.provinceEmpty.style.display = "block";
-        // }
         if (!city) {
           this.$refs.cityEmpty.style.display = "block";
         }
@@ -573,13 +510,11 @@ export default {
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
-      let distSponsor = JSON.stringify(this.formParams);
-      sessionStorage.setItem("distSponsor", distSponsor);
-      sessionStorage.setItem("distributorId", item.distributorId);
-      sessionStorage.setItem("uplineId", item.distributorId);
-      sessionStorage.setItem("sponsorData", JSON.stringify(item));
-      sessionStorage.setItem("uplineData", JSON.stringify(item));
-
+      session.set("distSponsor", this.formParams);
+      session.set("distributorId", item.distributorId);
+      session.set("uplineId", item.distributorId);
+      session.set("sponsorData", item);
+      session.set("uplineData", item);
       this.currentSponsor = item;
       this.recommendList = [];
       this.sponsor = "";
@@ -593,14 +528,12 @@ export default {
           this.$refs.countryEmpty.style.display = "none";
         if (this.$refs.cityEmpty.style.display === "block")
           this.$refs.cityEmpty.style.display = "none";
-        // if (this.$refs.provinceEmpty.style.display === "block")
-        //   this.$refs.provinceEmpty.style.display = "none";
         // 点击了一次
         this.submitClickTime = 1;
         return;
       }
       // 是否连接赞助商
-      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor")) || {};
+      let distSponsor = session.get("distSponsor") || {};
       if (!Object.keys(distSponsor).length) {
         this.$refs.noConnect.style.display = "block";
       } else {
@@ -741,6 +674,7 @@ select, input
                   border-right none
                   height 10px
                   line-height 10px
+                  font-weight normal
               .item-p
                 line-height 40px
                 padding-right 10px
@@ -873,38 +807,63 @@ select, input
           color #5BA2CC
       .table-wrap
         display none
-        @media (max-width: 980px)
-          width 'cale(100vw - %s)' 5px
-          overflow auto
-          white-space nowrap
-        .table
-          text-align center
-          width 100%
-          margin-top 30px
-          thead
-            border-bottom 1px solid #eee
-            tr
-              th
-                @media (max-width: 980px)
-                  padding 0 4px
-          tbody
-            tr
-              height 70px
-              background-color #F3F3F3
-              border-top 10px solid #fff
-              @media (max-width: 980px)
-                height 36px
-                border-top none
-              td
-                @media (max-width: 980px)
-                  border 1px solid #ccc
-                .connect-btn
-                  color #fff
-                  padding 8px 18px
-                  border-radius 4px
-                  background-color #55ABD9
+        position relative
+        .table-section
+          @media (max-width: 980px)
+            width 87%
+            overflow auto
+            white-space nowrap
+            font-size 12px
+          .table
+            text-align center
+            width 100%
+            margin-top 30px
+            thead
+              border-bottom 1px solid #eee
+              tr
+                th
                   @media (max-width: 980px)
-                    font-size 12px
+                    padding 0 4px
+                  .email-th
+                    @media (max-width: 980px)
+                      padding-right 86px
+            tbody
+              tr
+                height 70px
+                background-color #F3F3F3
+                border-top 10px solid #fff
+                @media (max-width: 980px)
+                  height 36px
+                  border-top none
+                td
+                  @media (max-width: 980px)
+                    border 1px solid #ccc
+                    padding 0 2px
+                  .connect-btn
+                    color #fff
+                    padding 8px 18px
+                    border-radius 4px
+                    background-color #55ABD9
+                    @media (max-width: 980px)
+                      font-size 12px
+                      padding 4px
+                      color #55ABD9
+                      background-color #F3F3F3
+          .right
+            position absolute
+            top 0
+            right 0
+            width auto
+            margin 0
+            @media (max-width: 980px)
+              margin-top 30px
+            td
+              padding-right 10px
+              @media (max-width: 980px)
+                padding 0 2px
+            .email-td
+              @media (max-width: 980px)
+                padding-right 86px
     .next-btn-wrap
       margin-top 30px
       text-align right

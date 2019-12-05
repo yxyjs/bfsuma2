@@ -301,9 +301,9 @@
           />
           <img class="check-img" src="../../../../static/img/checked.png" alt />
           <label :for="learn.value" class="interest-label-box">
-            <img class="check-img" src="../../../../static/img/check_box.png" alt />
+            <i class="check-box-img iconfont icon-radio"></i>
           </label>
-          <label class="check-label before" :for="learn.value">
+          <label class="check-label" :for="learn.value">
             {{
             learn.value
             }}
@@ -343,6 +343,7 @@
 
 <script type="text/ecmascript-6">
 import { BASE_URL, registerCheck, registerCustomer } from "@/api/index";
+import { session } from "@/util/tool";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -356,11 +357,13 @@ export default {
       showPassword: false,
       showToast: false,
       showDialog: false,
+      showDialog1: false,
       showMobileLoading: false,
       toastText: "",
       prePassword: "", //初始密码
       phoneHead: "",
       phoneBody: "",
+      count: 0, //表单修改次数
       formParams: {
         //表单对象
         firstName: "",
@@ -481,27 +484,21 @@ export default {
         tempList.push(passwordErrorList[2]);
       }
       this.passwordErrorList = tempList;
-    },
-    formParams: {
-      handler: function() {
-        const { firstName, lastName, email, phone } = this.formParams;
-      },
-      deep: true
     }
   },
   mounted() {
-    const areaCode = sessionStorage.getItem("areaCode");
+    const areaCode = session.get("areaCode");
     if (areaCode) {
       this.phoneHead = areaCode;
     }
 
-    const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+    const distSponsor = session.get("distSponsor");
     this.formParams.country = distSponsor.country;
     this.formParams.city = distSponsor.city;
-    const uplineId = sessionStorage.getItem("uplineId");
+    const uplineId = session.get("uplineId");
 
     this.formParams.upline = uplineId;
-    const distributorId = sessionStorage.getItem("distributorId");
+    const distributorId = session.get("distributorId");
     this.formParams.sponsor = distributorId;
   },
   methods: {
@@ -539,12 +536,18 @@ export default {
         case 101: //邮箱和手机被使用了
           this.$refs.phoneBound.style.display = "block";
           this.$refs.emailBound.style.display = "block";
+          this.showToast = true;
+          this.toastText = "Please check email or phone";
           break;
         case 102: //邮箱被使用了
           this.$refs.emailBound.style.display = "block";
+          this.showToast = true;
+          this.toastText = "Please check email";
           break;
         case 103: //手机号码被使用了
           this.$refs.phoneBound.style.display = "block";
+          this.showToast = true;
+          this.toastText = "Please check phone";
           break;
         default:
           break;
@@ -557,14 +560,20 @@ export default {
       const reqData = Object.assign({}, this.formParams);
       reqData.phone = this.computedPhone;
       reqData.productInterests = JSON.stringify(reqData.productInterests);
-      sessionStorage.setItem("distInformation", JSON.stringify(reqData));
+      const sponsorData = session.get("sponsorData");
+      const uplineData = session.get("uplineData");
+      const distObj = Object.assign({}, reqData);
+      distObj.sponsor = sponsorData;
+      distObj.upline = uplineData;
+      session.set("distInformation", distObj);
       const res = await registerCustomer(reqData);
       this.showMobileLoading = false;
       const rescode = res.code;
       switch (rescode) {
         case 0:
           this.showDialog = true;
-          sessionStorage.setItem("customerInfo", res.data);
+          const resdata = res.data;
+          session.set("customerInfo", resdata);
           break;
         case 101:
           break;
@@ -611,7 +620,6 @@ select, input
         font-size 13px
         line-height 1.5
         font-weight normal
-        padding 10px
     .required
       margin 12px 0 0 0
       color #5BA2CC
@@ -727,9 +735,13 @@ select, input
         &:last-child
           left 100%
         >div
-          font-size 12px
-          >i
+          font-size 14px
+          @media (max-width: 980px)
             font-size 12px
+          >i
+            font-size 16px
+            @media (max-width: 980px)
+              font-size 14px
     .country-tips
       margin-top 20px
       font-weight bold
@@ -742,7 +754,7 @@ select, input
     .product-interest
       margin 20px 30px
       @media (max-width: 980px)
-        margin 6px 0 6px 20px
+        margin 6px 0 6px 24px
         line-height 2.6
         font-size 12px
       .checkbox-wrap
@@ -766,6 +778,12 @@ select, input
             transform translateY(-10px)
           .check-box-img
             width 12px
+          .icon-radio
+            display block
+            font-size 14px
+            transform translateY(-4px)
+            @media (max-width: 980px)
+              transform translateY(0)
         .check-label
           display inline-block
           height 20px
@@ -778,18 +796,6 @@ select, input
           @media (max-width: 980px)
             white-space nowrap
             margin 4px 0 4px 4px
-        .before
-          &::before
-            content ''
-            display inline-block
-            margin 0 6px 0 -20px
-            // margin-left -30px
-            width 11px
-            height 11px
-            border-radius 50%
-            border 1px solid
-            @media (max-width: 980px)
-              margin 0 2px 0 -20px
         .check-img
           opacity 0
           position absolute
@@ -813,7 +819,8 @@ select, input
         flex 1
         font-size 16px
     .btn-back
-      background-color #c8c8c8
+      color #4295c5
+      border 1px solid #c8c8c8
     .btn-submit
       margin-left 15px
       background-color #5BA2CC

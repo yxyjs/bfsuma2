@@ -34,10 +34,6 @@
         <section ref="payAccount" class="pay-account">
           <p>Please pay the EXACT amount to complete your order</p>
           <div class="pay-account-main">
-            <p
-              ref="notOpened"
-              class="pay-error"
-            >Sorry,your phone hasn't been opened for M-pesa payment.</p>
             <form class="form">
               <!-- 支付方式 -->
               <div class="pay-methods">
@@ -110,6 +106,10 @@
         <!-- 支付失败盒子 -->
         <section ref="payFailBox" class="pay-account" style="display:none">
           <p>Sorry，payment failed, please repay</p>
+          <p
+            ref="notOpened"
+            class="pay-error"
+          >Sorry,your phone hasn't been opened for M-pesa payment.</p>
           <div class="pay-account-main">
             <img class="fail-img" src="../../../../static/img/payment_fail.png" alt />
           </div>
@@ -333,7 +333,7 @@ import {
   getAllCity,
   getAllpayMethods
 } from "@/api/index";
-import { toThousands } from "@/util/tool.js";
+import { toThousands, session } from "@/util/tool.js";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -383,18 +383,22 @@ export default {
     }
   },
   mounted() {
+    this.getAllpayMethods();
     this.getAllCountry();
-    const cityList = JSON.parse(sessionStorage.getItem("cityList"));
+    const cityList = session.get("cityList");
     if (cityList) {
       this.cityList = cityList;
     }
 
-    this.getAllpayMethods();
-
-    let user = JSON.parse(sessionStorage.getItem("user"));
-    let customerInfo = sessionStorage.getItem("customerInfo");
-    let id = customerInfo || user.id;
-    const mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+    let user = session.get("user") || {};
+    let customerInfo = session.get("customerInfo");
+    let id = "";
+    if (customerInfo) {
+      id = customerInfo;
+    } else {
+      id = user.id;
+    }
+    const mySponsor = session.get("mySponsor");
     if (!mySponsor) {
       this.payBill(id);
     } else {
@@ -404,9 +408,7 @@ export default {
       this.rightAmount = mySponsor.payAmount;
     }
 
-    const distInformation = JSON.parse(
-      sessionStorage.getItem("distInformation")
-    );
+    const distInformation = session.get("distInformation");
     if (distInformation) {
       const { email, phone } = distInformation;
       this.account = email;
@@ -432,13 +434,22 @@ export default {
       if (rescode === 0) {
         const resdata = res.data;
         this.cityList = resdata;
-        sessionStorage.setItem("cityList", JSON.stringify(resdata));
+        session.set("cityList", resdata);
       } else {
         console.error(res.fullMessage);
       }
     },
+    // 获取所有支付方式
     async getAllpayMethods() {
-      let res = await getAllpayMethods();
+      const distSponsor = session.get("distSponsor");
+      const distInformation = session.get("distInformation");
+      let country = "";
+      if (distSponsor) {
+        country = distSponsor.country;
+      } else {
+        country = distInformation.country;
+      }
+      let res = await getAllpayMethods(country);
       const rescode = res.code;
       if (rescode === 0) {
         const resdata = res.data;
@@ -475,16 +486,14 @@ export default {
         this.formParams.orderNo = resdata.orderNo;
         this.formParams.amount = toThousands(resdata.payAmount);
         this.rightAmount = resdata.payAmount;
-        sessionStorage.setItem("mySponsor", JSON.stringify(resdata));
+        session.set("mySponsor", resdata);
       }
     },
     // 发起支付请求
     async payRequest() {
       this.showMobileLoading = true;
-      // this.$refs.payUl.style.display = "none";
       let res = await payRequest(this.formParams);
       this.showMobileLoading = false;
-      // this.$refs.payUl.style.display = "block";
       const rescode = res.code;
       if (rescode === 0) {
         let time = 60;
@@ -515,7 +524,7 @@ export default {
         this.distributorUpgrade();
       }
       if ([201].includes(rescode)) {
-        console.error("支付状态失败啦");
+        console.error("支付失败啦");
         this.$refs.notOpened.style.display = "block";
         this.$refs.payAccount.style.display = "none";
         this.$refs.payFailBox.style.display = "block";
@@ -525,12 +534,10 @@ export default {
     async distributorUpgrade() {
       this.showDialog = true;
       // 给dialog赋值
-      const distInformation = JSON.parse(
-        sessionStorage.getItem("distInformation")
-      );
-      const distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
-      const customerInfo = sessionStorage.getItem("customerInfo");
-      const distributorId = sessionStorage.getItem("distributorId");
+      const distInformation = session.get("distInformation");
+      const distSponsor = session.get("distSponsor");
+      const customerInfo = session.get("customerInfo");
+      const distributorId = session.get("distributorId");
       if (!distInformation) {
         this.distributorCustomer(customerInfo);
       } else {
@@ -564,7 +571,7 @@ export default {
         const rescode = res.code;
         if (rescode === 0) {
           const resdata = res.data;
-          sessionStorage.setItem("myDistributorId", resdata);
+          session.set("myDistributorId", resdata);
         }
         if ([101, 102, 103, 104].includes(rescode)) {
           this.showToast = true;
@@ -576,11 +583,11 @@ export default {
     // 成功后提交地址信息
     async distributorAddress() {
       const reqData = Object.assign({}, this.dialogParams);
-      const distributorNo = sessionStorage.getItem("myDistributorId");
+      const distributorNo = session.get("myDistributorId");
       if (distributorNo) {
         reqData.distributorNo = distributorNo;
       }
-      const user = JSON.parse(sessionStorage.getItem("user"));
+      const user = session.get("user");
       if (user) {
         reqData.distributorNo = user.id;
       }
@@ -590,13 +597,14 @@ export default {
       const rescode = res.code;
       if (rescode === 0) {
         reqData.phone = reqData.phoneHead + reqData.phoneBody;
-        sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+        session.set("addressInformation", reqData);
+
         this.$router.replace("/register/distributor/business");
       }
       if (rescode === 101) {
         if (this.BASE_URL === "http://172.18.1.240:73") {
           reqData.phone = reqData.phoneHead + reqData.phoneBody;
-          sessionStorage.setItem("addressInformation", JSON.stringify(reqData));
+          session.set("addressInformation", reqData);
           this.$router.replace("/register/distributor/business");
         } else {
           console.error(res.fullMessage);
@@ -634,7 +642,7 @@ export default {
         if (countryList[i].name === this.dialogParams.country) {
           const areaCode = countryList[i].areaCode;
           this.getAllCity(areaCode);
-          sessionStorage.setItem("areaCode", areaCode);
+          session.set("areaCode", areaCode);
         }
       }
     },
@@ -644,6 +652,7 @@ export default {
     repayHandle() {
       this.$refs.payFailBox.style.display = "none";
       this.$refs.payAccount.style.display = "block";
+      this.$refs.notOpened.style.display = "none";
     },
     beforeDestroy() {
       clearInterval(this.interval);
@@ -721,22 +730,21 @@ export default {
           padding-left 0
           padding-top 10px
           margin-top 10px
+        .pay-error
+          display none
+          // position absolute
+          color #a94442
         .pay-account-main
           margin 28px 0 20px 0
           padding 30px 20px
           background-color #fafafa
           @media (max-width: 980px)
             padding 10px
-          .pay-error
-            display none
-            position absolute
-            color #a94442
           .fail-img
             display block
             margin auto
             width 193px
           .form
-            height 400px
             overflow auto
             .pay-methods
               overflow auto
@@ -762,8 +770,12 @@ export default {
                       line-height 30px
                   .methods-bottom
                     padding 16px 10px
+                    @media (max-width: 980px)
+                      padding 10px
                     .form-box
                       display flex
+                      @media (max-width: 980px)
+                        height 30px
                       .form-input
                         display flex
                         align-items center
@@ -772,7 +784,9 @@ export default {
                           padding 8px 20px
                           color #4AA3D7
                           @media (max-width: 980px)
-                            padding 0
+                            padding 0 4px 0 0
+                            font-size 12px
+                            font-weight normal
                         .form-input-inner
                           color #575757
                           padding 11px 20px
@@ -796,6 +810,7 @@ export default {
         @media (max-width: 980px)
           margin-left 6px
           padding 10px 20px
+          font-size 12px
         &:hover
           background-color #286090
         &:disabled
@@ -850,6 +865,7 @@ export default {
           padding-right 10px
           @media (max-width: 980px)
             margin 0
+            padding 0 0 0 4px
             border-right none
             height 30px
             line-height 30px

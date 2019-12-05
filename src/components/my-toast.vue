@@ -1,5 +1,5 @@
 <template>
-  <div id="toast-cont" v-if="showToast">
+  <div id="toast-cont" :class="{'slide-in':showToast}">
     <p class="toast-text">{{toastText}}</p>
     <i class="toast-icon iconfont icon-del-" @click="closeToast"></i>
   </div>
@@ -14,11 +14,9 @@ export default {
     },
     showToast: {
       type: Boolean,
-      default: false
+      default: false,
+      required: true
     }
-  },
-  data() {
-    return {};
   },
   watch: {
     showToast(val) {
@@ -40,23 +38,25 @@ export default {
 
 <style scoped lang="stylus">
 @keyframes slidein
-  from
-    transform translateY(-20px)
-  to
+  0%
+    transform translateY(-51px)
+  25%, 75%
     transform translateY(0)
+  100%
+    transform translateY(-51px)
 #toast-cont
   display flex
   align-items center
   position fixed
   top 0
+  transform translateY(-51px)
   left 0
   right 0
-  padding 20px 0
+  padding 15px 0
   background-color #f2dede
-  animation slidein 0.25s ease-in-out
-  @media (max-width: 980px)
-    padding 10px 0
   z-index 3
+  &.slide-in
+    animation slidein 3s ease-in-out
   .toast-text
     flex 1
     text-align center

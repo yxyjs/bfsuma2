@@ -110,6 +110,7 @@
 
 <script type="text/ecmascript-6">
 import { BASE_URL, distributorLogin } from "@/api/index";
+import { session } from "@/util/tool";
 import myToast from "@/components/my-toast";
 import mobileLoading from "@/components/mobile-loading";
 export default {
@@ -132,7 +133,7 @@ export default {
     }
   },
   mounted() {
-    let userLogin = JSON.parse(sessionStorage.getItem("userLogin"));
+    let userLogin = session.get("userLogin");
     if (userLogin) {
       this.account = userLogin.account;
       this.password = userLogin.password;
@@ -164,11 +165,11 @@ export default {
           password: password
         };
         if (this.rememberPwd) {
-          sessionStorage.setItem("userLogin", JSON.stringify(userInfo));
+          session.set("userLogin", userInfo);
         }
         const resdata = res.data;
         // 成功
-        sessionStorage.setItem("user", JSON.stringify(resdata));
+        session.set("user", resdata);
         // 判断是顾客还是经销商
         if (res.data.userType == "customer") {
           this.$router.push("/register/distributor/personal");

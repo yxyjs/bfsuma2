@@ -13,7 +13,7 @@
           class="guide"
           @click="$router.replace('/login')"
         >Login</a>
-        <span v-show="path==='findPassword'">|</span>
+        <span class="shu-xian" v-show="path==='findPassword'">|</span>
         <a
           v-show="path==='login' || path==='findPassword'"
           href="javascript:;"
@@ -112,7 +112,7 @@ export default {
   background-color #fff
   padding 10px 0 20px 0
   @media (max-width: 980px)
-    padding 10px
+    padding 8px 10px
     background #5ba2cc
   .header-main
     display flex
@@ -126,7 +126,7 @@ export default {
         >img
           max-width 100%
           @media (max-width: 980px)
-            max-width 50%
+            max-width 40%
     .link
       display flex
       .guide
@@ -135,6 +135,9 @@ export default {
           color #fff
         &:hover
           color #22adde
+      .shu-xian
+        @media (max-width: 980px)
+          color #fff
     .link-exit
       display flex
       .exit-username

@@ -69,6 +69,7 @@
         </section>
       </div>
       <button
+        ref="goPay"
         class="goback"
         type="button"
         @click="$router.push('/register/distributor/payment')"
@@ -79,7 +80,7 @@
 
 <script type="text/ecmascript-6">
 import { distributorCustomer, payBill } from "@/api/index";
-import { toThousands } from "@/util/tool.js";
+import { toThousands, session } from "@/util/tool.js";
 export default {
   data() {
     return {
@@ -92,7 +93,12 @@ export default {
     };
   },
   mounted() {
-    let user = JSON.parse(sessionStorage.getItem("user"));
+    const myDistributorId = session.get("myDistributorId");
+    if (myDistributorId) {
+      this.$refs.goPay.style.display = "none";
+    }
+
+    let user = session.get("user");
     if (user) {
       //登录进来的
       const id = user.id;
@@ -100,26 +106,24 @@ export default {
       this.payBill(id);
     } else {
       //注册进来的
-      let sponsorData = JSON.parse(sessionStorage.getItem("sponsorData"));
+      let sponsorData = session.get("sponsorData");
       if (sponsorData) {
         this.sponsorData = sponsorData;
       }
-      let uplineData = JSON.parse(sessionStorage.getItem("uplineData"));
+      let uplineData = session.get("uplineData");
       if (uplineData) {
         this.uplineData = uplineData;
       }
-      let distSponsor = JSON.parse(sessionStorage.getItem("distSponsor"));
+      let distSponsor = session.get("distSponsor");
       if (distSponsor) {
         this.distSponsor = distSponsor;
       }
-      let distInformation = JSON.parse(
-        sessionStorage.getItem("distInformation")
-      );
+      let distInformation = session.get("distInformation");
       if (distInformation) {
         this.firstName = distInformation.firstName;
         this.lastName = distInformation.lastName;
       }
-      let mySponsor = JSON.parse(sessionStorage.getItem("mySponsor"));
+      let mySponsor = session.get("mySponsor");
       if (mySponsor) {
         this.payAmount = toThousands(mySponsor.payAmount);
       }
@@ -133,7 +137,7 @@ export default {
         const rescode = res.code;
         if (rescode === 0) {
           const resdata = res.data;
-          sessionStorage.setItem("distInformation", JSON.stringify(resdata));
+          session.set("distInformation", resdata);
           this.firstName = resdata.firstName;
           this.lastName = resdata.lastName;
           this.sponsorData = resdata.sponsor;
@@ -149,7 +153,7 @@ export default {
       if (rescode === 0) {
         const resdata = res.data;
         this.payAmount = resdata.payAmount;
-        sessionStorage.setItem("mySponsor", JSON.stringify(resdata));
+        session.set("mySponsor", resdata);
       }
     }
   },
@@ -232,8 +236,8 @@ export default {
       font-size 14px
       @media (max-width: 980px)
         width 100%
-        margin-left 0
         margin 20px 0 16px 0
+        padding 14px
       &:hover
         background-color #286090
 </style>

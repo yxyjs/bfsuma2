@@ -1,6 +1,6 @@
 <template>
-  <div id="dialog-cont" v-if="showDialog">
-    <div class="dialog-mask"></div>
+  <div id="dialog-cont" v-if="showDialog" :class="{'fade-in':showDialog}">
+    <div class="dialog-mask" @click="closeDialog"></div>
     <div class="dialog-wrap">
       <header class="header">
         <p class="dialog-title">{{ title }}</p>
@@ -61,7 +61,14 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@keyframes fadein
+  from
+    opacity 0
+  to
+    opacity 1
 #dialog-cont
+  &.fade-in
+    animation fadein .25s ease-in-out
   .dialog-mask
     position fixed
     top 0
