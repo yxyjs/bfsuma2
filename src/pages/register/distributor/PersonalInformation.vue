@@ -136,15 +136,11 @@
                     v-model="phoneHead"
                   >
                     <option disabled value style="display: none;">Aera Code</option>
-                    <option value="86">86</option>
-                    <option value="254">254</option>
-                    <option value="234">234</option>
-                    <option value="255">255</option>
-                    <option value="256">256</option>
-                    <option value="264">264</option>
-                    <option value="233">233</option>
-                    <option value="237">237</option>
-                    <option value="229">229</option>
+                    <option
+                      :value="areaCode"
+                      v-for="(areaCode ,index) in areaCodeArr"
+                      :key="index"
+                    >{{areaCode}}</option>
                   </select>
                 </div>
               </div>
@@ -154,7 +150,7 @@
             </ValidationProvider>
             <ValidationProvider
               name="Phone Number"
-              rules="required|length:9"
+              :rules="rules"
               v-slot="{ errors }"
               tag="section"
               class="form-item margin-l"
@@ -167,7 +163,7 @@
                     type="number"
                     placeholder="Phone Number"
                     v-model.trim="phoneBody"
-                    oninput="if(value.length>9)value=value.slice(0,9)"
+                    @input="phoneBodyHandle"
                     onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                     @focus="phoneBodyFocus"
                   />
@@ -316,12 +312,12 @@
         <a
           class="link"
           href="javascript:;"
-          @click="$router.push('/register/agreement')"
+          @click="agreeHandle"
         >the BF Suma Privacy Policy</a>
       </div>
       <!-- btn -->
       <div class="btn-wrap">
-        <button class="btn btn-back" type="button" @click="$router.go(-1)">Back</button>
+        <button class="btn btn-back" type="button" @click="goBack">Back</button>
         <button class="btn btn-submit" type="submit">Submit</button>
       </div>
     </ValidationObserver>
@@ -353,6 +349,7 @@ import mobileLoading from "@/components/mobile-loading";
 export default {
   data() {
     return {
+      rules: "",
       BASE_URL: BASE_URL,
       showPrePassword: false,
       showPassword: false,
@@ -380,6 +377,7 @@ export default {
         sponsor: "",
         upline: ""
       },
+      areaCodeArr: [],
       passwordErrorList: [], //密码错误提示
       productInterestList: [
         {
@@ -485,9 +483,22 @@ export default {
         tempList.push(passwordErrorList[2]);
       }
       this.passwordErrorList = tempList;
+    },
+    phoneHead(val) {
+      this.rules = val === "234" ? "required|length:10" : "required|length:9";
     }
   },
   mounted() {
+    const areaCodeArr = session.get("areaCodeArr");
+    if (areaCodeArr) {
+      this.areaCodeArr = areaCodeArr;
+    }
+
+    const registerInfo = session.get("registerInfo");
+    if (registerInfo) {
+      this.formParams = registerInfo;
+    }
+
     const areaCode = session.get("areaCode");
     if (areaCode) {
       this.phoneHead = areaCode;
@@ -503,6 +514,17 @@ export default {
     this.formParams.sponsor = distributorId;
   },
   methods: {
+    phoneBodyHandle(event) {
+      let value = event.target.value;
+      let numberLength = 9;
+      if (this.phoneHead === "234") {
+        numberLength = 10;
+      }
+      if (value.length >= numberLength) {
+        value = value.slice(0, numberLength);
+      }
+      this.phoneBody = value;
+    },
     emailFocus() {
       if (this.$refs.emailBound.style.display === "block")
         this.$refs.emailBound.style.display = "none ";
@@ -586,6 +608,14 @@ export default {
       if (flag) {
         this.$router.replace("/register/distributor/payment");
       }
+    },
+    agreeHandle() {
+      session.set("registerInfo", this.formParams);
+      this.$router.push("/register/agreement");
+    },
+    goBack() {
+      session.set("registerInfo", this.formParams);
+      this.$router.go(-1);
     }
   },
   components: {

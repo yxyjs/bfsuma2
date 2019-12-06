@@ -1,7 +1,8 @@
 <template>
   <div id="payment-cont">
     <my-header>
-      <a href="javascript:;" @click="$router.replace('/register')">Register</a>
+      <a v-if="showLoginRouter" href="javascript:;" @click="$router.replace('/login')">Login</a>
+      <a v-else href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
     </my-header>
     <my-step>
@@ -64,7 +65,7 @@
                             placeholder="Phone Number"
                             v-model.trim="formParams.payPhone"
                             oninput="if(value.length>12)value=value.slice(0,12)"
-                            onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" 
+                            onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                           />
                         </div>
                         <button
@@ -80,10 +81,10 @@
                       </div>
                     </div>
                     <div ref="payUl" class="account-box">
-                      <p class="account-p">
+                      <!-- <p class="account-p">
                         <span class="info-title">Mpesa Paybill:</span>
                         <span class="info-content">{{paybill}}</span>
-                      </p>
+                      </p>-->
                       <p class="account-p">
                         <span class="info-title">Account:</span>
                         <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
@@ -217,7 +218,7 @@
                       placeholder="Phone Number"
                       v-model.trim="dialogParams.phoneBody"
                       oninput="if(value.length>9)value=value.slice(0,9)"
-                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" 
+                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                     />
                   </div>
                 </div>
@@ -346,6 +347,7 @@ export default {
   data() {
     return {
       BASE_URL: BASE_URL,
+      showLoginRouter: false,
       showDialog: false,
       showLoading: false,
       showMobileLoading: false,
@@ -399,6 +401,10 @@ export default {
       id = customerInfo;
     } else {
       id = user.id;
+    }
+
+    if (user) {
+      this.showLoginRouter = true;
     }
     const mySponsor = session.get("mySponsor");
     if (!mySponsor) {
@@ -534,7 +540,6 @@ export default {
     },
     // 经销商升级
     async distributorUpgrade() {
-      this.showDialog = true;
       // 给dialog赋值
       const distInformation = session.get("distInformation");
       const distSponsor = session.get("distSponsor");
@@ -574,6 +579,7 @@ export default {
         if (rescode === 0) {
           const resdata = res.data;
           session.set("myDistributorId", resdata);
+          this.showDialog = true;
         }
         if ([101, 102, 103, 104].includes(rescode)) {
           this.showToast = true;

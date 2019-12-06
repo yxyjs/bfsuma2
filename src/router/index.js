@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// register
+
 import RegisterIndex from "@/pages/register/Index"
 import RegisterAgreement from "@/pages/register/Agreement"
-const DistributorCountrySponsor = () => import('@/pages/register/distributor/CountrySponsor')
-const DistributorPersonalInformation = () => import('@/pages/register/distributor/PersonalInformation')
-const DistributorPayment = () => import('@/pages/register/distributor/Payment')
-const DistributorPersonal = () => import('@/pages/register/distributor/Personal')
-const DistributorBusiness = () => import('@/pages/register/distributor/Business')
+import DistributorCountrySponsor from "@/pages/register/distributor/CountrySponsor"
+import DistributorPersonalInformation from "@/pages/register/distributor/PersonalInformation"
+import DistributorPayment from "@/pages/register/distributor/Payment"
+import DistributorPersonal from "@/pages/register/distributor/Personal"
+import DistributorBusiness from "@/pages/register/distributor/Business"
 
 import LoginIndex from "@/pages/login/Index"
-const FindPassword = () => import("@/pages/login/FindPassword")
+import FindPassword from "@/pages/login/FindPassword"
 
 Vue.use(Router)
 

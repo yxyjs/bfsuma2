@@ -101,8 +101,8 @@
         </section>
       </div>
       <hr class="hr" />
-      <div class="form-wrap" v-show="Object.keys(currentSponsor).length !== 0">
-        <section>
+      <div class="form-wrap">
+        <section v-show="Object.keys(sponsorData).length !== 0">
           <div class="form-wrap-box">
             <section class="form-item">
               <div class="form-item-top">
@@ -111,26 +111,26 @@
                   Gage get
                   <span>
                     <strong>ID:</strong>
-                    {{ currentSponsor.distributorId }}
+                    {{ sponsorData.distributorId }}
                   </span>
                   <span>
                     <strong>Gender:</strong>
-                    {{ currentSponsor.gender }}
+                    {{ sponsorData.gender }}
                   </span>
                   <span>
                     <strong>Mobile Number:</strong>
-                    {{ currentSponsor.phone}}
+                    {{ sponsorData.phone}}
                   </span>
                   <span>
                     <strong>E-mail:</strong>
-                    {{ currentSponsor.email}}
+                    {{ sponsorData.email}}
                   </span>
                 </div>
               </div>
             </section>
           </div>
         </section>
-        <section style="margin-top:10px">
+        <section v-show="Object.keys(uplineData).length !== 0" style="margin-top:10px">
           <div class="form-wrap-box">
             <section class="form-item">
               <div class="form-item-top">
@@ -139,19 +139,19 @@
                   Gage get
                   <span>
                     <strong>ID:</strong>
-                    {{ currentSponsor.distributorId }}
+                    {{ uplineData.distributorId }}
                   </span>
                   <span>
                     <strong>Gender:</strong>
-                    {{ currentSponsor.gender }}
+                    {{ uplineData.gender }}
                   </span>
                   <span>
                     <strong>Mobile Number:</strong>
-                    {{ currentSponsor.phone }}
+                    {{ uplineData.phone }}
                   </span>
                   <span>
                     <strong>E-mail:</strong>
-                    {{ currentSponsor.email }}
+                    {{ uplineData.email }}
                   </span>
                 </div>
               </div>
@@ -165,7 +165,7 @@
             <section class="form-item">
               <div class="form-item-top">
                 <p
-                  v-if="Object.keys(currentSponsor).length !== 0"
+                  v-if="Object.keys(uplineData).length !== 0"
                   class="item-p"
                 >Or you want to modify your Upline</p>
                 <label v-else class="item-lable">*Sponsor</label>
@@ -254,7 +254,7 @@
                     <button
                       type="button"
                       class="connect-btn"
-                      @click="connectHandle(recommend)"
+                      @click=" !connectTime ? connectHandle(recommend,false) : connectHandle(recommend,true)"
                     >Connect</button>
                   </td>
                 </tr>
@@ -317,14 +317,15 @@ export default {
       showLoading: false,
       showToast: false,
       toastText: "",
-      currentSponsor: {}, //连接的推荐人
+      sponsorData: {},
+      uplineData: {},
+      connectTime: 0,
       formParams: {
         //表单对象
         country: "",
         city: ""
       },
       sponsor: "",
-      submitClickTime: 0, //点击提交按钮
       countryList: [],
       cityList: [],
       recommendList: []
@@ -405,7 +406,10 @@ export default {
       let res = await getAllCountry();
       const rescode = res.code;
       if (rescode === 0) {
-        this.countryList = res.data;
+        const resdata = res.data;
+        const areaCodeArr = resdata.map(v => v.areaCode);
+        session.set("areaCodeArr", areaCodeArr);
+        this.countryList = resdata;
       } else {
         console.error(res.fullMessage);
       }
@@ -424,16 +428,8 @@ export default {
     },
     // 搜索经销商
     async onSearch() {
-      const { country, city } = this.formParams;
-      if (!this.submitClickTime) {
-        if (!country) {
-          this.$refs.countryEmpty.style.display = "block";
-        }
-        if (!city) {
-          this.$refs.cityEmpty.style.display = "block";
-        }
-      }
-
+      const flag = await this.$refs.observer.validate();
+      if (!flag) return;
       if (!this.sponsor) {
         this.$refs.searchEmpty.style.display = "block";
       } else {
@@ -470,15 +466,9 @@ export default {
     },
     // 获取6个推荐人
     async getRecommend() {
+      const flag = await this.$refs.observer.validate();
+      if (!flag) return;
       const { country, city } = this.formParams;
-      if (!this.submitClickTime) {
-        if (!country) {
-          this.$refs.countryEmpty.style.display = "block";
-        }
-        if (!city) {
-          this.$refs.cityEmpty.style.display = "block";
-        }
-      }
 
       if ((this.$refs.searchEmpty.style.display = "block")) {
         this.$refs.searchEmpty.style.display = "none";
@@ -504,32 +494,37 @@ export default {
         }
       }
     },
-    connectHandle(item) {
+    connectHandle(item, flag) {
+      if (!flag) {
+        this.connectTime = 1;
+        this.sponsorData = item;
+        this.uplineData = item;
+        session.set("sponsorData", item);
+        session.set("uplineData", item);
+      } else {
+        this.uplineData = item;
+        session.set("uplineData", item);
+      }
+
+      session.set("distSponsor", this.formParams);
+      session.set("distributorId", item.distributorId);
+      session.set("uplineId", item.distributorId);
+
       this.$refs.noConnect.style.display = "none";
       this.$refs.searchEmpty.style.display = "none";
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
       this.$refs.systemRecommend.style.display = "block";
-      session.set("distSponsor", this.formParams);
-      session.set("distributorId", item.distributorId);
-      session.set("uplineId", item.distributorId);
-      session.set("sponsorData", item);
-      session.set("uplineData", item);
-      this.currentSponsor = item;
+
       this.recommendList = [];
       this.sponsor = "";
     },
+
     async onSubmit() {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
         this.showToast = true;
         this.toastText = "Please check required";
-        if (this.$refs.countryEmpty.style.display === "block")
-          this.$refs.countryEmpty.style.display = "none";
-        if (this.$refs.cityEmpty.style.display === "block")
-          this.$refs.cityEmpty.style.display = "none";
-        // 点击了一次
-        this.submitClickTime = 1;
         return;
       }
       // 是否连接赞助商

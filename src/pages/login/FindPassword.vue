@@ -60,15 +60,19 @@
                     name="phoneHead"
                     id="phoneHead"
                     v-model="formParams.phoneHead"
-                    disabled
+                    @change="phoneHeadChange"
                   >
                     <option disabled value style="display: none;">Aera Code</option>
-                    <option :value="formParams.phoneHead">{{formParams.phoneHead}}</option>
+                    <option
+                      :value="areaCode"
+                      v-for="(areaCode ,index) in areaCodeArr"
+                      :key="index"
+                    >{{areaCode}}</option>
                   </select>
                 </div>
               </div>
               <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="phoneHeadError" class="help-block">{{ errors[0] }}</span>
               </div>
             </ValidationProvider>
             <div class="form-item">
@@ -83,11 +87,12 @@
                   <label class="item-lable hidden-lable">&nbsp;</label>
                   <div class="item-main">
                     <input
+                      ref="phoneBody"
                       class="item-main-inner"
                       type="number"
                       placeholder="Phone Number"
                       v-model.trim="formParams.phoneBody"
-                      @input="oninput"
+                      @input="phoneBodyHandle"
                       onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                       @focus="phoneBodyFocus"
                     />
@@ -120,6 +125,8 @@
                     v-model.trim="formParams.code"
                     oninput="if(value.length>6)value=value.slice(0,6)"
                     onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                    :readonly="codeReadonly"
+                    :disabled="codeDisabled"
                   />
                   <button
                     ref="getCodeBtn"
@@ -131,7 +138,7 @@
                 </div>
               </div>
               <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="code" class="help-block">{{ errors[0] }}</span>
                 <small ref="codeFailed" class="other-help">Failed to send text message</small>
                 <small ref="notRegistered" class="other-help">Cell phone number not registered</small>
                 <small ref="codeError" class="other-help">Verification code error</small>
@@ -266,6 +273,8 @@ export default {
       disabled: false,
       codeBtnDisabled: true,
       showToast: false,
+      codeReadonly: true,
+      codeDisabled: true,
       toastText: "",
       prePassword: "",
       formParams: {
@@ -277,7 +286,8 @@ export default {
         phoneBody: ""
       },
       countryList: [],
-      cityList: []
+      cityList: [],
+      areaCodeArr: []
     };
   },
   computed: {
@@ -306,32 +316,36 @@ export default {
       handler(val) {
         let { code, password, country, phoneBody } = val;
         const { prePassword } = this;
-        let value = "";
-        if (country === "China") {
-          if (phoneBody.length >= 11) {
-            this.codeBtnDisabled = false;
-            value = phoneBody.slice(0, 11);
-            this.formParams.phoneBody = value;
-          } else {
-            this.codeBtnDisabled = true;
-          }
-        } else {
-          if (phoneBody.length >= 9) {
-            this.codeBtnDisabled = false;
-            value = phoneBody.slice(0, 9);
-            this.formParams.phoneBody = value;
-          } else {
-            this.codeBtnDisabled = true;
-          }
-        }
+        // let value = "";
+        // if (country === "China") {
+        //   if (phoneBody.length >= 11) {
+        //     this.codeBtnDisabled = false;
+        //     value = phoneBody.slice(0, 11);
+        //     this.formParams.phoneBody = value;
+        //   } else {
+        //     this.codeBtnDisabled = true;
+        //   }
+        // } else {
+        //   if (phoneBody.length >= 9) {
+        //     this.codeBtnDisabled = false;
+        //     value = phoneBody.slice(0, 9);
+        //     this.formParams.phoneBody = value;
+        //   } else {
+        //     this.codeBtnDisabled = true;
+        //   }
+        // }
 
         // password
-        if (prePassword === password) {
-          this.$refs.confirmErr.style.display = "none";
-          this.$refs.confirmPass.style.display = "block";
+        if (!prePassword || !password) {
+          return;
         } else {
-          this.$refs.confirmErr.style.display = "block";
-          this.$refs.confirmPass.style.display = "none";
+          if (prePassword === password) {
+            this.$refs.confirmErr.style.display = "none";
+            this.$refs.confirmPass.style.display = "block";
+          } else {
+            this.$refs.confirmErr.style.display = "block";
+            this.$refs.confirmPass.style.display = "none";
+          }
         }
       },
       deep: true
@@ -380,27 +394,35 @@ export default {
     }
   },
   methods: {
-    oninput(event) {
-      // let value = event.target.value;
-      // let currentCountry = this.formParams.country;
-      // if (value.length > 9) {
-      //   if (currentCountry === "China") {
-      //     value = value.slice(0, 11);
-      //     this.codeBtnDisabled = false;
-      //   } else {
-      //     value = value.slice(0, 9);
-      //     this.codeBtnDisabled = false;
-      //   }
-      // }
-      // this.formParams.phoneBody = value;
+    phoneHeadChange() {
+      if ((this.$refs.phoneHeadError.innerHTML = "Format Error")) {
+        this.$refs.phoneHeadError.innerHTML = "";
+      }
+    },
+    phoneBodyHandle(event) {
+      this.codeBtnDisabled = true;
+      let value = event.target.value;
+      let numberLength = 9;
+      if (this.formParams.phoneHead === "234") {
+        numberLength = 10;
+      }
+      if (value.length >= numberLength) {
+        value = value.slice(0, numberLength);
+        this.codeBtnDisabled = false;
+      }
+      this.formParams.phoneBody = value;
     },
     phoneBodyFocus() {
       if ((this.$refs.notRegistered.style.display = "block")) {
         this.$refs.notRegistered.style.display = "none";
       }
+      if (this.codeBtnDisabled) {
+        this.codeBtnDisabled = false;
+      }
     },
     confirmPasswordFocus() {},
     countryChange(event) {
+      this.formParams.phoneBody = "";
       let value = event.target.value;
       const countryList = this.countryList;
       for (let i = 0; i < countryList.length; i++) {
@@ -418,6 +440,8 @@ export default {
       const rescode = res.code;
       if (rescode === 0) {
         const resdata = res.data;
+        const areaCodeArr = resdata.map(v => v.areaCode);
+        this.areaCodeArr = areaCodeArr;
         this.countryList = resdata;
       }
     },
@@ -425,6 +449,13 @@ export default {
       let res = await getAllCity();
     },
     async getCode() {
+      if (!this.formParams.phoneHead) {
+        this.$refs.phoneHeadError.innerHTML = "Format Error";
+        return;
+      }
+      if (this.$refs.code.innerHTML === "Required") {
+        this.$refs.code.innerHTML = "";
+      }
       let sendBy = "BFSUMA_PWD";
       let phone = this.computedPhone;
       let res = await getTelCode({ sendBy, phone });
@@ -432,6 +463,8 @@ export default {
       if (res) {
         const rescode = res.code;
         if (rescode === 0) {
+          this.codeReadonly = false;
+          this.codeDisabled = false;
           // 按钮倒计时
           let time = 60;
           this.interval = setInterval(() => {
@@ -447,6 +480,8 @@ export default {
           }, 1000);
         }
         if (rescode === 201) {
+          this.codeBtnDisabled = true;
+          this.codeDisabled = true;
           this.$refs.notRegistered.style.display = "block";
         }
       }
@@ -569,7 +604,6 @@ export default {
                   margin-left 0
                   font-size 12px
                   border-right none
-                  line-height 0
                   font-weight normal
                 &.hidden-lable
                   display none
@@ -601,6 +635,8 @@ export default {
                     background-color #959494
                 span
                   margin-left 15px
+                .item-icon
+                  background #e6f0f3
                 .item-main-inner
                   flex 1
                   color #575757
@@ -623,6 +659,8 @@ export default {
               line-height 20px
               @media (max-width: 980px)
                 margin-top 30px
+                height 14px
+                line-height 14px
               .help-block
                 font-size 12px
                 color #a94442

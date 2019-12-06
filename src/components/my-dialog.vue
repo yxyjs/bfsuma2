@@ -101,7 +101,7 @@ export default {
         margin 25px 0
         @media (max-width: 980px)
           font-size 16px
-          margin 10px 0 15px 0
+          margin 5px 0 5px 0
     .dialog-main
       text-align left
       font-size 16px
@@ -112,6 +112,9 @@ export default {
         line-height 26px
       .dialog-text
         font-weight bold
+        @media (max-width: 980px)
+          line-height 1.5
+          margin-bottom 5px
         a
           display block
           color #56a7d8
@@ -147,10 +150,12 @@ export default {
       justify-content space-between
       margin 30px
       @media (max-width: 980px)
-        margin 20px 0 0 0
+        margin 5px 0 0 0
       .buttons-item
         flex 1
         text-align center
+        @media (max-width: 980px)
+          background-color #56a7d8
         .btn
           font-size 16px
           font-weight bold
@@ -160,11 +165,14 @@ export default {
           border-radius 4px
           @media (max-width: 980px)
             width 100%
-            padding 10px
+            font-size 14px
+            padding 6px
             border-radius 0
+            font-weight normal
         .btn-cancel
           color #56a7d8
           border 1px solid #56a7d8
+          background-color #fff
           &:hover
             background-color #eee
             @media (max-width: 980px)
