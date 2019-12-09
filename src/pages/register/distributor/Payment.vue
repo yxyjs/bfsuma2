@@ -61,7 +61,7 @@
                           <input
                             id="payPhone"
                             class="form-input-inner"
-                            type="number"
+                            type="tel"
                             placeholder="Phone Number"
                             v-model.trim="formParams.payPhone"
                             oninput="if(value.length>12)value=value.slice(0,12)"
@@ -81,10 +81,6 @@
                       </div>
                     </div>
                     <div ref="payUl" class="account-box">
-                      <!-- <p class="account-p">
-                        <span class="info-title">Mpesa Paybill:</span>
-                        <span class="info-content">{{paybill}}</span>
-                      </p>-->
                       <p class="account-p">
                         <span class="info-title">Account:</span>
                         <span class="info-content">SUMA HEALTH PRODUCTS CO.LTD</span>
@@ -140,120 +136,6 @@
           tag="form"
           class="form"
         >
-          <!-- name -->
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">*Name</label>
-                  <div class="item-main">
-                    <input
-                      type="text"
-                      class="item-main-inner"
-                      placeholder="First Name"
-                      v-model.trim="dialogParams.firstName"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
-            <section class="form-item margin-l">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="text"
-                      placeholder="Last Name"
-                      v-model.trim="dialogParams.lastName"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
-          </div>
-          <!-- Phone -->
-          <div class="form-wrap-box">
-            <section class="form-item">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <label class="item-lable">*Phone</label>
-                  <div class="item-main">
-                    <select
-                      class="item-main-inner"
-                      name="phoneHead"
-                      id="phoneHead"
-                      v-model="dialogParams.phoneHead"
-                    >
-                      <option style="display: none;" value="Aera Code">Aera Code</option>
-                      <option value="254">254</option>
-                      <option value="234">234</option>
-                      <option value="255">255</option>
-                      <option value="256">256</option>
-                      <option value="264">264</option>
-                      <option value="233">233</option>
-                      <option value="237">237</option>
-                      <option value="229">229</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
-            <section class="form-item margin-l">
-              <ValidationProvider rules="required" v-slot="{ errors }">
-                <div class="form-item-top">
-                  <div class="item-main">
-                    <input
-                      class="item-main-inner"
-                      type="number"
-                      placeholder="Phone Number"
-                      v-model.trim="dialogParams.phoneBody"
-                      oninput="if(value.length>9)value=value.slice(0,9)"
-                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
-                    />
-                  </div>
-                </div>
-                <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                </div>
-              </ValidationProvider>
-            </section>
-          </div>
-          <!-- address -->
-          <div class="form-wrap-box">
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors }"
-              class="form-item"
-              tag="section"
-            >
-              <div class="form-item-top" style="height:60px;">
-                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
-                <div class="item-main">
-                  <textarea
-                    class="item-main-inner"
-                    style="padding-top:15px"
-                    type="text"
-                    placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model.trim="dialogParams.address"
-                    autofocus
-                  ></textarea>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-              </div>
-            </ValidationProvider>
-          </div>
           <div class="form-wrap-box">
             <!-- country -->
             <ValidationProvider
@@ -314,6 +196,119 @@
               </div>
             </ValidationProvider>
           </div>
+          <!-- name -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*Name</label>
+                  <div class="item-main">
+                    <input
+                      type="text"
+                      class="item-main-inner"
+                      placeholder="First Name"
+                      v-model.trim="dialogParams.firstName"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+            <section class="form-item margin-l">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="text"
+                      placeholder="Last Name"
+                      v-model.trim="dialogParams.lastName"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+          <!-- Phone -->
+          <div class="form-wrap-box">
+            <section class="form-item">
+              <ValidationProvider rules="required" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <label class="item-lable">*Phone</label>
+                  <div class="item-main">
+                    <select
+                      class="item-main-inner"
+                      name="phoneHead"
+                      id="phoneHead"
+                      @change="phoneHeadChange"
+                      v-model="dialogParams.phoneHead"
+                    >
+                      <option style="display: none;" value="Aera Code">Aera Code</option>
+                      <option
+                        :value="areaCode"
+                        v-for="(areaCode ,index) in areaCodeArr"
+                        :key="index"
+                      >{{areaCode}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+            <section class="form-item margin-l">
+              <ValidationProvider :rules="rules" v-slot="{ errors }">
+                <div class="form-item-top">
+                  <div class="item-main">
+                    <input
+                      class="item-main-inner"
+                      type="tel"
+                      placeholder="Phone Number"
+                      v-model.trim="dialogParams.phoneBody"
+                      @input="phoneBodyInput"
+                      onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                    />
+                  </div>
+                </div>
+                <div class="form-item-bottom">
+                  <span class="help-block">{{ errors[0] }}</span>
+                </div>
+              </ValidationProvider>
+            </section>
+          </div>
+          <!-- address -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              class="form-item"
+              tag="section"
+            >
+              <div class="form-item-top" style="height:60px;">
+                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
+                <div class="item-main">
+                  <textarea
+                    class="item-main-inner"
+                    style="padding-top:15px"
+                    type="text"
+                    placeholder="Street Name/Building/Apartment No./Floor"
+                    v-model.trim="dialogParams.address"
+                    autofocus
+                  ></textarea>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
+          
         </ValidationObserver>
       </div>
     </my-dialog>
@@ -347,6 +342,7 @@ export default {
   data() {
     return {
       BASE_URL: BASE_URL,
+      rules:"",
       showLoginRouter: false,
       showDialog: false,
       showLoading: false,
@@ -359,6 +355,7 @@ export default {
       rightAmount: "",
       countryList: [],
       cityList: [],
+      areaCodeArr: [],
       formParams: {
         // 页面参数对象
         amount: "",
@@ -374,24 +371,30 @@ export default {
     formParams: {
       handler() {
         // payPhone
-        if (this.formParams.payPhone.length !== 12) {
-          this.$refs.phoneEmpty.style.display = "block";
-          this.payBtnDisabled = true;
-        } else {
-          // console.log(this.$refs.phoneEmpty.style)
-          // this.$refs.phoneEmpty.style.display = "none";
-          // this.payBtnDisabled = false;
-        }
+        // if (this.formParams.payPhone.length !== 12) {
+        //   this.$refs.phoneEmpty.style.display = "block";
+        //   this.payBtnDisabled = true;
+        // } else {
+        //   console.log(this.$refs.phoneEmpty.style)
+        //   this.$refs.phoneEmpty.style.display = "none";
+        //   this.payBtnDisabled = false;
+        // }
       },
       deep: true
     }
   },
   mounted() {
+    //this.rules = val === "234" ? "required|length:10" : "required|length:9";
     this.getAllpayMethods();
     this.getAllCountry();
     const cityList = session.get("cityList");
     if (cityList) {
       this.cityList = cityList;
+    }
+
+    const areaCodeArr = session.get("areaCodeArr");
+    if (areaCodeArr) {
+      this.areaCodeArr = areaCodeArr;
     }
 
     let user = session.get("user") || {};
@@ -630,13 +633,29 @@ export default {
       this.showMobileLoading = true;
       this.distributorAddress();
     },
+    phoneHeadChange(){
+      this.dialogParams.phoneBody = ""
+    },
+    phoneBodyInput(event){
+      let value = event.target.value;
+      if(!/^\d+$/.test(value))return
+      let numberLength = 9;
+      if (this.dialogParams.phoneHead === "234") {
+        numberLength = 10;
+      }
+      if (value.length >= numberLength) {
+        value = value.slice(0, numberLength);
+      }
+      this.dialogParams.phoneBody = value;
+    },
     dialogHandle(flag) {
       if (flag) {
         // 确定
         this.onSubmit();
       } else {
         // 取消
-        this.$router.replace("/register/distributor/business");
+        // this.$router.replace("/register/distributor/business");
+        this.distributorAddress();
       }
     },
     countryChange(event) {
@@ -646,13 +665,14 @@ export default {
       this.dialogParams.country = value;
 
       const countryList = this.countryList;
-      for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name === this.dialogParams.country) {
-          const areaCode = countryList[i].areaCode;
+      countryList.forEach(element => {
+        if (element.name === value) {
+          const areaCode = element.areaCode;
           this.getAllCity(areaCode);
+          this.dialogParams.phoneHead = areaCode 
           session.set("areaCode", areaCode);
         }
-      }
+      });
     },
     choosePayMethods(index) {
       this.currentPayIndex = index;
@@ -798,13 +818,9 @@ export default {
                         .form-input-inner
                           color #575757
                           padding 11px 20px
-                          box-shadow rgb(230, 240, 243) 0px 0px 0px 100px inset
+                          border 1px solid #ccc
                           @media (max-width: 980px)
                             padding 8px 0 8px 8px
-                          &.show-help
-                            box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-                            &::placeholder
-                              color #fff
                     .form-bottom
                       .help-block
                         display none
@@ -903,10 +919,6 @@ export default {
             height 100%
             color rgb(87, 87, 87)
             padding-left 10px
-            &.show-help
-              box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
-              &::placeholder
-                color #fff
             .item-main-help
               color #a94442
               font-weight normal

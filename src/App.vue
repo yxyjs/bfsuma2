@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <SumaHeader @handleExit="handleExit"></SumaHeader>
+    <SumaHeader @handleExit="handleExit" :path="path"></SumaHeader>
     <div class="app-md">
       <router-view />
     </div>
@@ -28,8 +28,14 @@ export default {
   name: "App",
   data() {
     return {
-      showDialog: false
+      showDialog: false,
+      path:'',
     };
+  },
+  mounted(){
+    this.path = this.$route.path.split("/")[
+      this.$route.path.split("/").length - 1
+    ];
   },
   methods: {
     handleExit() {

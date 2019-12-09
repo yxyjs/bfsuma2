@@ -104,7 +104,7 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="email"
+                    type="text"
                     placeholder="Email Address"
                     v-model.lazy="formParams.email"
                     @focus="emailFocus"
@@ -160,10 +160,10 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="number"
+                    type="tel"
                     placeholder="Phone Number"
                     v-model.trim="phoneBody"
-                    @input="phoneBodyHandle"
+                    @input="phoneBodyInput"
                     onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                     @focus="phoneBodyFocus"
                   />
@@ -339,7 +339,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { BASE_URL, registerCheck, registerCustomer } from "@/api/index";
+import { BASE_URL, registerCheck, registerCustomer,distributorLogin } from "@/api/index";
 import { session } from "@/util/tool";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -497,7 +497,10 @@ export default {
     const registerInfo = session.get("registerInfo");
     if (registerInfo) {
       this.formParams = registerInfo;
+      this.prePassword = registerInfo.prePassword
+      this.phoneBody = registerInfo.phoneBody
     }
+    
 
     const areaCode = session.get("areaCode");
     if (areaCode) {
@@ -514,8 +517,9 @@ export default {
     this.formParams.sponsor = distributorId;
   },
   methods: {
-    phoneBodyHandle(event) {
+    phoneBodyInput(event) {
       let value = event.target.value;
+      if(!/^\d+$/.test(value))return
       let numberLength = 9;
       if (this.phoneHead === "234") {
         numberLength = 10;
@@ -545,6 +549,7 @@ export default {
         this.toastText = "Passwords must match";
         return;
       } else {
+        session.remove("registerInfo")
         this.registerCheck();
       }
     },
@@ -594,6 +599,7 @@ export default {
       const rescode = res.code;
       switch (rescode) {
         case 0:
+          this.distributorLogin()
           this.showDialog = true;
           const resdata = res.data;
           session.set("customerInfo", resdata);
@@ -604,17 +610,43 @@ export default {
           break;
       }
     },
+    // 注册完成自动登录
+    async distributorLogin() {
+      const { email, password } = this.formParams;
+      const reqData = {}
+      reqData.account = email
+      reqData.password = password
+      reqData.rememberPwd = false
+      let res = await distributorLogin(reqData);
+      const rescode = res.code;
+      // this.disabled = true;
+      if (rescode === 0) {
+        let userInfo = {
+          account: email,
+          password: password
+        };
+        const resdata = res.data;
+        // 成功
+        session.set("user", resdata);
+      }
+    },
     dialogHandle(flag) {
       if (flag) {
         this.$router.replace("/register/distributor/payment");
       }
     },
+    rememberInput(){
+      const registerInfo = JSON.parse(JSON.stringify(this.formParams))
+      registerInfo.prePassword = this.prePassword
+      registerInfo.phoneBody = this.phoneBody
+      session.set("registerInfo", registerInfo);
+    },
     agreeHandle() {
-      session.set("registerInfo", this.formParams);
+      this.rememberInput()
       this.$router.push("/register/agreement");
     },
     goBack() {
-      session.set("registerInfo", this.formParams);
+      this.rememberInput()
       this.$router.go(-1);
     }
   },

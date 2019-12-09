@@ -159,7 +159,7 @@
           </div>
         </section>
       </div>
-      <div class="form-wrap" style="margin-top:10px">
+      <div ref="search" class="form-wrap" style="margin-top:10px">
         <section>
           <div class="form-wrap-box">
             <section class="form-item">
@@ -171,16 +171,26 @@
                 <label v-else class="item-lable">*Sponsor</label>
                 <div class="item-main">
                   <input
+                    v-if="!connectTime"
                     class="item-main-inner"
                     type="text"
                     placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
                     v-model.trim="sponsor"
                   />
-                  <button class="item-searchbtn" type="button" @click="onSearch">Search</button>
+                  <input
+                    v-else
+                    ref="newSponsor"
+                    class="item-main-inner"
+                    type="text"
+                    placeholder="*Upline Distributor Id or Mobile Phone or E-mail"
+                    v-model.trim="newSponsor"
+                  />
+                  <button class="item-searchbtn" type="button" @click="onSearch()">Search</button>
                 </div>
               </div>
               <div class="form-item-bottom">
-                <span ref="searchEmpty" class="show-required">Required</span>
+                <span v-if="!connectTime" ref="searchEmpty" class="show-required">Required</span>
+                <span v-else ref="searchEmpty1" class="show-required">Required</span>
                 <span
                   ref="noConnect"
                   class="help-block"
@@ -326,6 +336,7 @@ export default {
         city: ""
       },
       sponsor: "",
+      newSponsor: "",
       countryList: [],
       cityList: [],
       recommendList: []
@@ -344,7 +355,14 @@ export default {
       } else {
         this.$refs.searchEmpty.style.display = "none";
       }
-    }
+    },
+    newSponsor(val) {
+      if (!val) {
+        this.$refs.searchEmpty1.style.display = "block";
+      } else {
+        this.$refs.searchEmpty1.style.display = "none";
+      }
+    },
   },
   mounted() {
     const distSponsor = session.get("distSponsor");
@@ -428,51 +446,61 @@ export default {
     },
     // 搜索经销商
     async onSearch() {
-      const flag = await this.$refs.observer.validate();
-      if (!flag) return;
-      if (!this.sponsor) {
-        this.$refs.searchEmpty.style.display = "block";
-      } else {
-        this.$refs.searchEmpty.style.display = "none";
-        this.$refs.systemRecommend.style.display = "none";
-        this.showLoading = true;
-        const { country, city } = this.formParams;
-        const { sponsor } = this;
-        const reqData = {
-          country: country,
-          city: city,
-          page: 1,
-          rows: 6,
-          keyword: sponsor
-        };
-        let res = await searchSponsor(reqData);
-        const rescode = res.code;
-        this.showLoading = false;
-        const resdata = res.list;
+      const validate = await this.$refs.observer.validate();
+      if (!validate) return;
+      let searchValue = ""
+      if(!this.connectTime){
+        searchValue = this.sponsor
+        if(!searchValue)this.$refs.searchEmpty.style.display = "block";
+      }else{
+        searchValue = this.newSponsor
+        if(!searchValue) this.$refs.searchEmpty1.style.display = "block";
+      }
+      if(!searchValue) return
+      this.$refs.systemRecommend.style.display = "none";
+      this.showLoading = true;
+      const { country, city } = this.formParams;
+      const reqData = {
+        country: country,
+        city: city,
+        page: 1,
+        rows: 6,
+        keyword: searchValue
+      };
+      let res = await searchSponsor(reqData);
+      const rescode = res.code;
+      this.showLoading = false;
+      const resdata = res.list;
 
-        if (!resdata.length) {
-          this.$refs.tableWrap.style.display = "none";
-          this.$refs.recommendMatches.style.display = "none";
-          this.$refs.noData.style.display = "block";
-          this.$refs.systemRecommend.style.display = "block";
-        } else {
-          this.recommendList = resdata;
-          this.$refs.tableWrap.style.display = "block";
-          this.$refs.recommendMatches.style.display = "block";
-          this.$refs.noData.style.display = "none";
-          this.$refs.systemRecommend.style.display = "none";
-        }
+      if (!resdata.length) {
+        this.$refs.tableWrap.style.display = "none";
+        this.$refs.recommendMatches.style.display = "none";
+        this.$refs.noData.style.display = "block";
+        this.$refs.systemRecommend.style.display = "block";
+      } else {
+        this.recommendList = resdata;
+        this.$refs.tableWrap.style.display = "block";
+        this.$refs.recommendMatches.style.display = "block";
+        this.$refs.noData.style.display = "none";
+        this.$refs.systemRecommend.style.display = "none";
       }
     },
     // 获取6个推荐人
     async getRecommend() {
-      const flag = await this.$refs.observer.validate();
-      if (!flag) return;
+      const validate = await this.$refs.observer.validate();
+      if (!validate) return;
       const { country, city } = this.formParams;
 
-      if ((this.$refs.searchEmpty.style.display = "block")) {
-        this.$refs.searchEmpty.style.display = "none";
+      if(!this.connectTime){
+        if ((this.$refs.searchEmpty.style.display = "block")) {
+          this.$refs.searchEmpty.style.display = "none";
+        }
+      }else{
+        if ((this.$refs.searchEmpty1.style.display = "block")) {
+          this.$refs.searchEmpty1.style.display = "none";
+        }
       }
+      
       if ((this.$refs.noConnect.style.display = "block")) {
         this.$refs.noConnect.style.display = "none";
       }
@@ -499,9 +527,15 @@ export default {
         this.connectTime = 1;
         this.sponsorData = item;
         this.uplineData = item;
+        this.$refs.systemRecommend.style.display = "block";
+        this.$refs.searchEmpty.style.display = "none";
         session.set("sponsorData", item);
         session.set("uplineData", item);
       } else {
+        //更换upline
+        this.$refs.search.style.display = "none";
+        this.$refs.searchEmpty1.style.display = "none";
+        this.$refs.systemRecommend.style.display = "none";
         this.uplineData = item;
         session.set("uplineData", item);
       }
@@ -511,13 +545,9 @@ export default {
       session.set("uplineId", item.distributorId);
 
       this.$refs.noConnect.style.display = "none";
-      this.$refs.searchEmpty.style.display = "none";
       this.$refs.tableWrap.style.display = "none";
       this.$refs.recommendMatches.style.display = "none";
-      this.$refs.systemRecommend.style.display = "block";
-
       this.recommendList = [];
-      this.sponsor = "";
     },
 
     async onSubmit() {

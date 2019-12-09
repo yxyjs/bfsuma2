@@ -11,5 +11,8 @@ export const session = {
   get: function (key) {
     if (!key) return
     return JSON.parse(sessionStorage.getItem(key))
+  },
+  remove: function(key){
+    return sessionStorage.removeItem(key)
   }
 }

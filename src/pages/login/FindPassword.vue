@@ -92,7 +92,7 @@
                       type="number"
                       placeholder="Phone Number"
                       v-model.trim="formParams.phoneBody"
-                      @input="phoneBodyHandle"
+                      @input="phoneBodyInput"
                       onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                       @focus="phoneBodyFocus"
                     />
@@ -398,8 +398,9 @@ export default {
       if ((this.$refs.phoneHeadError.innerHTML = "Format Error")) {
         this.$refs.phoneHeadError.innerHTML = "";
       }
+      this.formParams.phoneBody = "";
     },
-    phoneBodyHandle(event) {
+    phoneBodyInput(event) {
       this.codeBtnDisabled = true;
       let value = event.target.value;
       let numberLength = 9;
@@ -601,7 +602,7 @@ export default {
                 padding-right 10px
                 border-right 1px solid #BABABA
                 @media (max-width: 980px)
-                  margin-left 0
+                  margin 0
                   font-size 12px
                   border-right none
                   font-weight normal
@@ -658,7 +659,7 @@ export default {
               height 20px
               line-height 20px
               @media (max-width: 980px)
-                margin-top 30px
+                margin-top 32px
                 height 14px
                 line-height 14px
               .help-block

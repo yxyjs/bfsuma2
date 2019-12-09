@@ -139,6 +139,60 @@
           tag="form"
           class="form"
         >
+          <div class="form-wrap-box">
+            <!-- country -->
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*Country</label>
+                <div class="item-main">
+                  <select
+                    class="item-main-inner"
+                    v-model="dialogParams.country"
+                    @change="countryChange"
+                  >
+                    <option disabled value style="display:none;">Choose Country</option>
+                    <option
+                      :value="country.name"
+                      v-for="(country,index) in countryList"
+                      :key="index"
+                    >{{country.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+            <!-- city -->
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item margin-l"
+            >
+              <div class="form-item-top">
+                <label class="item-lable">*City</label>
+                <div class="item-main">
+                  <select class="item-main-inner" v-model="dialogParams.city">
+                    <option disabled value style="display:none;">Choose City</option>
+                    <option
+                      :value="city.name"
+                      v-for="(city,index) in cityList"
+                      :key="index"
+                    >{{city.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
           <!-- name -->
           <div class="form-wrap-box">
             <ValidationProvider
@@ -226,7 +280,7 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="number"
+                    type="tel"
                     placeholder="Phone Number"
                     v-model.trim="dialogParams.phoneBody"
                     oninput="if(value.length>9)value=value.slice(0,9)"
@@ -258,60 +312,6 @@
                     v-model.trim="dialogParams.address"
                     autofocus
                   ></textarea>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-              </div>
-            </ValidationProvider>
-          </div>
-          <div class="form-wrap-box">
-            <!-- country -->
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item"
-            >
-              <div class="form-item-top">
-                <label class="item-lable">*Country</label>
-                <div class="item-main">
-                  <select
-                    class="item-main-inner"
-                    v-model="dialogParams.country"
-                    @change="countryChange"
-                  >
-                    <option disabled value style="display:none;">Choose Country</option>
-                    <option
-                      :value="country.name"
-                      v-for="(country,index) in countryList"
-                      :key="index"
-                    >{{country.name}}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-              </div>
-            </ValidationProvider>
-            <!-- city -->
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item margin-l"
-            >
-              <div class="form-item-top">
-                <label class="item-lable">*City</label>
-                <div class="item-main">
-                  <select class="item-main-inner" v-model="dialogParams.city">
-                    <option disabled value style="display:none;">Choose City</option>
-                    <option
-                      :value="city.name"
-                      v-for="(city,index) in cityList"
-                      :key="index"
-                    >{{city.name}}</option>
-                  </select>
                 </div>
               </div>
               <div class="form-item-bottom">

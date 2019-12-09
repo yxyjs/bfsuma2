@@ -21,13 +21,13 @@
           @click="$router.replace('/register')"
         >Register</a>
         <a
-          v-show="path==='payment' || path==='business'"
+          v-show="path==='business'"
           href="javascript:;"
           class="guide"
           @click="$router.replace('/register/distributor/personal')"
         >{{firstName}}&nbsp;{{lastName}}</a>
       </div>
-      <div class="link-exit" v-show="path==='personal'">
+      <div class="link-exit" v-if="path==='personal' || path==='payment'">
         <span class="exit-username">Welcome to BF Suma，{{firstName}}&nbsp;{{lastName}}</span>
         <a href="javascript:;" class="guide" @click="handleExit">
           <span>
@@ -42,16 +42,22 @@
 
 <script type="text/ecmascript-6">
 import { BASE_URL } from "@/api/index";
+import { session } from "@/util/tool";
 export default {
+  props:{
+    path:{
+      type:String,
+      required:true
+    }
+  },
   data() {
     return {
       BASE_URL: BASE_URL,
-      path: "",
       firstName: "",
       lastName: ""
     };
   },
-  updated(){
+  mounted(){
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user) {
       const name = user.name.split(" ");
@@ -66,30 +72,6 @@ export default {
         this.lastName = distInformation.lastName;
       }
     }
-
-    this.path = this.$route.path.split("/")[
-      this.$route.path.split("/").length - 1
-    ];
-  },
-  mounted() {
-    // const user = JSON.parse(sessionStorage.getItem("user"));
-    // if (user) {
-    //   const name = user.name.split(" ");
-    //   this.firstName = name[0];
-    //   this.lastName = name[1];
-    // } else {
-    //   const distInformation = JSON.parse(
-    //     sessionStorage.getItem("distInformation")
-    //   );
-    //   if (distInformation) {
-    //     this.firstName = distInformation.firstName;
-    //     this.lastName = distInformation.lastName;
-    //   }
-    // }
-
-    // this.path = this.$route.path.split("/")[
-    //   this.$route.path.split("/").length - 1
-    // ];
   },
   methods: {
     handleExit() {
