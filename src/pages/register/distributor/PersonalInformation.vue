@@ -1,5 +1,6 @@
 <template>
   <div id="personal-cont">
+    <SumaHeader path="personalInformation"></SumaHeader>
     <my-header>
       <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
@@ -134,6 +135,7 @@
                     name="phoneHead"
                     id="phoneHead"
                     v-model="phoneHead"
+                    @change="phoneHeadChange"
                   >
                     <option disabled value style="display: none;">Aera Code</option>
                     <option
@@ -150,7 +152,7 @@
             </ValidationProvider>
             <ValidationProvider
               name="Phone Number"
-              :rules="rules"
+              rules="required"
               v-slot="{ errors }"
               tag="section"
               class="form-item margin-l"
@@ -160,7 +162,7 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="tel"
+                    type="number"
                     placeholder="Phone Number"
                     v-model.trim="phoneBody"
                     @input="phoneBodyInput"
@@ -170,7 +172,7 @@
                 </div>
               </div>
               <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="phoneBodyError" class="help-block">{{ errors[0] }}</span>
                 <span ref="phoneBound" class="already-bound">Already bound, please replace one</span>
               </div>
             </ValidationProvider>
@@ -315,7 +317,6 @@
           @click="agreeHandle"
         >the BF Suma Privacy Policy</a>
       </div>
-      <!-- btn -->
       <div class="btn-wrap">
         <button class="btn btn-back" type="button" @click="goBack">Back</button>
         <button class="btn btn-submit" type="submit">Submit</button>
@@ -323,12 +324,10 @@
     </ValidationObserver>
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
     <mobile-loading :showMobileLoading="showMobileLoading" />
-    <!-- dialog -->
     <my-dialog
       title="Create account"
       :showDialog="showDialog"
       @dialogHandle="dialogHandle"
-      @closeDialog="showDialog = false"
     >
       <div
         slot="dialog-text"
@@ -339,8 +338,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { BASE_URL, registerCheck, registerCustomer,distributorLogin } from "@/api/index";
+import {
+  BASE_URL,
+  registerCheck,
+  registerCustomer,
+  distributorLogin
+} from "@/api/index";
 import { session } from "@/util/tool";
+import SumaHeader from "@/components/SumaHeader";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -483,10 +488,10 @@ export default {
         tempList.push(passwordErrorList[2]);
       }
       this.passwordErrorList = tempList;
-    },
-    phoneHead(val) {
-      this.rules = val === "234" ? "required|length:10" : "required|length:9";
     }
+    // phoneHead(val) {
+    //   this.rules = val === "234" ? "required|length:10" : "required|length:9";
+    // }
   },
   mounted() {
     const areaCodeArr = session.get("areaCodeArr");
@@ -497,10 +502,9 @@ export default {
     const registerInfo = session.get("registerInfo");
     if (registerInfo) {
       this.formParams = registerInfo;
-      this.prePassword = registerInfo.prePassword
-      this.phoneBody = registerInfo.phoneBody
+      this.prePassword = registerInfo.prePassword;
+      this.phoneBody = registerInfo.phoneBody;
     }
-    
 
     const areaCode = session.get("areaCode");
     if (areaCode) {
@@ -517,15 +521,33 @@ export default {
     this.formParams.sponsor = distributorId;
   },
   methods: {
+    phoneHeadChange() {
+      this.phoneBody = "";
+      this.$refs.phoneBodyError.innerHTML = "";
+    },
     phoneBodyInput(event) {
       let value = event.target.value;
-      if(!/^\d+$/.test(value))return
-      let numberLength = 9;
-      if (this.phoneHead === "234") {
+      if (!/^\d+$/.test(value)) return;
+      let numberLength;
+      let phoneHead = this.phoneHead;
+      const nineList = ["254", "255", "256", "264", "233", "237", "229"];
+      if (nineList.includes(phoneHead)) {
+        numberLength = 9;
+      }
+      if (phoneHead === "234") {
         numberLength = 10;
       }
       if (value.length >= numberLength) {
+        this.$refs.phoneBodyError.innerHTML = "";
         value = value.slice(0, numberLength);
+      } else {
+        const arr = nineList;
+        arr.push("234");
+        if (!arr.includes(phoneHead)) {
+          this.$refs.phoneBodyError.innerHTML = "";
+        } else {
+          this.$refs.phoneBodyError.innerHTML = "Format Error";
+        }
       }
       this.phoneBody = value;
     },
@@ -549,7 +571,7 @@ export default {
         this.toastText = "Passwords must match";
         return;
       } else {
-        session.remove("registerInfo")
+        session.remove("registerInfo");
         this.registerCheck();
       }
     },
@@ -599,7 +621,7 @@ export default {
       const rescode = res.code;
       switch (rescode) {
         case 0:
-          this.distributorLogin()
+          this.distributorLogin();
           this.showDialog = true;
           const resdata = res.data;
           session.set("customerInfo", resdata);
@@ -613,10 +635,10 @@ export default {
     // 注册完成自动登录
     async distributorLogin() {
       const { email, password } = this.formParams;
-      const reqData = {}
-      reqData.account = email
-      reqData.password = password
-      reqData.rememberPwd = false
+      const reqData = {};
+      reqData.account = email;
+      reqData.password = password;
+      reqData.rememberPwd = false;
       let res = await distributorLogin(reqData);
       const rescode = res.code;
       // this.disabled = true;
@@ -635,18 +657,18 @@ export default {
         this.$router.replace("/register/distributor/payment");
       }
     },
-    rememberInput(){
-      const registerInfo = JSON.parse(JSON.stringify(this.formParams))
-      registerInfo.prePassword = this.prePassword
-      registerInfo.phoneBody = this.phoneBody
+    rememberInput() {
+      const registerInfo = JSON.parse(JSON.stringify(this.formParams));
+      registerInfo.prePassword = this.prePassword;
+      registerInfo.phoneBody = this.phoneBody;
       session.set("registerInfo", registerInfo);
     },
     agreeHandle() {
-      this.rememberInput()
+      this.rememberInput();
       this.$router.push("/register/agreement");
     },
     goBack() {
-      this.rememberInput()
+      this.rememberInput();
       this.$router.go(-1);
     }
   },
@@ -655,7 +677,8 @@ export default {
     "my-step": myStep,
     "my-toast": myToast,
     "my-dialog": myDialog,
-    "mobile-loading": mobileLoading
+    "mobile-loading": mobileLoading,
+    SumaHeader
   }
 };
 </script>
@@ -666,6 +689,9 @@ export default {
 select, input
   padding-left 10px
 #personal-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .form
     margin 20px 0 38px 0
     background-color #fff

@@ -1,5 +1,6 @@
 <template>
   <div id="agreement-cont">
+    <SumaHeader path="agreement"></SumaHeader>
     <my-header title="We Are Bright Future Suma">
       <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Agreement</span>
@@ -246,16 +247,21 @@
 </template>
 
 <script type="text/ecmascript-6">
+import SumaHeader from "@/components/SumaHeader";
 import myHeader from "@/components/my-header";
 export default {
   components: {
-    "my-header": myHeader
+    "my-header": myHeader,
+    SumaHeader
   }
 };
 </script>
 
 <style scoped lang='stylus'>
 #agreement-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .agreement-mid
     margin-top 20px
     padding 40px

@@ -1,5 +1,6 @@
 <template>
   <div id="personal-cont">
+    <SumaHeader path="personal" @handleExit="handleExit"></SumaHeader>
     <div class="personal-mid">
       <p class="top-tips">Hello，{{firstName}} {{lastName}},Welcome to BF Suma！</p>
       <div class="personal-main">
@@ -75,15 +76,29 @@
         @click="$router.push('/register/distributor/payment')"
       >go pay now</button>
     </div>
+    <my-dialog
+      title="Are you sure to exit？"
+      showCancel
+      :showDialog="showDialog"
+      @dialogHandle="dialogHandle"
+      @closeDialog="showDialog = false"
+    >
+      <div class="dialog-img" slot="dialog-img">
+        <i class="iconfont icon--quetion-pane"></i>
+      </div>
+    </my-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { distributorCustomer, payBill } from "@/api/index";
+import { distributorCustomer, payBill, BASE_URL } from "@/api/index";
 import { toThousands, session } from "@/util/tool.js";
+import SumaHeader from "@/components/SumaHeader";
+import myDialog from "@/components/my-dialog";
 export default {
   data() {
     return {
+      showDialog: false,
       firstName: "",
       lastName: "",
       payAmount: "",
@@ -155,9 +170,23 @@ export default {
         this.payAmount = resdata.payAmount;
         session.set("mySponsor", resdata);
       }
+    },
+    handleExit() {
+      this.showDialog = true;
+    },
+    dialogHandle(flag) {
+      if (flag) {
+        session.clear();
+        location.href = BASE_URL;
+      } else {
+        this.showDialog = false;
+      }
     }
   },
-  components: {}
+  components: {
+    SumaHeader,
+    "my-dialog": myDialog
+  }
 };
 </script>
 
@@ -171,8 +200,10 @@ export default {
     margin 0
     min-height 100vh
   .personal-mid
+    margin-top 136px
     padding 20px
     @media (max-width: 980px)
+      margin-top 50px
       padding 8px
     .top-tips
       font-size 14px

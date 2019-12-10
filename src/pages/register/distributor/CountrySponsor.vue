@@ -1,5 +1,6 @@
 <template>
   <div id="country-cont">
+    <SumaHeader path="countrySponsor"></SumaHeader>
     <my-header>
       <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
@@ -311,6 +312,7 @@ import {
   getAllCity
 } from "@/api/index";
 import { session } from "@/util/tool";
+import SumaHeader from "@/components/SumaHeader";
 import myDialog from "@/components/my-dialog";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
@@ -571,7 +573,8 @@ export default {
     "my-header": myHeader,
     "my-step": myStep,
     "my-loading": myLoading,
-    "my-toast": myToast
+    "my-toast": myToast,
+    SumaHeader
   }
 };
 </script>
@@ -584,6 +587,9 @@ select, input
 ::placeholder
   letter-spacing -0.4px
 #country-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .form
     margin 20px 0 38px 0
     padding 20px

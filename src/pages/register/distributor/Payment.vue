@@ -1,5 +1,6 @@
 <template>
   <div id="payment-cont">
+    <SumaHeader path="payment" @handleExit="handleExit"></SumaHeader>
     <my-header>
       <a v-if="showLoginRouter" href="javascript:;" @click="$router.replace('/login')">Login</a>
       <a v-else href="javascript:;" @click="$router.replace('/register')">Register</a>
@@ -35,7 +36,13 @@
         <section ref="payAccount" class="pay-account">
           <p>Please pay the EXACT amount to complete your order</p>
           <div class="pay-account-main">
-            <form class="form">
+            <ValidationObserver
+              ref="observerPay"
+              @submit.prevent="payRequest"
+              v-slot="{ invalid }"
+              tag="form"
+              class="form"
+            >
               <!-- 支付方式 -->
               <div class="pay-methods">
                 <ul class="pay-ul">
@@ -55,30 +62,33 @@
                       <span class="methods-box-name">{{method.name}}</span>
                     </div>
                     <div v-show="index === currentPayIndex" class="methods-bottom">
-                      <div class="form-box">
-                        <div class="form-input">
-                          <label class="form-input-label" for="payPhone">Your Phone</label>
-                          <input
-                            id="payPhone"
-                            class="form-input-inner"
-                            type="tel"
-                            placeholder="Phone Number"
-                            v-model.trim="formParams.payPhone"
-                            oninput="if(value.length>12)value=value.slice(0,12)"
-                            onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
-                          />
+                      <ValidationProvider tag="section" rules="required" v-slot="{ errors }">
+                        <div class="form-box">
+                          <div class="form-input">
+                            <label class="form-input-label" for="payPhone">Your Phone</label>
+                            <input
+                              id="payPhone"
+                              class="form-input-inner"
+                              type="number"
+                              placeholder="Phone Number"
+                              v-model.trim="formParams.payPhone"
+                              @input="payPhoneBodyInput"
+                              onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                            />
+                          </div>
+                          <button
+                            ref="payBtn"
+                            class="form-button"
+                            type="button"
+                            @click="payRequest"
+                            :disabled="payBtnDisabled"
+                          >Pay</button>
                         </div>
-                        <button
-                          ref="payBtn"
-                          class="form-button"
-                          type="button"
-                          @click="payRequest"
-                          :disabled="payBtnDisabled"
-                        >Pay</button>
-                      </div>
-                      <div class="form-bottom">
-                        <small ref="phoneEmpty" class="help-block">Format Error</small>
-                      </div>
+                        <div class="form-bottom">
+                          <!-- <span ref="payPhoneFormatError" class="help-bloc">error</span> -->
+                          <span ref="payPhoneFormatError" class="help-block">{{ errors[0] }}</span>
+                        </div>
+                      </ValidationProvider>
                     </div>
                     <div ref="payUl" class="account-box">
                       <p class="account-p">
@@ -93,7 +103,7 @@
                   </li>
                 </ul>
               </div>
-            </form>
+            </ValidationObserver>
           </div>
           <button
             class="form-button"
@@ -120,7 +130,6 @@
       title="Shipping Address"
       :showDialog="showDialog"
       @dialogHandle="dialogHandle"
-      @closeDialog="dialogHandle(false)"
       showCancel
     >
       <div slot="dialog-text" class="dialog-text">
@@ -268,7 +277,7 @@
                   <div class="item-main">
                     <input
                       class="item-main-inner"
-                      type="tel"
+                      type="number"
                       placeholder="Phone Number"
                       v-model.trim="dialogParams.phoneBody"
                       @input="phoneBodyInput"
@@ -277,7 +286,7 @@
                   </div>
                 </div>
                 <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
+                  <span ref="phoneFormatError" class="help-block">{{ errors[0] }}</span>
                 </div>
               </ValidationProvider>
             </section>
@@ -299,7 +308,6 @@
                     type="text"
                     placeholder="Street Name/Building/Apartment No./Floor"
                     v-model.trim="dialogParams.address"
-                    autofocus
                   ></textarea>
                 </div>
               </div>
@@ -308,12 +316,20 @@
               </div>
             </ValidationProvider>
           </div>
-          
         </ValidationObserver>
       </div>
     </my-dialog>
+    <my-dialog
+      title="Are you sure to exit？"
+      :showDialog="showDialog1"
+      @dialogHandle="dialogHandle1"
+      showCancel
+    >
+      <div class="dialog-img" slot="dialog-img">
+        <i class="iconfont icon--quetion-pane"></i>
+      </div>
+    </my-dialog>
     <mobile-loading :showMobileLoading="showMobileLoading" />
-    <!-- 错误提示框 -->
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
 </template>
@@ -333,6 +349,7 @@ import {
 } from "@/api/index";
 import { toThousands, session } from "@/util/tool.js";
 import myDialog from "@/components/my-dialog";
+import SumaHeader from "@/components/SumaHeader";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myLoading from "@/components/my-loading";
@@ -342,9 +359,9 @@ export default {
   data() {
     return {
       BASE_URL: BASE_URL,
-      rules:"",
       showLoginRouter: false,
       showDialog: false,
+      showDialog1: false,
       showLoading: false,
       showMobileLoading: false,
       payBtnDisabled: false,
@@ -367,24 +384,7 @@ export default {
       currentPayIndex: 0 //当前支付方式
     };
   },
-  watch: {
-    formParams: {
-      handler() {
-        // payPhone
-        // if (this.formParams.payPhone.length !== 12) {
-        //   this.$refs.phoneEmpty.style.display = "block";
-        //   this.payBtnDisabled = true;
-        // } else {
-        //   console.log(this.$refs.phoneEmpty.style)
-        //   this.$refs.phoneEmpty.style.display = "none";
-        //   this.payBtnDisabled = false;
-        // }
-      },
-      deep: true
-    }
-  },
   mounted() {
-    //this.rules = val === "234" ? "required|length:10" : "required|length:9";
     this.getAllpayMethods();
     this.getAllCountry();
     const cityList = session.get("cityList");
@@ -502,6 +502,10 @@ export default {
     },
     // 发起支付请求
     async payRequest() {
+      const isValid = await this.$refs.observerPay.validate();
+      if (!isValid) {
+        return;
+      }
       this.showMobileLoading = true;
       let res = await payRequest(this.formParams);
       this.showMobileLoading = false;
@@ -633,18 +637,58 @@ export default {
       this.showMobileLoading = true;
       this.distributorAddress();
     },
-    phoneHeadChange(){
-      this.dialogParams.phoneBody = ""
+    phoneHeadChange() {
+      this.dialogParams.phoneBody = "";
     },
-    phoneBodyInput(event){
+    payPhoneBodyInput(event) {
       let value = event.target.value;
-      if(!/^\d+$/.test(value))return
-      let numberLength = 9;
-      if (this.dialogParams.phoneHead === "234") {
+      if (!/^\d+$/.test(value)) return;
+      let numberLength, phoneHead;
+      phoneHead = this.formParams.payPhone.substring(0, 3);
+      const tenList = ["254", "255", "256", "264", "233", "237", "229"];
+      if (tenList.includes(phoneHead)) {
+        numberLength = 12;
+      }
+      if (phoneHead === "234") {
+        numberLength = 13;
+      }
+      if (value.length >= numberLength) {
+        value = value.slice(0, numberLength);
+        this.$refs.payPhoneFormatError.innerHTML = "";
+      } else {
+        const arr = tenList;
+        arr.push("234");
+        if (!arr.includes(phoneHead)) {
+          this.$refs.payPhoneFormatError.innerHTML = "";
+        } else {
+          this.$refs.payPhoneFormatError.innerHTML = "block";
+        }
+      }
+      this.formParams.payPhone = value;
+    },
+    phoneBodyInput(event) {
+      let value = event.target.value;
+      if (!/^\d+$/.test(value)) return;
+      let numberLength, phoneHead;
+      phoneHead = this.dialogParams.phoneHead;
+      const nineList = ["254", "255", "256", "264", "233", "237", "229"];
+      if (nineList.includes(phoneHead)) {
+        numberLength = 9;
+      }
+      if (phoneHead === "234") {
         numberLength = 10;
       }
       if (value.length >= numberLength) {
         value = value.slice(0, numberLength);
+        this.$refs.phoneFormatError.innerHTML = "";
+      } else {
+        const arr = nineList;
+        arr.push("234");
+        if (!arr.includes(phoneHead)) {
+          this.$refs.phoneFormatError.innerHTML = "";
+        } else {
+          this.$refs.phoneFormatError.innerHTML = "Format Error";
+        }
       }
       this.dialogParams.phoneBody = value;
     },
@@ -669,7 +713,7 @@ export default {
         if (element.name === value) {
           const areaCode = element.areaCode;
           this.getAllCity(areaCode);
-          this.dialogParams.phoneHead = areaCode 
+          this.dialogParams.phoneHead = areaCode;
           session.set("areaCode", areaCode);
         }
       });
@@ -684,6 +728,17 @@ export default {
     },
     beforeDestroy() {
       clearInterval(this.interval);
+    },
+    handleExit() {
+      this.showDialog1 = true;
+    },
+    dialogHandle1(flag) {
+      if (flag) {
+        session.clear();
+        location.href = BASE_URL;
+      } else {
+        this.showDialog1 = false;
+      }
     }
   },
   components: {
@@ -692,7 +747,8 @@ export default {
     "my-step": myStep,
     "my-loading": myLoading,
     "mobile-loading": mobileLoading,
-    "my-toast": myToast
+    "my-toast": myToast,
+    SumaHeader
   }
 };
 </script>
@@ -701,6 +757,9 @@ export default {
 @import '../../../../static/stylus/common.styl'
 
 #payment-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .pay-mid
     padding 20px
     background #fff
@@ -817,13 +876,17 @@ export default {
                             font-weight normal
                         .form-input-inner
                           color #575757
+                          width 110px
                           padding 11px 20px
                           border 1px solid #ccc
                           @media (max-width: 980px)
-                            padding 8px 0 8px 8px
+                            padding 8px 0 8px 2px
                     .form-bottom
+                      display flex
+                      height 20px
+                      line-height 20px
                       .help-block
-                        display none
+                        font-size 12px
                         color #a94442
       .form-button
         color #fff
@@ -833,7 +896,7 @@ export default {
         border-radius 4px
         @media (max-width: 980px)
           margin-left 6px
-          padding 10px 20px
+          padding 10px
           font-size 12px
         &:hover
           background-color #286090

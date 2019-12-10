@@ -12,7 +12,10 @@ export const session = {
     if (!key) return
     return JSON.parse(sessionStorage.getItem(key))
   },
-  remove: function(key){
+  remove: function (key) {
     return sessionStorage.removeItem(key)
+  },
+  clear: function (key) {
+    return sessionStorage.clear()
   }
 }

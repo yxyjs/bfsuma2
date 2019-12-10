@@ -1,5 +1,6 @@
 <template>
   <div id="login-cont">
+    <SumaHeader path="login"></SumaHeader>
     <p class="welcome">Welcome</p>
     <div class="login-main">
       <div class="login-banner">
@@ -113,6 +114,7 @@ import { BASE_URL, distributorLogin } from "@/api/index";
 import { session } from "@/util/tool";
 import myToast from "@/components/my-toast";
 import mobileLoading from "@/components/mobile-loading";
+import SumaHeader from "@/components/SumaHeader";
 export default {
   data() {
     return {
@@ -133,6 +135,7 @@ export default {
     }
   },
   mounted() {
+    this.accountFocus();
     let userLogin = session.get("userLogin");
     if (userLogin) {
       this.account = userLogin.account;
@@ -207,7 +210,8 @@ export default {
   },
   components: {
     "my-toast": myToast,
-    "mobile-loading": mobileLoading
+    "mobile-loading": mobileLoading,
+    SumaHeader
   }
 };
 </script>
@@ -217,10 +221,13 @@ export default {
   .welcome
     color #5BA2CC
     font-size 36px
-    margin 20px
+    // margin 20px
+    padding-top 116px
     @media (max-width: 980px)
       font-size 26px
-      margin 8px
+      // margin 8px
+      padding-top 60px
+      padding-left 10px
   .login-main
     display flex
     .login-banner

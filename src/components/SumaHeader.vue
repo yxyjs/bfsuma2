@@ -1,5 +1,5 @@
 <template>
-  <div id="header-cont">
+  <div id="bfheader-cont">
     <div class="header-main">
       <div class="logo">
         <a :href="BASE_URL">
@@ -8,7 +8,7 @@
       </div>
       <div class="link">
         <a
-          v-if="path==='register' || path==='personalInformation' || path==='countrySponsor' || path==='findPassword' || path==='agreement'"
+          v-show="path==='register' || path==='personalInformation' || path==='countrySponsor' || path==='findPassword' || path==='agreement'"
           href="javascript:;"
           class="guide"
           @click="$router.replace('/login')"
@@ -27,7 +27,7 @@
           @click="$router.replace('/register/distributor/personal')"
         >{{firstName}}&nbsp;{{lastName}}</a>
       </div>
-      <div class="link-exit" v-if="path==='personal' || path==='payment'">
+      <div class="link-exit" v-show="path==='personal' || path==='payment'">
         <span class="exit-username">Welcome to BF Suma，{{firstName}}&nbsp;{{lastName}}</span>
         <a href="javascript:;" class="guide" @click="handleExit">
           <span>
@@ -44,10 +44,10 @@
 import { BASE_URL } from "@/api/index";
 import { session } from "@/util/tool";
 export default {
-  props:{
-    path:{
-      type:String,
-      required:true
+  props: {
+    path: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -57,16 +57,14 @@ export default {
       lastName: ""
     };
   },
-  mounted(){
-    const user = JSON.parse(sessionStorage.getItem("user"));
+  mounted() {
+    const user = session.get("user");
     if (user) {
       const name = user.name.split(" ");
       this.firstName = name[0];
       this.lastName = name[1];
     } else {
-      const distInformation = JSON.parse(
-        sessionStorage.getItem("distInformation")
-      );
+      const distInformation = session.get("distInformation");
       if (distInformation) {
         this.firstName = distInformation.firstName;
         this.lastName = distInformation.lastName;
@@ -78,19 +76,23 @@ export default {
       this.$emit("handleExit");
     }
   },
-  watch: {
-    $route: function(to, from) {
-      this.path = this.$route.path.split("/")[
-        this.$route.path.split("/").length - 1
-      ];
-    }
-  },
+  // watch: {
+  //   $route: function(to, from) {
+  //     this.path = this.$route.path.split("/")[
+  //       this.$route.path.split("/").length - 1
+  //     ];
+  //   }
+  // },
   components: {}
 };
 </script>
 
 <style scoped lang="stylus">
-#header-cont
+#bfheader-cont
+  position absolute
+  top 0
+  left 0
+  right 0
   background-color #fff
   padding 10px 0 20px 0
   @media (max-width: 980px)

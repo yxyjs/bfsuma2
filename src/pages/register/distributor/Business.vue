@@ -1,5 +1,6 @@
 <template>
   <div id="business-cont">
+    <SumaHeader path="business"></SumaHeader>
     <my-header>
       <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
@@ -123,7 +124,6 @@
       title="Shipping Address"
       :showDialog="showDialog"
       @dialogHandle="dialogHandle"
-      @closeDialog="dialogHandle(false)"
       showCancel
     >
       <div slot="dialog-text" class="dialog-text">
@@ -280,11 +280,11 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="tel"
+                    type="number"
                     placeholder="Phone Number"
                     v-model.trim="dialogParams.phoneBody"
                     oninput="if(value.length>9)value=value.slice(0,9)"
-                    onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" 
+                    onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                   />
                 </div>
               </div>
@@ -336,6 +336,7 @@ import {
   getAllCountry
 } from "@/api/index";
 import { session } from "@/util/tool";
+import SumaHeader from "@/components/SumaHeader";
 import myHeader from "@/components/my-header";
 import myStep from "@/components/my-step";
 import myToast from "@/components/my-toast";
@@ -520,7 +521,8 @@ export default {
     "my-step": myStep,
     "my-toast": myToast,
     "mobile-loading": mobileLoading,
-    "my-dialog": myDialog
+    "my-dialog": myDialog,
+    SumaHeader
   }
 };
 </script>
@@ -529,6 +531,9 @@ export default {
 @import '../../../../static/stylus/common.styl'
 
 #business-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .business-mid
     padding 20px
     background #fff

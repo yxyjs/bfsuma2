@@ -1,5 +1,6 @@
 <template>
   <div id="index-cont">
+    <SumaHeader path="register"></SumaHeader>
     <my-header title="We Are BF Suma">Register</my-header>
     <div class="index-md">
       <div class="md-text">
@@ -40,15 +41,24 @@
 
 <script type="text/ecmascript-6">
 import myHeader from "@/components/my-header";
+import SumaHeader from "@/components/SumaHeader";
+import { session } from "@/util/tool";
 export default {
+  mounted() {
+    session.clear();
+  },
   components: {
-    "my-header": myHeader
+    "my-header": myHeader,
+    SumaHeader
   }
 };
 </script>
 
 <style scoped lang="stylus">
 #index-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .index-md
     margin 20px 0 38px 0
     padding 20px

@@ -1,6 +1,10 @@
 <template>
   <div id="find-cont">
-    <p class="welcome">Find Password</p>
+    <SumaHeader path="findPassword"></SumaHeader>
+    <my-header title="Find Password">
+      <a href="javascript:;" @click="$router.replace('/login')">Login</a>
+      <span>/ Find Password</span>
+    </my-header>
     <div class="find-main">
       <div class="find-banner">
         <img src="../../../static/img/login_banner.png" />
@@ -37,6 +41,7 @@
                       :key="index"
                     >{{ country.name }}</option>
                   </select>
+                  <i class="xiajiantou iconfont icon-f11"></i>
                 </div>
               </div>
               <div class="form-item-bottom">
@@ -69,6 +74,7 @@
                       :key="index"
                     >{{areaCode}}</option>
                   </select>
+                  <i class="xiajiantou iconfont icon-f11"></i>
                 </div>
               </div>
               <div class="form-item-bottom">
@@ -99,8 +105,8 @@
                   </div>
                 </div>
                 <div class="form-item-bottom">
-                  <span class="help-block">{{ errors[0] }}</span>
-                  <small ref="phoneFormatErr" class="other-help">Format Error</small>
+                  <span ref="phoneBodyError" class="help-block">{{ errors[0] }}</span>
+                  <!-- <small ref="phoneFormatErr" class="other-help">Format Error</small> -->
                   <small ref="phoneNotValid" class="other-help">Please enter a valid number</small>
                 </div>
               </ValidationProvider>
@@ -263,6 +269,8 @@ import {
   getAllCountry,
   getAllCity
 } from "@/api/index";
+import SumaHeader from "@/components/SumaHeader";
+import myHeader from "@/components/my-header";
 import { session } from "@/util/tool";
 import myToast from "@/components/my-toast";
 export default {
@@ -398,18 +406,35 @@ export default {
       if ((this.$refs.phoneHeadError.innerHTML = "Format Error")) {
         this.$refs.phoneHeadError.innerHTML = "";
       }
+      this.$refs.phoneBodyError.innerHTML = "";
       this.formParams.phoneBody = "";
     },
     phoneBodyInput(event) {
       this.codeBtnDisabled = true;
       let value = event.target.value;
-      let numberLength = 9;
-      if (this.formParams.phoneHead === "234") {
+      if (!/^\d+$/.test(value)) return;
+      let numberLength;
+      let phoneHead = this.formParams.phoneHead;
+      const nineList = ["254", "255", "256", "264", "233", "237", "229"];
+      if (nineList.includes(phoneHead)) {
+        numberLength = 9;
+      }
+      if (phoneHead === "234") {
         numberLength = 10;
       }
       if (value.length >= numberLength) {
         value = value.slice(0, numberLength);
+        this.$refs.phoneBodyError.innerHTML = "";
         this.codeBtnDisabled = false;
+      } else {
+        const arr = nineList;
+        arr.push("234");
+        if (!arr.includes(phoneHead)) {
+          this.$refs.phoneBodyError.innerHTML = "";
+          this.codeBtnDisabled = false;
+        } else {
+          this.$refs.phoneBodyError.innerHTML = "Format Error";
+        }
       }
       this.formParams.phoneBody = value;
     },
@@ -417,7 +442,7 @@ export default {
       if ((this.$refs.notRegistered.style.display = "block")) {
         this.$refs.notRegistered.style.display = "none";
       }
-      if (this.codeBtnDisabled) {
+      if (this.formParams.phoneBody && this.codeBtnDisabled) {
         this.codeBtnDisabled = false;
       }
     },
@@ -508,6 +533,7 @@ export default {
         }
         if (rescode === 201) {
           // 未获取验证码或者已过期，请重新获取
+          this.formParams.code = "";
           this.$refs.codeError.style.display = "block";
           clearInterval(this.interval);
           this.codeBtnDisabled = false;
@@ -524,13 +550,18 @@ export default {
     }
   },
   components: {
-    "my-toast": myToast
+    "my-toast": myToast,
+    "my-header": myHeader,
+    SumaHeader
   }
 };
 </script>
 
 <style scoped lang="stylus">
 #find-cont
+  margin-top 132px
+  @media (max-width: 980px)
+    margin-top 50px
   .welcome
     color #5BA2CC
     font-size 36px
@@ -615,14 +646,17 @@ export default {
                 padding-right 10px
                 background-color #fff
               .item-main
+                position relative
                 flex 1
                 display flex
                 align-items center
                 color rgb(87, 87, 87)
                 @media (max-width: 980px)
                   line-height 36px
+                  margin-top 18px
+                  background #e6f0f3
                 .btn-getcode
-                  padding 0 26px
+                  width 80px
                   height 100%
                   border-radius 4px
                   color #fff
@@ -637,13 +671,19 @@ export default {
                 span
                   margin-left 15px
                 .item-icon
+                  position absolute
+                  right 10px
+                .xiajiantou
+                  position absolute
+                  right 0px
+                  font-size 30px
+                  height 34px
                   background #e6f0f3
                 .item-main-inner
                   flex 1
                   color #575757
-                  padding-left 10px
+                  padding 10px 0 10px 10px
                   @media (max-width: 980px)
-                    padding 10px 0 10px 10px
                     background #e6f0f3
                   &::placeholder
                     color #b7b7b7

@@ -113,7 +113,7 @@ export default {
       .dialog-text
         font-weight bold
         @media (max-width: 980px)
-          line-height 1.5
+          line-height 1.3
           margin-bottom 5px
         a
           display block
