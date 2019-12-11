@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <SumaHeader @handleExit="handleExit" :path="path"></SumaHeader> -->
     <div class="app-md">
       <router-view />
     </div>

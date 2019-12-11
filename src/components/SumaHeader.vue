@@ -20,14 +20,14 @@
           class="guide"
           @click="$router.replace('/register')"
         >Register</a>
-        <a
+        <!-- <a
           v-show="path==='business'"
           href="javascript:;"
           class="guide"
           @click="$router.replace('/register/distributor/personal')"
-        >{{firstName}}&nbsp;{{lastName}}</a>
+        >{{firstName}}&nbsp;{{lastName}}</a>-->
       </div>
-      <div class="link-exit" v-show="path==='personal' || path==='payment'">
+      <div class="link-exit" v-show="path==='personal' || path==='payment' || path==='business'">
         <span class="exit-username">Welcome to BF Suma，{{firstName}}&nbsp;{{lastName}}</span>
         <a href="javascript:;" class="guide" @click="handleExit">
           <span>

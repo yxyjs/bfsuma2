@@ -1,6 +1,6 @@
 <template>
   <div id="business-cont">
-    <SumaHeader path="business"></SumaHeader>
+    <SumaHeader path="business" @handleExit="handleExit"></SumaHeader>
     <my-header>
       <a href="javascript:;" @click="$router.replace('/register')">Register</a>
       <span>/ Distributor Register</span>
@@ -321,6 +321,16 @@
         </ValidationObserver>
       </div>
     </my-dialog>
+    <my-dialog
+      title="Are you sure to exit？"
+      :showDialog="showDialog1"
+      @dialogHandle="dialogHandle1"
+      showCancel
+    >
+      <div class="dialog-img" slot="dialog-img">
+        <i class="iconfont icon--quetion-pane"></i>
+      </div>
+    </my-dialog>
     <mobile-loading :showMobileLoading="showMobileLoading" />
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
   </div>
@@ -346,6 +356,7 @@ export default {
     return {
       BASE_URL: BASE_URL,
       showDialog: false,
+      showDialog1: false,
       showEditAddress: true,
       showMobileLoading: false,
       showToast: false,
@@ -486,9 +497,9 @@ export default {
       this.showMobileLoading = false;
       const rescode = res.code;
       if (rescode === 0) {
-        this.showDialog = false;
         session.set("addressInformation", reqData);
-        location.reload();
+        this.addressData = reqData;
+        this.showDialog = false;
       }
       if (rescode === 101) {
         if (this.BASE_URL === "http://172.18.1.240:73") {
@@ -500,8 +511,8 @@ export default {
         }
       }
     },
-    phoneHeadChange(){
-      this.dialogParams.phoneBody = ""
+    phoneHeadChange() {
+      this.dialogParams.phoneBody = "";
     },
     phoneBodyInput(event) {
       let value = event.target.value;
@@ -535,6 +546,17 @@ export default {
       } else {
         this.showDialog = false;
       }
+    },
+    dialogHandle1(flag) {
+      if (flag) {
+        session.clear();
+        location.href = BASE_URL;
+      } else {
+        this.showDialog1 = false;
+      }
+    },
+    handleExit() {
+      this.showDialog1 = true;
     },
     countryChange(event) {
       this.dialogParams.city = "";
