@@ -598,13 +598,14 @@ select, input
       margin 0 0 20px 0
       padding 8px
     .top-tips
-      font-size 14px
       font-weight bold
       color #575757
       line-height 30px
       @media (max-width: 980px)
         line-height 1.5
         font-weight normal
+      @media (max-width: 320px)
+        font-size 12px
     .required
       margin 12px 0 0 0
       color #5BA2CC

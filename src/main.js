@@ -13,7 +13,7 @@ if ('addEventListener' in document) {
 }
 
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
-import { required, email, alpha_spaces, length, min_value } from 'vee-validate/dist/rules';
+import { required, email, numeric, alpha_spaces, length, min_value } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
@@ -41,7 +41,7 @@ Vue.component('ValidationProvider', ValidationProvider);
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */ 
+/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,

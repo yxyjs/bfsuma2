@@ -162,7 +162,8 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="number"
+                    type="tel"
+                    name="tel"
                     placeholder="Phone Number"
                     v-model.trim="phoneBody"
                     @input="phoneBodyInput"
@@ -324,11 +325,7 @@
     </ValidationObserver>
     <my-toast :toastText="toastText" :showToast="showToast" @closeToast="showToast=false"></my-toast>
     <mobile-loading :showMobileLoading="showMobileLoading" />
-    <my-dialog
-      title="Create account"
-      :showDialog="showDialog"
-      @dialogHandle="dialogHandle"
-    >
+    <my-dialog title="Create account" :showDialog="showDialog" @dialogHandle="dialogHandle">
       <div
         slot="dialog-text"
         class="dialog-text"
@@ -701,7 +698,6 @@ select, input
       margin-top 0
       min-height 100vh
     .top-tips
-      font-size 14px
       font-weight bold
       color #575757
       line-height 30px
@@ -764,6 +760,8 @@ select, input
                   @media (max-width: 980px)
                     display block
                     margin 3px
+                  @media (max-width: 320px)
+                    margin 3px
                 @media (max-width: 980px)
                   margin-left 0
                   border-right none
@@ -821,10 +819,11 @@ select, input
         margin-left -200px
         @media (max-width: 980px)
           left 56%
+        @media (max-width: 320px)
+          left 66%
         &:last-child
           left 100%
         >div
-          font-size 14px
           @media (max-width: 980px)
             font-size 12px
           >i
@@ -869,7 +868,6 @@ select, input
             width 12px
           .icon-radio
             display block
-            font-size 14px
             transform translateY(-4px)
             @media (max-width: 980px)
               transform translateY(0)

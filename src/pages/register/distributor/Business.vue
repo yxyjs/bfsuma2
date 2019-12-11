@@ -193,6 +193,32 @@
               </div>
             </ValidationProvider>
           </div>
+          <!-- address -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              tag="section"
+              class="form-item"
+            >
+              <div class="form-item-top" style="height:60px;">
+                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
+                <div class="item-main">
+                  <textarea
+                    class="item-main-inner"
+                    style="padding-top:6px"
+                    type="text"
+                    placeholder="Street Name/Building/Apartment No./Floor"
+                    v-model.trim="dialogParams.address"
+                    autofocus
+                  ></textarea>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
           <!-- name -->
           <div class="form-wrap-box">
             <ValidationProvider
@@ -253,16 +279,14 @@
                     name="phoneHead"
                     id="phoneHead"
                     v-model="dialogParams.phoneHead"
+                    @change="phoneHeadChange"
                   >
                     <option style="display: none;" value="Aera Code">Aera Code</option>
-                    <option value="254">254</option>
-                    <option value="234">234</option>
-                    <option value="255">255</option>
-                    <option value="256">256</option>
-                    <option value="264">264</option>
-                    <option value="233">233</option>
-                    <option value="237">237</option>
-                    <option value="229">229</option>
+                    <option
+                      :value="areaCode"
+                      v-for="(areaCode ,index) in areaCodeArr"
+                      :key="index"
+                    >{{areaCode}}</option>
                   </select>
                 </div>
               </div>
@@ -280,42 +304,17 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="number"
+                    type="tel"
+                    name="tel"
                     placeholder="Phone Number"
                     v-model.trim="dialogParams.phoneBody"
-                    oninput="if(value.length>9)value=value.slice(0,9)"
+                    @input="phoneBodyInput"
                     onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                   />
                 </div>
               </div>
               <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-              </div>
-            </ValidationProvider>
-          </div>
-          <!-- address -->
-          <div class="form-wrap-box">
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors }"
-              tag="section"
-              class="form-item"
-            >
-              <div class="form-item-top" style="height:60px;">
-                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
-                <div class="item-main">
-                  <textarea
-                    class="item-main-inner"
-                    style="padding-top:15px"
-                    type="text"
-                    placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model.trim="dialogParams.address"
-                    autofocus
-                  ></textarea>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
+                <span ref="phoneBodyError" class="help-block">{{ errors[0] }}</span>
               </div>
             </ValidationProvider>
           </div>
@@ -353,6 +352,7 @@ export default {
       toastText: "",
       countryList: [],
       cityList: [],
+      areaCodeArr: [],
       sponsorData: {},
       uplineData: {},
       addressData: {
@@ -373,6 +373,11 @@ export default {
     const cityList = session.get("cityList");
     if (cityList) {
       this.cityList = cityList;
+    }
+
+    const areaCodeArr = session.get("areaCodeArr");
+    if (areaCodeArr) {
+      this.areaCodeArr = areaCodeArr;
     }
 
     this.getAllCountry();
@@ -472,6 +477,8 @@ export default {
     // 提交地址信息
     async submitAddress() {
       const reqData = Object.assign({}, this.dialogParams);
+      delete reqData.phone;
+      reqData.phone = reqData.phoneHead + reqData.phoneBody;
       if (this.myDistributorId) {
         reqData.distributorNo = this.myDistributorId;
       }
@@ -492,6 +499,35 @@ export default {
           console.error(res.fullMessage);
         }
       }
+    },
+    phoneHeadChange(){
+      this.dialogParams.phoneBody = ""
+    },
+    phoneBodyInput(event) {
+      let value = event.target.value;
+      value = value.replace(/\D/g, "");
+      let numberLength;
+      let phoneHead = this.dialogParams.phoneHead;
+      const nineList = ["254", "255", "256", "264", "233", "237", "229"];
+      if (nineList.includes(phoneHead)) {
+        numberLength = 9;
+      }
+      if (phoneHead === "234") {
+        numberLength = 10;
+      }
+      if (value.length >= numberLength) {
+        value = value.slice(0, numberLength);
+        this.$refs.phoneBodyError.innerHTML = "";
+      } else {
+        const arr = nineList;
+        arr.push("234");
+        if (!arr.includes(phoneHead)) {
+          this.$refs.phoneBodyError.innerHTML = "";
+        } else {
+          this.$refs.phoneBodyError.innerHTML = "Format Error";
+        }
+      }
+      this.dialogParams.phoneBody = value;
     },
     dialogHandle(flag) {
       if (flag) {
@@ -617,25 +653,27 @@ export default {
     display flex
     flex 1
     @media (max-width: 980px)
-      display block
       margin 0
+      overflow hidden
     .form-item
       flex 1
       @media (max-width: 980px)
         background-color #fff
         flex-direction column
+        width 100px
       &.margin-l
         margin-left 16px
         @media (max-width: 980px)
           margin-left 0
+          border-left 10px solid #fff
       .form-item-top
         display flex
         background-color #E6F0F3
         height 40px
         line-height 40px
         @media (max-width: 980px)
-          height 30px
-          line-height 30px
+          height 26px
+          line-height 26px
         .item-lable
           font-size 12px
           font-weight bold
@@ -647,9 +685,10 @@ export default {
           padding-right 10px
           @media (max-width: 980px)
             margin 0
+            padding 0 0 0 4px
             border-right none
-            height 30px
-            line-height 30px
+            height 26px
+            line-height 26px
             font-weight normal
         .item-p
           line-height 40px
@@ -674,6 +713,8 @@ export default {
               box-shadow rgb(255, 174, 174) 0px 0px 0px 100px inset
               &::placeholder
                 color #fff
+            @media (max-width: 980px)
+              width 30%
             .item-main-help
               color #a94442
               font-weight normal
@@ -684,9 +725,9 @@ export default {
             color #ccc
       .form-item-bottom
         display flex
-        height 20px
-        line-height 20px
+        height 14px
+        line-height 14px
         .help-block
-          font-size 12px
+          font-size 11px
           color #a94442
 </style>

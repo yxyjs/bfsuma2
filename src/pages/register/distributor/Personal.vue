@@ -206,7 +206,6 @@ export default {
       margin-top 50px
       padding 8px
     .top-tips
-      font-size 14px
       font-weight bold
       color #575757
       line-height 30px
@@ -264,7 +263,6 @@ export default {
       margin-left 20px
       padding 10px 14px
       border-radius 4px
-      font-size 14px
       @media (max-width: 980px)
         width 100%
         margin 20px 0 16px 0

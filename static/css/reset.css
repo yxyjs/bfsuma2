@@ -115,7 +115,7 @@ body {
   background-color        : #fff;
   -webkit-text-size-adjust: none;
   font                    : 14px/1.5 arial, Microsoft YaHei, tahoma, Hiragino Sans GB, \\5b8b\4f53, sans-serif
-}
+  }
 }
 
 a {
@@ -193,3 +193,4 @@ a {
   }
   /*正文的字体大小和颜色*/
 }
+

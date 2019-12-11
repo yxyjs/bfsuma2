@@ -69,7 +69,8 @@
                             <input
                               id="payPhone"
                               class="form-input-inner"
-                              type="number"
+                              type="tel"
+                              name="tel"
                               placeholder="Phone Number"
                               v-model.trim="formParams.payPhone"
                               @input="payPhoneBodyInput"
@@ -205,6 +206,31 @@
               </div>
             </ValidationProvider>
           </div>
+          <!-- address -->
+          <div class="form-wrap-box">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors }"
+              class="form-item"
+              tag="section"
+            >
+              <div class="form-item-top" style="height:60px;">
+                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
+                <div class="item-main">
+                  <textarea
+                    class="item-main-inner"
+                    style="padding-top:6px"
+                    type="text"
+                    placeholder="Street Name/Building/Apartment No./Floor"
+                    v-model.trim="dialogParams.address"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="form-item-bottom">
+                <span class="help-block">{{ errors[0] }}</span>
+              </div>
+            </ValidationProvider>
+          </div>
           <!-- name -->
           <div class="form-wrap-box">
             <section class="form-item">
@@ -272,12 +298,13 @@
               </ValidationProvider>
             </section>
             <section class="form-item margin-l">
-              <ValidationProvider :rules="rules" v-slot="{ errors }">
+              <ValidationProvider rules="required" v-slot="{ errors }">
                 <div class="form-item-top">
                   <div class="item-main">
                     <input
                       class="item-main-inner"
-                      type="number"
+                      type="tel"
+                      name="tel"
                       placeholder="Phone Number"
                       v-model.trim="dialogParams.phoneBody"
                       @input="phoneBodyInput"
@@ -290,31 +317,6 @@
                 </div>
               </ValidationProvider>
             </section>
-          </div>
-          <!-- address -->
-          <div class="form-wrap-box">
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors }"
-              class="form-item"
-              tag="section"
-            >
-              <div class="form-item-top" style="height:60px;">
-                <label class="item-lable" style="height:40px;line-height:40px">*Address</label>
-                <div class="item-main">
-                  <textarea
-                    class="item-main-inner"
-                    style="padding-top:15px"
-                    type="text"
-                    placeholder="Street Name/Building/Apartment No./Floor"
-                    v-model.trim="dialogParams.address"
-                  ></textarea>
-                </div>
-              </div>
-              <div class="form-item-bottom">
-                <span class="help-block">{{ errors[0] }}</span>
-              </div>
-            </ValidationProvider>
           </div>
         </ValidationObserver>
       </div>
@@ -769,7 +771,6 @@ export default {
       padding 8px
       margin 0
     .top-tips
-      font-size 14px
       font-weight bold
       color #575757
       line-height 30px
@@ -922,25 +923,27 @@ export default {
     display flex
     flex 1
     @media (max-width: 980px)
-      display block
       margin 0
+      overflow hidden
     .form-item
       flex 1
       @media (max-width: 980px)
         background-color #fff
         flex-direction column
+        width 100px
       &.margin-l
         margin-left 16px
         @media (max-width: 980px)
           margin-left 0
+          border-left 10px solid #fff
       .form-item-top
         display flex
         background-color #E6F0F3
         height 40px
         line-height 40px
         @media (max-width: 980px)
-          height 30px
-          line-height 30px
+          height 26px
+          line-height 26px
         .item-lable
           font-size 12px
           font-weight bold
@@ -954,8 +957,8 @@ export default {
             margin 0
             padding 0 0 0 4px
             border-right none
-            height 30px
-            line-height 30px
+            height 26px
+            line-height 26px
             font-weight normal
           &.hidden-lable
             display none
@@ -982,6 +985,8 @@ export default {
             height 100%
             color rgb(87, 87, 87)
             padding-left 10px
+            @media (max-width: 980px)
+              width 30%
             .item-main-help
               color #a94442
               font-weight normal
@@ -992,9 +997,9 @@ export default {
             color #ccc
       .form-item-bottom
         display flex
-        height 20px
-        line-height 20px
+        height 14px
+        line-height 14px
         .help-block
-          font-size 12px
+          font-size 11px
           color #a94442
 </style>

@@ -95,18 +95,19 @@
                     <input
                       ref="phoneBody"
                       class="item-main-inner"
-                      type="number"
+                      type="tel"
+                      name="tel"
                       placeholder="Phone Number"
                       v-model.trim="formParams.phoneBody"
                       @input="phoneBodyInput"
                       onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                       @focus="phoneBodyFocus"
+                      autocomplete="off"
                     />
                   </div>
                 </div>
                 <div class="form-item-bottom">
                   <span ref="phoneBodyError" class="help-block">{{ errors[0] }}</span>
-                  <!-- <small ref="phoneFormatErr" class="other-help">Format Error</small> -->
                   <small ref="phoneNotValid" class="other-help">Please enter a valid number</small>
                 </div>
               </ValidationProvider>
@@ -126,7 +127,8 @@
                 <div class="item-main">
                   <input
                     class="item-main-inner"
-                    type="number"
+                    type="tel"
+                    name="tel"
                     placeholder="Short Message Verification Code"
                     v-model.trim="formParams.code"
                     oninput="if(value.length>6)value=value.slice(0,6)"
@@ -412,7 +414,7 @@ export default {
     phoneBodyInput(event) {
       this.codeBtnDisabled = true;
       let value = event.target.value;
-      if (!/^\d+$/.test(value)) return;
+      value = value.replace(/\D/g, "");
       let numberLength;
       let phoneHead = this.formParams.phoneHead;
       const nineList = ["254", "255", "256", "264", "233", "237", "229"];
@@ -437,6 +439,9 @@ export default {
         }
       }
       this.formParams.phoneBody = value;
+      if (!this.formParams.phoneBody) {
+        this.codeBtnDisabled = true;
+      }
     },
     phoneBodyFocus() {
       if ((this.$refs.notRegistered.style.display = "block")) {

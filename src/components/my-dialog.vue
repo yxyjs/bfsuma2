@@ -82,7 +82,7 @@ export default {
       background-color rgba(0, 0, 0, 0.5)
   .dialog-wrap
     position fixed
-    top 50%
+    top 36%
     left 50%
     transform translate(-50%) translateY(-50%)
     width 50%
@@ -91,7 +91,7 @@ export default {
     border-radius 10px
     overflow hidden
     @media (max-width: 980px)
-      width 80%
+      width 90%
     .header
       .dialog-title
         font-size 20px
@@ -100,8 +100,8 @@ export default {
         text-align center
         margin 25px 0
         @media (max-width: 980px)
-          font-size 16px
-          margin 5px 0 5px 0
+          font-size 14px
+          margin 5px 0 3px 0
     .dialog-main
       text-align left
       font-size 16px
@@ -150,7 +150,7 @@ export default {
       justify-content space-between
       margin 30px
       @media (max-width: 980px)
-        margin 5px 0 0 0
+        margin 0
       .buttons-item
         flex 1
         text-align center
