@@ -606,7 +606,7 @@ export default {
       let { country, city, sponsor, upline } = this.formParams;
       const reqData = Object.assign({}, this.formParams);
       reqData.phone = this.computedPhone;
-      reqData.productInterests = JSON.stringify(reqData.productInterests);
+      reqData.productInterests = reqData.productInterests.join(",");
       const sponsorData = session.get("sponsorData");
       const uplineData = session.get("uplineData");
       const distObj = Object.assign({}, reqData);

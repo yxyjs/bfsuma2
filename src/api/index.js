@@ -4,9 +4,9 @@
  */
 import ajax from './ajax'
 import { type } from 'os'
-export const BASE_URL = 'http://172.18.1.240:73' //测试
+// export const BASE_URL = 'http://172.18.1.240:73' //测试
 
-//export const BASE_URL = 'http://www.bfsuma.com' //正式
+export const BASE_URL = 'http://www.bfsuma.com' //正式
 
 //---------------------------------------SponsorController-----------------------------------------
 
